@@ -235,15 +235,15 @@ export function ListingForm({ listing, isNew }: ListingFormProps) {
       
       if (isNew) {
         // Create new listing
-        result = await supabase
-          .from('listings')
+        result = await (supabase
+          .from('listings') as any)
           .insert([listingData])
           .select();
       } else {
         // Update existing listing
         const { id, ...updateData } = listingData;
-        result = await supabase
-          .from('listings')
+        result = await (supabase
+          .from('listings') as any)
           .update(updateData)
           .eq('id', id)
           .select();

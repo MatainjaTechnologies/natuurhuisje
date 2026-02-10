@@ -21,7 +21,7 @@ export default async function AccountPage() {
     .from('profiles')
     .select('*')
     .eq('id', session.user.id)
-    .single();
+    .single() as { data: any };
   
   // Get user's bookings
   const { data: bookings } = await supabase
@@ -33,7 +33,7 @@ export default async function AccountPage() {
       )
     `)
     .eq('guest_id', session.user.id)
-    .order('check_in_date', { ascending: false });
+    .order('check_in_date', { ascending: false }) as { data: any[] | null };
   
   // Get user's favorites
   const { data: favorites } = await supabase
@@ -44,10 +44,10 @@ export default async function AccountPage() {
         id, title, slug, images, location, price_per_night, avg_rating
       )
     `)
-    .eq('user_id', session.user.id);
+    .eq('user_id', session.user.id) as { data: any[] | null };
   
   // Format user name
-  const fullName = profile ? `${profile.first_name} ${profile.last_name}`.trim() : 'User';
+  const fullName = profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'User' : 'User';
   
   return (
     <div className="bg-cream-50 min-h-screen">

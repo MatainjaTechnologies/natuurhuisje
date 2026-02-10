@@ -13,13 +13,13 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
     redirect('/login');
   }
   
-  // Fetch listing
+  // Fetch listing data
   const { data: listing, error } = await supabase
     .from('listings')
     .select('*')
     .eq('id', listingId)
-    .single();
-    
+    .single() as { data: any; error: any };
+
   // Check if listing exists and belongs to the current user
   if (error || !listing || listing.host_id !== session.user.id) {
     redirect('/host/listings');

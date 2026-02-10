@@ -84,18 +84,18 @@ export async function createListing(formData: FormData) {
       .from("profiles")
       .select("is_host")
       .eq("id", session.user.id)
-      .single();
+      .single() as { data: any };
       
     if (profile && !profile.is_host) {
-      await supabase
-        .from("profiles")
+      await (supabase
+        .from("profiles") as any)
         .update({ is_host: true })
         .eq("id", session.user.id);
     }
     
     // Create listing
-    const { data: listing, error } = await supabase
-      .from("listings")
+    const { data: listing, error } = await (supabase
+      .from("listings") as any)
       .insert({
         ...validatedData,
         host_id: session.user.id,
@@ -140,7 +140,7 @@ export async function updateListing(listingId: string, formData: FormData) {
     .select("*")
     .eq("id", listingId)
     .eq("host_id", session.user.id)
-    .single();
+    .single() as { data: any };
     
   if (!existingListing) {
     return { error: "You are not authorized to update this listing" };
@@ -174,8 +174,8 @@ export async function updateListing(listingId: string, formData: FormData) {
     }
     
     // Update listing
-    const { error } = await supabase
-      .from("listings")
+    const { error } = await (supabase
+      .from("listings") as any)
       .update({
         ...updateData,
         updated_at: new Date().toISOString(),
@@ -268,15 +268,15 @@ export async function toggleListingPublishStatus(listingId: string) {
     .select("*")
     .eq("id", listingId)
     .eq("host_id", session.user.id)
-    .single();
+    .single() as { data: any };
     
   if (!existingListing) {
     return { error: "You are not authorized to update this listing" };
   }
   
   // Toggle the is_published status
-  const { error } = await supabase
-    .from("listings")
+  const { error } = await (supabase
+    .from("listings") as any)
     .update({
       is_published: !existingListing.is_published,
       updated_at: new Date().toISOString(),

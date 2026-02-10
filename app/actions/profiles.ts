@@ -38,8 +38,8 @@ export async function updateProfile(formData: FormData) {
     const validatedData = profileSchema.parse(rawData);
     
     // Update profile
-    const { error } = await supabase
-      .from("profiles")
+    const { error } = await (supabase
+      .from("profiles") as any)
       .update({
         ...validatedData,
         updated_at: new Date().toISOString(),
@@ -101,8 +101,8 @@ export async function uploadAvatar(formData: FormData) {
       .getPublicUrl(filePath);
       
     // Update the user's profile with the new avatar URL
-    const { error: updateError } = await supabase
-      .from("profiles")
+    const { error: updateError } = await (supabase
+      .from("profiles") as any)
       .update({
         avatar_url: publicUrl,
         updated_at: new Date().toISOString(),
@@ -141,15 +141,15 @@ export async function toggleHostStatus() {
     .from("profiles")
     .select("is_host")
     .eq("id", session.user.id)
-    .single();
+    .single() as { data: any };
     
   if (!profile) {
     return { error: "Profile not found" };
   }
   
   // Toggle host status
-  const { error } = await supabase
-    .from("profiles")
+  const { error } = await (supabase
+    .from("profiles") as any)
     .update({
       is_host: !profile.is_host,
       updated_at: new Date().toISOString(),

@@ -12,17 +12,17 @@ export default async function NewListingPage() {
     redirect('/login');
   }
   
-  // Get user profile
+  // Get user profile to check host status
   const { data: profile } = await supabase
     .from('profiles')
-    .select('*')
+    .select('is_host')
     .eq('id', session.user.id)
-    .single();
-    
+    .single() as { data: any };
+
   // Ensure user is a host
   if (profile && !profile.is_host) {
-    await supabase
-      .from('profiles')
+    await (supabase
+      .from('profiles') as any)
       .update({ is_host: true })
       .eq('id', session.user.id);
   }
