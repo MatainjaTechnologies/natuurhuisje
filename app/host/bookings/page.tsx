@@ -19,7 +19,7 @@ export default async function HostBookingsPage() {
     .from('listings')
     .select('*')
     .eq('host_id', session.user.id)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false }) as { data: any[] | null };
     
   // Fetch all bookings for user's listings
   const { data: bookings } = await supabase
@@ -29,14 +29,14 @@ export default async function HostBookingsPage() {
       listings(id, title, slug, images),
       profiles(id, first_name, last_name, avatar_url)
     `)
-    .in('listing_id', listings?.map(listing => listing.id) || [])
-    .order('created_at', { ascending: false });
+    .in('listing_id', listings?.map((listing: any) => listing.id) || [])
+    .order('created_at', { ascending: false }) as { data: any[] | null };
 
   // Group bookings by status
-  const pendingBookings = bookings?.filter(b => b.status === 'pending') || [];
-  const confirmedBookings = bookings?.filter(b => b.status === 'confirmed') || [];
-  const completedBookings = bookings?.filter(b => b.status === 'completed') || [];
-  const cancelledBookings = bookings?.filter(b => b.status === 'cancelled') || [];
+  const pendingBookings = bookings?.filter((b: any) => b.status === 'pending') || [];
+  const confirmedBookings = bookings?.filter((b: any) => b.status === 'confirmed') || [];
+  const completedBookings = bookings?.filter((b: any) => b.status === 'completed') || [];
+  const cancelledBookings = bookings?.filter((b: any) => b.status === 'cancelled') || [];
 
   return (
     <div className="bg-cream-50 min-h-screen">

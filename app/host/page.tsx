@@ -20,14 +20,11 @@ export default async function HostDashboardPage() {
     .from('profiles')
     .select('*')
     .eq('id', session.user.id)
-    .single();
+    .single() as { data: any };
     
   // If the user is not a host, update their profile to become a host
   if (profile && !profile.is_host) {
-    await supabase
-      .from('profiles')
-      .update({ is_host: true })
-      .eq('id', session.user.id);
+    await (supabase.from('profiles') as any).update({ is_host: true }).eq('id', session.user.id);
   }
   
   // Fetch host's listings
@@ -35,7 +32,7 @@ export default async function HostDashboardPage() {
     .from('listings')
     .select('*')
     .eq('host_id', session.user.id)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false }) as { data: any[] | null };
     
   // Fetch host's bookings
   const { data: bookings } = await supabase
@@ -44,8 +41,8 @@ export default async function HostDashboardPage() {
       *,
       listings(id, title, slug)
     `)
-    .in('listing_id', listings?.map(listing => listing.id) || [])
-    .order('created_at', { ascending: false });
+    .in('listing_id', listings?.map((listing: any) => listing.id) || [])
+    .order('created_at', { ascending: false }) as { data: any[] | null };
     
   // Calculate basic statistics
   const totalListings = listings?.length || 0;

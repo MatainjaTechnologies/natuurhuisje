@@ -19,7 +19,7 @@ export default async function HostListingsPage() {
     .from('listings')
     .select('*, bookings(*)')
     .eq('host_id', session.user.id)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false }) as { data: any[] | null };
 
   return (
     <div className="bg-cream-50 min-h-screen">
@@ -61,9 +61,9 @@ export default async function HostListingsPage() {
         
         {listings && listings.length > 0 ? (
           <div className="grid grid-cols-1 gap-6">
-            {listings.map((listing) => {
+            {listings.map((listing: any) => {
               const bookingCount = listing.bookings ? listing.bookings.length : 0;
-              const activeBookings = listing.bookings ? listing.bookings.filter(b => b.status === 'confirmed').length : 0;
+              const activeBookings = listing.bookings ? listing.bookings.filter((b: any) => b.status === 'confirmed').length : 0;
               
               return (
                 <div key={listing.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
@@ -112,7 +112,7 @@ export default async function HostListingsPage() {
                       </div>
                       
                       <div className="flex flex-wrap gap-2 mb-4">
-                        {listing.amenities?.map((amenity, index) => (
+                        {listing.amenities?.map((amenity: string, index: number) => (
                           <span key={index} className="inline-block text-xs px-2 py-1 rounded-full bg-cream-100 text-forest-700">
                             {amenity}
                           </span>

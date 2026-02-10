@@ -37,6 +37,8 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   // Format amenities for display
   const amenityLabels: Record<string, string> = {
     'wifi': 'WiFi',
+    'parking': 'Parking',
+    'kitchen': 'Kitchen',
     'pets': 'Pets Allowed',
     'fireplace': 'Fireplace',
     'pool': 'Pool',
@@ -49,7 +51,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
     'forest': 'Forest'
   };
   
-  const formattedAmenities = listing.amenities?.map(amenity => amenityLabels[amenity] || amenity);
+  const formattedAmenities = listing.amenities?.map((amenity: string) => amenityLabels[amenity] || amenity);
   
   // Get host details
   const host = listing.profiles;
@@ -137,7 +139,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
               <div className="mb-8 pb-8 border-b border-border">
                 <h2 className="text-xl font-semibold text-forest-900 mb-4">What this place offers</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {formattedAmenities?.map((amenity) => (
+                  {formattedAmenities?.map((amenity: string) => (
                     <div key={amenity} className="flex items-center">
                       <div className="p-2 bg-forest-100 rounded-full mr-3">
                         <div className="w-5 h-5 flex items-center justify-center text-forest-700">

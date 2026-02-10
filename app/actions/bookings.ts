@@ -50,7 +50,7 @@ export async function createBooking(formData: FormData) {
         guest_id: session.user.id,
         status: "pending", // Initial status is pending
         created_at: new Date().toISOString(),
-      })
+      } as any)
       .select()
       .single();
       
@@ -88,15 +88,15 @@ export async function updateBookingStatus(bookingId: string, status: 'confirmed'
     .from("bookings")
     .select("*, listings!inner(*)")
     .eq("id", bookingId)
-    .single();
+    .single() as { data: any };
     
   if (!booking || booking.listings.host_id !== session.user.id) {
     return { error: "You are not authorized to update this booking" };
   }
   
   // Update booking status
-  const { error } = await supabase
-    .from("bookings")
+  const { error } = await (supabase
+    .from("bookings") as any)
     .update({ status, updated_at: new Date().toISOString() })
     .eq("id", bookingId);
     
@@ -126,7 +126,7 @@ export async function cancelBooking(bookingId: string) {
     .select("*")
     .eq("id", bookingId)
     .eq("guest_id", session.user.id)
-    .single();
+    .single() as { data: any };
     
   if (!booking) {
     return { error: "You are not authorized to cancel this booking" };
@@ -143,8 +143,8 @@ export async function cancelBooking(bookingId: string) {
   const daysDifference = Math.ceil((checkInDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   
   // Cancel the booking
-  const { error } = await supabase
-    .from("bookings")
+  const { error } = await (supabase
+    .from("bookings") as any)
     .update({ 
       status: "cancelled",
       cancellation_reason: "Guest cancelled",
