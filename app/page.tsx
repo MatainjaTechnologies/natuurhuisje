@@ -1,7 +1,9 @@
+"use client";
+
 import Link from 'next/link';
 import { SearchDock } from '@/components/SearchDock';
 import { ListingCard } from '@/components/ListingCard';
-import { createClient } from '@/utils/supabase/server';
+import { useRef } from 'react';
 
 // Define listing type
 type Listing = {
@@ -15,9 +17,20 @@ type Listing = {
   is_published: boolean;
 };
 
-export const revalidate = 3600; // Revalidate this page every hour
+export default function Home() {
+  const carouselRef = useRef<HTMLDivElement>(null);
 
-export default async function Home() {
+  const scrollCarousel = (direction: 'left' | 'right') => {
+    if (carouselRef.current) {
+      const scrollAmount = 280; // Card width (256px) + gap (24px)
+      const newScrollPosition = carouselRef.current.scrollLeft + (direction === 'right' ? scrollAmount : -scrollAmount);
+      carouselRef.current.scrollTo({
+        left: newScrollPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   // Default featured listings
   const featuredListings: Listing[] = [
     {
@@ -228,34 +241,95 @@ export default async function Home() {
       </section>
       
       {/* Property Types Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gray-50">
         <div className="container-custom">
           <div className="mb-12">
-            <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 font-poppins">Browse by property type</h2>
+            <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 font-poppins">Browse by destination</h2>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
-            {[
-              { type: 'cabin', label: 'Cabins', emoji: '🏡', gradient: 'from-amber-800 to-amber-600' },
-              { type: 'treehouse', label: 'Treehouses', emoji: '🌳', gradient: 'from-emerald-800 to-emerald-600' },
-              { type: 'glamping', label: 'Glamping', emoji: '⛺', gradient: 'from-orange-800 to-orange-600' },
-              { type: 'tiny-house', label: 'Tiny Houses', emoji: '🏠', gradient: 'from-sky-800 to-sky-600' },
-              { type: 'farm', label: 'Farm Stays', emoji: '🌾', gradient: 'from-lime-800 to-lime-600' },
-            ].map((item) => (
-              <Link 
-                key={item.type}
-                href={`/search?type=${item.type}`}
-                className="group"
-              >
-                <div className={`relative h-52 overflow-hidden rounded-2xl bg-gradient-to-br ${item.gradient} transition-all duration-300 group-hover:scale-[1.03] group-hover:shadow-xl`}>
-                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-300"></div>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
-                    <span className="text-4xl mb-3">{item.emoji}</span>
-                    <h3 className="text-lg font-semibold text-white font-poppins">{item.label}</h3>
+          <div className="relative">
+            {/* Navigation Arrows */}
+            <button 
+              onClick={() => scrollCarousel('left')}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full bg-gray-800 shadow-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
+            >
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button 
+              onClick={() => scrollCarousel('right')}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full bg-gray-800 shadow-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
+            >
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* Carousel Container */}
+            <div ref={carouselRef} className="overflow-x-auto scrollbar-hide">
+              <div className="flex gap-4 pb-4">
+              {[
+                { 
+                  country: 'Netherlands', 
+                  label: 'Holiday homes Netherlands',
+                  image: 'https://images.unsplash.com/photo-1584003564911-e9ff6c0c3e64?w=500&q=80'
+                },
+                { 
+                  country: 'Germany', 
+                  label: 'Holiday homes Germany',
+                  image: 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=500&q=80'
+                },
+                { 
+                  country: 'Belgium', 
+                  label: 'Holiday homes Belgium',
+                  image: 'https://images.unsplash.com/photo-1534067783941-51c9c23ecefd?w=500&q=80'
+                },
+                { 
+                  country: 'France', 
+                  label: 'Holiday homes France',
+                  image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=500&q=80'
+                },
+                { 
+                  country: 'Austria', 
+                  label: 'Holiday homes Austria',
+                  image: 'https://images.unsplash.com/photo-1598970434795-0c54fe7c0648?w=500&q=80'
+                },
+                { 
+                  country: 'Switzerland', 
+                  label: 'Holiday homes Switzerland',
+                  image: 'https://images.unsplash.com/photo-1527004013197-933c4bb611b3?w=500&q=80'
+                },
+                { 
+                  country: 'Italy', 
+                  label: 'Holiday homes Italy',
+                  image: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=500&q=80'
+                },
+              ].map((item) => (
+                <Link 
+                  key={item.country}
+                  href={`/search?country=${item.country.toLowerCase()}`}
+                  className="group block flex-shrink-0 w-64"
+                >
+                  <div className="relative h-40 overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-300">
+                    <img 
+                      src={item.image}
+                      alt={item.label}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/40"></div>
+                    
+                    {/* Label */}
+                    <div className="absolute top-4 left-4">
+                      <span className="inline-block px-4 py-1.5 bg-white rounded-full text-sm font-medium text-gray-900">
+                        {item.label}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
