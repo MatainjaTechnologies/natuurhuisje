@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Poppins } from 'next/font/google'
 import './globals.css'
 
 import { Header } from '@/components/layout/Header'
@@ -8,6 +8,13 @@ import { Footer } from '@/components/layout/Footer'
 const inter = Inter({ 
   subsets: ['latin'],
   variable: '--font-inter',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+})
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  variable: '--font-poppins',
   display: 'swap',
   weight: ['400', '500', '600', '700'],
 })
@@ -23,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={[inter.variable, poppins.variable].join(' ')}>
       <body className="font-sans antialiased">
         <Header />
         <main className="min-h-screen pt-20">

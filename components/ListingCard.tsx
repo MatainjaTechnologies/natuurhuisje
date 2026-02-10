@@ -45,15 +45,15 @@ export function ListingCard({
       href={`/stay/${slug}`}
       className="group block"
     >
-      <div className="overflow-hidden rounded-2xl card-shadow h-full flex flex-col">
+      <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
         {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+        <div className="relative h-48 overflow-hidden">
           {images && images.length > 0 ? (
             <UnoptimizedImage
               src={images[0]}
               alt={title}
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className="object-cover group-hover:scale-110 transition-transform duration-500"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           ) : (
@@ -63,36 +63,43 @@ export function ListingCard({
           {/* Favorite Button */}
           <button
             onClick={handleFavoriteClick}
-            className="absolute top-3 right-3 p-2.5 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-sm transition-all hover:scale-110"
+            className="absolute top-3 right-3 p-2 rounded-full bg-white/90 hover:bg-white transition-colors"
           >
             <Heart
-              size={16}
+              size={20}
               className={`${favorited ? 'fill-rose-500 text-rose-500' : 'text-gray-600'}`}
             />
           </button>
+
+          {/* Capacity Badge */}
+          <div className="absolute bottom-3 right-3 flex items-center gap-1 px-2 py-1 rounded-md bg-black/60 text-white text-xs font-medium">
+            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+            </svg>
+            4
+          </div>
         </div>
 
         {/* Content */}
-        <div className="p-4 flex flex-col flex-1">
-          <div className="flex justify-between items-start mb-1">
-            <h3 className="font-semibold text-base text-gray-900 line-clamp-1 group-hover:text-purple-700 transition-colors">{title}</h3>
+        <div className="p-4">
+          <p className="text-sm text-gray-500 mb-1">{location}</p>
+          <h3 className="text-base font-semibold text-gray-900 mb-3 font-poppins truncate">
+            {title}
+          </h3>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-xs text-gray-500">from</span>
+              <p className="text-lg font-bold text-gray-900">
+                €{pricePerNight} <span className="text-sm font-normal text-gray-500">per night</span>
+              </p>
+            </div>
             {rating !== undefined && (
-              <div className="flex items-center gap-1 shrink-0 ml-2">
-                <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                <span className="text-sm font-semibold text-gray-700">{rating.toFixed(1)}</span>
+              <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-amber-400 text-white">
+                <Star className="w-3 h-3 fill-white" />
+                <span className="text-xs font-bold">{rating.toFixed(1)}</span>
               </div>
             )}
-          </div>
-          
-          <div className="flex items-center gap-1 text-gray-500 text-sm mb-3">
-            <MapPin className="h-3.5 w-3.5 shrink-0" />
-            <span className="line-clamp-1">{location}</span>
-          </div>
-          
-          <div className="mt-auto pt-2 border-t border-gray-100">
-            <p className="font-bold text-gray-900">
-              &euro;{pricePerNight} <span className="text-gray-400 font-normal text-sm">/ night</span>
-            </p>
           </div>
         </div>
       </div>

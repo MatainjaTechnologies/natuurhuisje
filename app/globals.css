@@ -1,6 +1,19 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
+/* === Keyframe Animations === */
+@keyframes fadeInOut {
+  0%, 100% {
+    opacity: 0;
+  }
+  33.33% {
+    opacity: 1;
+  }
+  66.66% {
+    opacity: 0;
+  }
+}
+
 /* === CSS Custom Properties === */
 :root {
   --background: 0 0% 100%;

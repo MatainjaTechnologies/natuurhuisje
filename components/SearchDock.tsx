@@ -68,91 +68,44 @@ export function SearchDock({
   };
   
   return (
-    <div className={`bg-white rounded-2xl shadow-2xl shadow-black/10 ${variant === 'hero' ? 'p-5 md:p-6' : 'p-4'} ${className}`}>
-      <div className={`flex ${variant === 'hero' ? 'flex-col lg:flex-row gap-3' : 'flex-col gap-3'}`}>
-        {/* Location */}
-        <div className="flex-1 flex items-center bg-gray-50 hover:bg-gray-100 rounded-xl px-4 py-3 transition-colors group">
-          <MapPin className="h-5 w-5 text-purple-600 mr-3 shrink-0" />
-          <div className="flex-1">
-            <label className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 block">Location</label>
-            <input 
-              type="text" 
-              placeholder="Where to?" 
-              className="w-full outline-none bg-transparent text-gray-900 text-sm font-medium placeholder:text-gray-400"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-            />
-          </div>
+    <div className={`bg-white rounded-xl shadow-md border border-gray-200 ${className}`}>
+      <div className="flex items-center">
+        {/* Search Destination */}
+        <div className="flex items-center gap-2.5 px-6 py-4 flex-1 border-r border-gray-200">
+          <MapPin className="h-5 w-5 text-gray-500 shrink-0" />
+          <input 
+            type="text" 
+            placeholder="Where or what?" 
+            className="w-full outline-none bg-transparent text-gray-900 text-[15px] placeholder:text-gray-500"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+          />
         </div>
         
-        {/* Date Range */}
-        <div className="flex-1 flex items-center bg-gray-50 hover:bg-gray-100 rounded-xl px-4 py-3 transition-colors group">
-          <CalendarIcon className="h-5 w-5 text-purple-600 mr-3 shrink-0" />
-          <div className="flex-1">
-            <label className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 block">Dates</label>
-            <button 
-              type="button" 
-              className="w-full text-left outline-none bg-transparent text-gray-900 text-sm font-medium"
-            >
-              {dateRangeText}
-            </button>
-          </div>
+        {/* Check-in */}
+        <div className="flex items-center gap-2.5 px-6 py-4 border-r border-gray-200 cursor-pointer hover:bg-gray-50">
+          <CalendarIcon className="h-5 w-5 text-gray-500 shrink-0" />
+          <span className="text-gray-900 text-[15px] whitespace-nowrap">
+            Choose dates
+          </span>
         </div>
         
         {/* Guests */}
-        <div className="flex-1 flex items-center bg-gray-50 hover:bg-gray-100 rounded-xl px-4 py-3 transition-colors group">
-          <Users className="h-5 w-5 text-purple-600 mr-3 shrink-0" />
-          <div className="flex-1">
-            <label className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 block">Guests</label>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-900 text-sm font-medium">{guests} {guests === 1 ? 'guest' : 'guests'}</span>
-              <div className="flex items-center gap-1">
-                <button 
-                  type="button" 
-                  className="w-7 h-7 rounded-lg bg-white border border-gray-200 hover:border-gray-400 flex items-center justify-center text-gray-600 text-sm font-medium disabled:opacity-30 transition-colors"
-                  disabled={guests <= 1}
-                  onClick={() => setGuests((prev) => Math.max(1, prev - 1))}
-                >
-                  −
-                </button>
-                <button 
-                  type="button"
-                  className="w-7 h-7 rounded-lg bg-white border border-gray-200 hover:border-gray-400 flex items-center justify-center text-gray-600 text-sm font-medium transition-colors"
-                  onClick={() => setGuests((prev) => prev + 1)}
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          </div>
+        <div className="flex items-center gap-2.5 px-6 py-4 cursor-pointer hover:bg-gray-50">
+          <Users className="h-5 w-5 text-gray-500 shrink-0" />
+          <span className="text-gray-900 text-[15px] whitespace-nowrap">
+            Guests
+          </span>
         </div>
         
-        {/* Actions */}
-        <div className="flex items-center gap-2">
-          <button 
-            type="button"
-            className={`flex items-center gap-2 px-4 py-3 border-2 rounded-xl transition-all ${
-              pets 
-                ? 'border-purple-500 bg-purple-50 text-purple-700' 
-                : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
-            }`}
-            onClick={() => setPets(!pets)}
-          >
-            <PawPrint className="h-4 w-4" />
-            <span className={`text-sm font-medium ${variant === 'compact' ? 'hidden sm:inline-block' : ''}`}>
-              Pets
-            </span>
-          </button>
-          
+        {/* Search Button */}
+        <div className="px-4 py-3">
           <button
             onClick={handleSearch}
-            className={`${variant === 'hero' ? 'py-3.5 px-7' : 'py-2.5 px-5'} flex items-center gap-2 rounded-xl text-white font-semibold text-sm transition-all hover:shadow-lg hover:-translate-y-0.5`}
-            style={{ background: 'linear-gradient(135deg, #7B3FA0, #5B2D8E)' }}
+            className="px-8 py-3 rounded-lg text-white font-semibold text-[15px] transition-all hover:shadow-lg whitespace-nowrap"
+            style={{ background: '#10b981' }}
           >
-            <Search className="h-4 w-4" />
-            <span className={variant === 'compact' ? 'hidden sm:inline-block' : ''}>
-              Search
-            </span>
+            Search
           </button>
         </div>
       </div>
