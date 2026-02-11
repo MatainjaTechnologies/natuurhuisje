@@ -1,0 +1,169 @@
+{
+  "featuredListings": [
+    {
+      "id": "1",
+      "slug": "cozy-cabin-forest",
+      "title": "Cozy Cabin in the Forest",
+      "location": "Gelderland, Netherlands",
+      "images": [
+        "/images/cozy-cabin-forest.jpg",
+        "/images/cozy-cabin-2.jpg",
+        "/images/cozy-cabin-3.jpg",
+        "/images/cozy-cabin-4.jpg",
+        "/images/cozy-cabin-5.jpg"
+      ],
+      "price_per_night": 150,
+      "avg_rating": 9.2,
+      "is_published": true
+    },
+    {
+      "id": "2",
+      "slug": "treehouse-adventure",
+      "title": "Treehouse Adventure",
+      "location": "Utrecht, Netherlands",
+      "images": [
+        "/images/treehouse-adventure.jpg",
+        "/images/treehouse-2.jpg",
+        "/images/treehouse-3.jpg",
+        "/images/treehouse-4.jpg",
+        "/images/treehouse-5.jpg"
+      ],
+      "price_per_night": 180,
+      "avg_rating": 9.5,
+      "is_published": true
+    },
+    {
+      "id": "3",
+      "slug": "luxury-glamping-tent",
+      "title": "Luxury Glamping Tent",
+      "location": "Limburg, Netherlands",
+      "images": [
+        "/images/luxury-glamping-tent.jpg",
+        "/images/glamping-2.jpg",
+        "/images/glamping-3.jpg",
+        "/images/glamping-4.jpg",
+        "/images/glamping-5.jpg"
+      ],
+      "price_per_night": 120,
+      "avg_rating": 9.0,
+      "is_published": true
+    },
+    {
+      "id": "4",
+      "slug": "windmill-experience",
+      "title": "Experience a night in a Windmill from 1590",
+      "location": "Noord-Holland, Netherlands",
+      "images": [
+        "/images/windmill-experience.jpg",
+        "/images/windmill-2.jpg",
+        "/images/windmill-3.jpg",
+        "/images/windmill-4.jpg",
+        "/images/windmill-5.jpg"
+      ],
+      "price_per_night": 250,
+      "avg_rating": 9.7,
+      "is_published": true
+    },
+    {
+      "id": "5",
+      "slug": "lakeside-cottage",
+      "title": "Peaceful Lakeside Cottage",
+      "location": "Friesland, Netherlands",
+      "images": [
+        "/images/lakeside-cottage.jpg",
+        "/images/lakeside-2.jpg",
+        "/images/lakeside-3.jpg",
+        "/images/lakeside-4.jpg",
+        "/images/lakeside-5.jpg"
+      ],
+      "price_per_night": 140,
+      "avg_rating": 9.3,
+      "is_published": true
+    },
+    {
+      "id": "6",
+      "slug": "tiny-house-nature",
+      "title": "Modern Tiny House in Nature",
+      "location": "Drenthe, Netherlands",
+      "images": [
+        "/images/tiny-house-nature.jpg",
+        "/images/tiny-house-2.jpg",
+        "/images/tiny-house-3.jpg",
+        "/images/tiny-house-4.jpg",
+        "/images/tiny-house-5.jpg"
+      ],
+      "price_per_night": 110,
+      "avg_rating": 8.9,
+      "is_published": true
+    },
+    {
+      "id": "7",
+      "slug": "mountain-chalet",
+      "title": "Rustic Mountain Chalet",
+      "location": "Overijssel, Netherlands",
+      "images": [
+        "/images/mountain-chalet.jpg",
+        "/images/chalet-2.jpg",
+        "/images/chalet-3.jpg",
+        "/images/chalet-4.jpg",
+        "/images/chalet-5.jpg"
+      ],
+      "price_per_night": 165,
+      "avg_rating": 9.1,
+      "is_published": true
+    },
+    {
+      "id": "8",
+      "slug": "countryside-villa",
+      "title": "Charming Countryside Villa",
+      "location": "Zeeland, Netherlands",
+      "images": [
+        "/images/countryside-villa.jpg",
+        "/images/villa-2.jpg",
+        "/images/villa-3.jpg",
+        "/images/villa-4.jpg",
+        "/images/villa-5.jpg"
+      ],
+      "price_per_night": 200,
+      "avg_rating": 9.4,
+      "is_published": true
+    }
+  ],
+  "destinations": [
+    {
+      "country": "Netherlands",
+      "label": "Holiday homes Netherlands",
+      "image": "https://images.unsplash.com/photo-1584003564911-e9ff6c0c3e64?w=500&q=80"
+    },
+    {
+      "country": "Germany",
+      "label": "Holiday homes Germany",
+      "image": "/images/germany.jpg"
+    },
+    {
+      "country": "Belgium",
+      "label": "Holiday homes Belgium",
+      "image": "/images/belgium.jpg"
+    },
+    {
+      "country": "France",
+      "label": "Holiday homes France",
+      "image": "/images/france.jpg"
+    },
+    {
+      "country": "Austria",
+      "label": "Holiday homes Austria",
+      "image": "/images/austria.jpg"
+    },
+    {
+      "country": "Switzerland",
+      "label": "Holiday homes Switzerland",
+      "image": "/images/switzerland.jpg"
+    },
+    {
+      "country": "Italy",
+      "label": "Holiday homes Italy",
+      "image": "/images/italy.jpg"
+    }
+  ]
+}
