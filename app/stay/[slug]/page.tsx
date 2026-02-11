@@ -4,35 +4,57 @@ import { notFound } from 'next/navigation';
 import { MapPin, User, Users, Home, BedDouble, Bath, Calendar, Star } from 'lucide-react';
 import { GalleryMosaic } from '@/components/GalleryMosaic';
 import { BookingBox } from '@/components/BookingBox';
-import { createClient } from '@/utils/supabase/server';
+// import { createClient } from '@/utils/supabase/server';
 
 // Revalidate the data every 3600 seconds (1 hour)
-export const revalidate = 3600;
+// export const revalidate = 3600;
 
 export default async function ListingPage({ params }: { params: Promise<{ slug: string }> }) {
-  const supabase = await createClient();
+  // COMMENTED OUT SUPABASE - WILL BE UPDATED LATER
+  // const supabase = await createClient();
   const { slug } = await params;
   
-  // Fetch the listing data
-  const { data: listing, error } = await supabase
-    .from('listings')
-    .select('*, profiles(first_name, last_name, avatar_url)')
-    .eq('slug', slug)
-    .eq('is_published', true)
-    .single() as { data: any; error: any };
+  // Load static data from JSON
+  const response = await fetch('http://localhost:3000/data/listings.json', { cache: 'no-store' });
+  const data = await response.json();
+  const listing = data.featuredListings.find((l: any) => l.slug === slug);
   
-  // Fetch reviews for this listing
-  const { data: reviews } = await supabase
-    .from('reviews')
-    .select('*, profiles(first_name, last_name, avatar_url)')
-    .eq('listing_id', listing?.id || '')
-    .order('created_at', { ascending: false })
-    .limit(5) as { data: any[] | null };
+  // Mock reviews data
+  const reviews: any[] = [];
+  
+  // COMMENTED OUT SUPABASE FETCH
+  // const { data: listing, error } = await supabase
+  //   .from('listings')
+  //   .select('*, profiles(first_name, last_name, avatar_url)')
+  //   .eq('slug', slug)
+  //   .eq('is_published', true)
+  //   .single() as { data: any; error: any };
+  
+  // const { data: reviews } = await supabase
+  //   .from('reviews')
+  //   .select('*, profiles(first_name, last_name, avatar_url)')
+  //   .eq('listing_id', listing?.id || '')
+  //   .order('created_at', { ascending: false })
+  //   .limit(5) as { data: any[] | null };
   
   // If listing not found, return 404
-  if (error || !listing) {
+  if (!listing) {
     notFound();
   }
+  
+  // Add mock data for fields not in JSON
+  listing.property_type = 'cabin';
+  listing.max_guests = 4;
+  listing.bedrooms = 2;
+  listing.beds = 2;
+  listing.bathrooms = 1;
+  listing.description = 'Experience the beauty of nature in this cozy retreat. Perfect for families and nature lovers seeking a peaceful getaway surrounded by stunning landscapes.';
+  listing.amenities = ['wifi', 'parking', 'kitchen', 'fireplace', 'bbq'];
+  listing.profiles = {
+    first_name: 'John',
+    last_name: 'Doe',
+    avatar_url: null
+  };
   
   // Format amenities for display
   const amenityLabels: Record<string, string> = {

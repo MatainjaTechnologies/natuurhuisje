@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { SearchDock } from '@/components/SearchDock';
 import { ListingCard } from '@/components/ListingCard';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 // Define listing type
 type Listing = {
@@ -17,8 +17,37 @@ type Listing = {
   is_published: boolean;
 };
 
+type Destination = {
+  country: string;
+  label: string;
+  image: string;
+};
+
+type DataType = {
+  featuredListings: Listing[];
+  destinations: Destination[];
+};
+
 export default function Home() {
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [data, setData] = useState<DataType>({
+    featuredListings: [],
+    destinations: []
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/data/listings.json')
+      .then(response => response.json())
+      .then((jsonData: DataType) => {
+        setData(jsonData);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error loading data:', error);
+        setLoading(false);
+      });
+  }, []);
 
   const scrollCarousel = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
@@ -31,91 +60,8 @@ export default function Home() {
     }
   };
 
-  // Default featured listings
-  const featuredListings: Listing[] = [
-    {
-      id: '1',
-      slug: 'cozy-cabin-forest',
-      title: 'Cozy Cabin in the Forest',
-      location: 'Gelderland, Netherlands',
-      images: ['https://images.unsplash.com/photo-1587061949409-02df41d5e562?w=500&q=80'],
-      price_per_night: 150,
-      avg_rating: 9.2,
-      is_published: true
-    },
-    {
-      id: '2',
-      slug: 'treehouse-adventure',
-      title: 'Treehouse Adventure',
-      location: 'Utrecht, Netherlands',
-      images: ['https://images.unsplash.com/photo-1618767689160-da3fb810aad7?w=500&q=80'],
-      price_per_night: 180,
-      avg_rating: 9.5,
-      is_published: true
-    },
-    {
-      id: '3',
-      slug: 'luxury-glamping-tent',
-      title: 'Luxury Glamping Tent',
-      location: 'Limburg, Netherlands',
-      images: ['https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=500&q=80'],
-      price_per_night: 120,
-      avg_rating: 9.0,
-      is_published: true
-    },
-    {
-      id: '4',
-      slug: 'windmill-experience',
-      title: 'Experience a night in a Windmill from 1590',
-      location: 'Noord-Holland, Netherlands',
-      images: ['https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&q=80'],
-      price_per_night: 250,
-      avg_rating: 9.7,
-      is_published: true
-    },
-    {
-      id: '5',
-      slug: 'lakeside-cottage',
-      title: 'Peaceful Lakeside Cottage',
-      location: 'Friesland, Netherlands',
-      images: ['https://images.unsplash.com/photo-1499696010180-025ef6e1a8f9?w=500&q=80'],
-      price_per_night: 140,
-      avg_rating: 9.3,
-      is_published: true
-    },
-    {
-      id: '6',
-      slug: 'tiny-house-nature',
-      title: 'Modern Tiny House in Nature',
-      location: 'Drenthe, Netherlands',
-      images: ['https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=500&q=80'],
-      price_per_night: 110,
-      avg_rating: 8.9,
-      is_published: true
-    },
-    {
-      id: '7',
-      slug: 'mountain-chalet',
-      title: 'Rustic Mountain Chalet',
-      location: 'Overijssel, Netherlands',
-      images: ['https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=500&q=80'],
-      price_per_night: 165,
-      avg_rating: 9.1,
-      is_published: true
-    },
-    {
-      id: '8',
-      slug: 'countryside-villa',
-      title: 'Charming Countryside Villa',
-      location: 'Zeeland, Netherlands',
-      images: ['https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&q=80'],
-      price_per_night: 200,
-      avg_rating: 9.4,
-      is_published: true
-    }
-  ];
-    
-  const typedListings = featuredListings;
+  const featuredListings = data.featuredListings;
+  const destinations = data.destinations;
   
   return (
     <div className="flex flex-col min-h-screen">
@@ -208,8 +154,8 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-7">
-            {typedListings.length > 0 ? (
-              typedListings.map((listing) => (
+            {!loading && featuredListings.length > 0 ? (
+              featuredListings.map((listing) => (
                 <ListingCard
                   key={listing.id}
                   id={listing.id}
@@ -269,43 +215,7 @@ export default function Home() {
             {/* Carousel Container */}
             <div ref={carouselRef} className="overflow-x-auto scrollbar-hide">
               <div className="flex gap-4 pb-4">
-              {[
-                { 
-                  country: 'Netherlands', 
-                  label: 'Holiday homes Netherlands',
-                  image: 'https://images.unsplash.com/photo-1584003564911-e9ff6c0c3e64?w=500&q=80'
-                },
-                { 
-                  country: 'Germany', 
-                  label: 'Holiday homes Germany',
-                  image: 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=500&q=80'
-                },
-                { 
-                  country: 'Belgium', 
-                  label: 'Holiday homes Belgium',
-                  image: 'https://images.unsplash.com/photo-1534067783941-51c9c23ecefd?w=500&q=80'
-                },
-                { 
-                  country: 'France', 
-                  label: 'Holiday homes France',
-                  image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=500&q=80'
-                },
-                { 
-                  country: 'Austria', 
-                  label: 'Holiday homes Austria',
-                  image: 'https://images.unsplash.com/photo-1598970434795-0c54fe7c0648?w=500&q=80'
-                },
-                { 
-                  country: 'Switzerland', 
-                  label: 'Holiday homes Switzerland',
-                  image: 'https://images.unsplash.com/photo-1527004013197-933c4bb611b3?w=500&q=80'
-                },
-                { 
-                  country: 'Italy', 
-                  label: 'Holiday homes Italy',
-                  image: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=500&q=80'
-                },
-              ].map((item) => (
+              {destinations.map((item) => (
                 <Link 
                   key={item.country}
                   href={`/search?country=${item.country.toLowerCase()}`}
