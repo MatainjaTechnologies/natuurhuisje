@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar as CalendarIcon, Search, Users, PawPrint, MapPin } from 'lucide-react';
+import { Calendar as CalendarIcon, Search, Users, MapPin, Home, Sparkles, Heart, X } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
 import { format, addDays } from 'date-fns';
 
@@ -13,6 +13,14 @@ interface SearchDockProps {
   defaultGuests?: number;
   defaultPets?: boolean;
   defaultDateRange?: DateRange;
+  maxWidth?: string;
+}
+
+interface Suggestion {
+  id: string;
+  name: string;
+  type: string;
+  icon: string;
 }
 
 export function SearchDock({ 
@@ -21,13 +29,16 @@ export function SearchDock({
   defaultLocation = '',
   defaultGuests = 2,
   defaultPets = false,
-  defaultDateRange
+  defaultDateRange,
+  maxWidth = 'max-w-full'
 }: SearchDockProps) {
   const router = useRouter();
+  const dropdownRef = useRef<HTMLDivElement>(null);
   
   const [location, setLocation] = useState(defaultLocation);
   const [guests, setGuests] = useState(defaultGuests);
   const [pets, setPets] = useState(defaultPets);
+  const [activeTab, setActiveTab] = useState<'where' | 'dates' | 'people' | null>(null);
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
     defaultDateRange || {
       from: new Date(),
@@ -35,13 +46,43 @@ export function SearchDock({
     }
   );
   
-  // This will be used for displaying the selected date range
-  const dateRangeText = dateRange?.from && dateRange?.to
-    ? `${format(dateRange.from, 'MMM d')} - ${format(dateRange.to, 'MMM d')}`
-    : 'Select dates';
+  // Search suggestions data
+  const suggestions = {
+    locations: [
+      { id: "1", name: "Amsterdam (NL)", type: "city", icon: "map-pin" },
+      { id: "2", name: "Veluwe (NL)", type: "city", icon: "map-pin" },
+      { id: "3", name: "Belgium", type: "country", icon: "map-pin" }
+    ],
+    categories: [
+      { id: "1", name: "Tiny House", type: "property", icon: "home" },
+      { id: "2", name: "Wellness", type: "amenity", icon: "sparkles" },
+      { id: "3", name: "Romantic overnight stays", type: "category", icon: "heart" }
+    ]
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setActiveTab(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const getIcon = (iconName: string) => {
+    switch(iconName) {
+      case 'map-pin': return <MapPin className="h-5 w-5 text-gray-600 shrink-0" />;
+      case 'home': return <Home className="h-5 w-5 text-gray-600 shrink-0" />;
+      case 'sparkles': return <Sparkles className="h-5 w-5 text-gray-600 shrink-0" />;
+      case 'heart': return <Heart className="h-5 w-5 text-gray-600 shrink-0" />;
+      default: return <MapPin className="h-5 w-5 text-gray-600 shrink-0" />;
+    }
+  };
   
   const handleSearch = () => {
-    // Build search params
     const searchParams = new URLSearchParams();
     
     if (location) {
@@ -68,45 +109,59 @@ export function SearchDock({
   };
   
   return (
-    <div className={`bg-white rounded-xl shadow-md border border-gray-200 ${className}`}>
-      <div className="flex items-center">
-        {/* Search Destination */}
-        <div className="flex items-center gap-2.5 px-6 py-4 flex-1 border-r border-gray-200">
-          <MapPin className="h-5 w-5 text-gray-500 shrink-0" />
-          <input 
-            type="text" 
-            placeholder="Where or what?" 
-            className="w-full outline-none bg-transparent text-gray-900 text-[15px] placeholder:text-gray-500"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-          />
-        </div>
-        
-        {/* Check-in */}
-        <div className="flex items-center gap-2.5 px-6 py-4 border-r border-gray-200 cursor-pointer hover:bg-gray-50">
-          <CalendarIcon className="h-5 w-5 text-gray-500 shrink-0" />
-          <span className="text-gray-900 text-[15px] whitespace-nowrap">
-            Choose dates
-          </span>
-        </div>
-        
-        {/* Guests */}
-        <div className="flex items-center gap-2.5 px-6 py-4 cursor-pointer hover:bg-gray-50">
-          <Users className="h-5 w-5 text-gray-500 shrink-0" />
-          <span className="text-gray-900 text-[15px] whitespace-nowrap">
-            Guests
-          </span>
-        </div>
-        
-        {/* Search Button */}
-        <div className="px-4 py-3">
+    <div className={`relative w-full ${maxWidth} mx-auto ${className}`} ref={dropdownRef}>
+      {/* Tabbed Search Bar */}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="flex items-center">
+          {/* Where or what Tab */}
           <button
-            onClick={handleSearch}
-            className="px-8 py-3 rounded-lg text-white font-semibold text-[15px] transition-all hover:shadow-lg whitespace-nowrap"
-            style={{ background: '#10b981' }}
+            onClick={() => setActiveTab(activeTab === 'where' ? null : 'where')}
+            className={`flex items-center gap-2.5 px-6 py-3 flex-1 transition-colors ${
+              activeTab === 'where' ? 'bg-blue-600 text-white' : 'bg-white text-gray-900 hover:bg-gray-50'
+            }`}
           >
-            Search
+            <Search className={`h-5 w-5 shrink-0 ${activeTab === 'where' ? 'text-white' : 'text-gray-500'}`} />
+            <span className={`font-medium text-[15px] ${activeTab === 'where' ? 'text-white' : 'text-gray-900'}`}>
+              Where or what?
+            </span>
           </button>
+
+          {/* Choose dates Tab */}
+          <button
+            onClick={() => setActiveTab(activeTab === 'dates' ? null : 'dates')}
+            className={`flex items-center gap-2.5 px-6 py-3 border-l border-gray-200 transition-colors ${
+              activeTab === 'dates' ? 'bg-blue-600 text-white' : 'bg-white text-gray-900 hover:bg-gray-50'
+            }`}
+          >
+            <CalendarIcon className={`h-5 w-5 shrink-0 ${activeTab === 'dates' ? 'text-white' : 'text-gray-500'}`} />
+            <span className={`text-[15px] whitespace-nowrap ${activeTab === 'dates' ? 'text-white' : 'text-gray-900'}`}>
+              Choose dates
+            </span>
+          </button>
+
+          {/* People Tab */}
+          <button
+            onClick={() => setActiveTab(activeTab === 'people' ? null : 'people')}
+            className={`flex items-center gap-2.5 px-6 py-3 border-l border-gray-200 transition-colors ${
+              activeTab === 'people' ? 'bg-blue-600 text-white' : 'bg-white text-gray-900 hover:bg-gray-50'
+            }`}
+          >
+            <Users className={`h-5 w-5 shrink-0 ${activeTab === 'people' ? 'text-white' : 'text-gray-500'}`} />
+            <span className={`text-[15px] whitespace-nowrap ${activeTab === 'people' ? 'text-white' : 'text-gray-900'}`}>
+              People
+            </span>
+          </button>
+
+          {/* Search Button */}
+          <div className="px-4 py-3">
+            <button
+              onClick={handleSearch}
+              className="px-8 py-3 rounded-lg text-white font-semibold text-[15px] transition-all hover:shadow-lg whitespace-nowrap"
+              style={{ background: '#10b981' }}
+            >
+              Search
+            </button>
+          </div>
         </div>
       </div>
     </div>

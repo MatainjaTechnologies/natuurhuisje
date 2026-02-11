@@ -243,66 +243,268 @@ export default function Home() {
           </div>
         </div>
       </section>
-      
-      {/* Features Section */}
-      <section className="py-20" style={{ background: 'linear-gradient(135deg, #2d1052 0%, #4a1d7a 50%, #5B2D8E 100%)' }}>
+
+      {/* Most Visited Section */}
+      <section className="py-20 bg-white">
         <div className="container-custom">
-          <div className="text-center mb-14">
-            <span className="text-sm font-semibold tracking-widest uppercase text-purple-300 mb-3 block">Why choose us</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-white font-poppins">Why Book with NatureStays</h2>
+          <div className="mb-12">
+            <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 font-poppins">Most Visited</h2>
+            <p className="text-gray-600 mt-2">Popular stays loved by our guests</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300">
-              <div className="w-16 h-16 bg-purple-400/20 text-purple-300 flex items-center justify-center rounded-2xl mx-auto mb-5">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-3 text-white font-poppins">Verified Properties</h3>
-              <p className="text-white/60 leading-relaxed">All our properties are carefully vetted to ensure the best quality and experience for our guests.</p>
-            </div>
-            
-            <div className="text-center p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300">
-              <div className="w-16 h-16 bg-purple-400/20 text-purple-300 flex items-center justify-center rounded-2xl mx-auto mb-5">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-3 text-white font-poppins">Flexible Booking</h3>
-              <p className="text-white/60 leading-relaxed">Many of our properties offer flexible cancellation policies to accommodate your travel plans.</p>
-            </div>
-            
-            <div className="text-center p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300">
-              <div className="w-16 h-16 bg-purple-400/20 text-purple-300 flex items-center justify-center rounded-2xl mx-auto mb-5">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-3 text-white font-poppins">24/7 Support</h3>
-              <p className="text-white/60 leading-relaxed">Our dedicated support team is always ready to assist you before, during, and after your stay.</p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {loading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="bg-stone-200 rounded-2xl h-64 mb-4"></div>
+                  <div className="space-y-3">
+                    <div className="h-4 bg-stone-200 rounded-full w-3/4"></div>
+                    <div className="h-4 bg-stone-200 rounded-full w-1/2"></div>
+                    <div className="h-4 bg-stone-200 rounded-full w-1/3 mt-auto"></div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              featuredListings.slice(0, 4).map((listing) => (
+                <ListingCard
+                  key={listing.id}
+                  id={listing.id}
+                  slug={listing.slug}
+                  title={listing.title}
+                  location={listing.location}
+                  images={listing.images}
+                  pricePerNight={listing.price_per_night}
+                  rating={listing.avg_rating}
+                />
+              ))
+            )}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link 
+              href="/search" 
+              className="inline-flex items-center gap-2 px-8 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors font-medium"
+            >
+              View All Popular Stays
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Recently Viewed Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container-custom">
+          <div className="mb-12">
+            <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 font-poppins">Recently Viewed</h2>
+            <p className="text-gray-600 mt-2">Continue where you left off</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {loading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="bg-stone-200 rounded-2xl h-64 mb-4"></div>
+                  <div className="space-y-3">
+                    <div className="h-4 bg-stone-200 rounded-full w-3/4"></div>
+                    <div className="h-4 bg-stone-200 rounded-full w-1/2"></div>
+                    <div className="h-4 bg-stone-200 rounded-full w-1/3 mt-auto"></div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              featuredListings.slice(4, 8).map((listing) => (
+                <ListingCard
+                  key={listing.id}
+                  id={listing.id}
+                  slug={listing.slug}
+                  title={listing.title}
+                  location={listing.location}
+                  images={listing.images}
+                  pricePerNight={listing.price_per_night}
+                  rating={listing.avg_rating}
+                />
+              ))
+            )}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link 
+              href="/search" 
+              className="inline-flex items-center gap-2 px-8 py-3 border-2 border-gray-900 text-gray-900 rounded-xl hover:bg-gray-900 hover:text-white transition-colors font-medium"
+            >
+              Browse More Properties
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
           </div>
         </div>
       </section>
       
-      {/* CTA Section */}
-      <section className="py-24 bg-white">
+      {/* Want to Rent Out Your Place Section */}
+      <section className="py-20 bg-gray-50">
         <div className="container-custom">
-          <div className="relative overflow-hidden rounded-3xl p-10 md:p-16 text-center" style={{ background: 'linear-gradient(135deg, #2d1052 0%, #5B2D8E 50%, #7B3FA0 100%)' }}>
-            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
-            <div className="relative z-10">
-              <span className="inline-block text-sm font-semibold tracking-widest uppercase text-purple-300 mb-4">For property owners</span>
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight font-poppins">
-                Own a unique property<br />in nature?
-              </h2>
-              <p className="text-lg text-white/70 mb-10 max-w-2xl mx-auto leading-relaxed">
-                Join our community of hosts and start earning by sharing your special place with nature lovers
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 font-poppins">Want to rent out your place?</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+            {/* Contribute to Conservation */}
+            <div className="text-center">
+              <div className="mb-6 flex justify-center">
+                <img 
+                  src="/images/rent-out_behoud-natuur.png" 
+                  alt="Contribute to conservation" 
+                  className="h-32 w-auto object-contain"
+                  onError={(e) => {
+                    e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"%3E%3Crect fill="%2334D399" width="120" height="120" rx="60"/%3E%3Cpath fill="white" d="M60 30c-5 0-10 2-13 6l-15 18c-2 3-2 7 0 10l15 18c3 4 8 6 13 6s10-2 13-6l15-18c2-3 2-7 0-10l-15-18c-3-4-8-6-13-6z"/%3E%3C/svg%3E';
+                  }}
+                />
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-gray-900 font-poppins">Contribute to the conservation of nature</h3>
+              <p className="text-gray-600 leading-relaxed">With your booking you contribute to local nature projects.</p>
+            </div>
+            
+            {/* Reach Target Group */}
+            <div className="text-center">
+              <div className="mb-6 flex justify-center">
+                <img 
+                  src="/images/rent-out_juiste-doelgroep.png" 
+                  alt="Reach the right target group" 
+                  className="h-32 w-auto object-contain"
+                  onError={(e) => {
+                    e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"%3E%3Ccircle fill="%2334D399" cx="60" cy="40" r="15"/%3E%3Cpath fill="%2334D399" d="M60 60c-15 0-27 8-27 18v12h54V78c0-10-12-18-27-18z"/%3E%3Cpath fill="%2310B981" d="M45 75l8 8 15-15"/%3E%3C/svg%3E';
+                  }}
+                />
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-gray-900 font-poppins">Reach the right target group</h3>
+              <p className="text-gray-600 leading-relaxed">By being part of an exclusive offer you reach the right people.</p>
+            </div>
+            
+            {/* You Decide */}
+            <div className="text-center">
+              <div className="mb-6 flex justify-center">
+                <img 
+                  src="/images/rent-out_jij-bepaalt.png" 
+                  alt="You decide" 
+                  className="h-32 w-auto object-contain"
+                  onError={(e) => {
+                    e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"%3E%3Crect fill="%2310B981" x="30" y="40" width="60" height="50" rx="5"/%3E%3Crect fill="%2334D399" x="40" y="30" width="40" height="8" rx="2"/%3E%3Cpath fill="white" d="M50 60h20M50 70h15M50 80h20" stroke="white" stroke-width="3"/%3E%3C/svg%3E';
+                  }}
+                />
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-gray-900 font-poppins">You decide</h3>
+              <p className="text-gray-600 leading-relaxed">Keep full control over your availability, rates, and how you communicate with guests.</p>
+            </div>
+          </div>
+
+          {/* CTA Button */}
+          <div className="text-center mt-12">
+            <Link 
+              href="/host" 
+              className="inline-flex items-center gap-2 px-10 py-4 rounded-xl text-white font-semibold text-lg transition-all hover:shadow-lg hover:-translate-y-0.5"
+              style={{ background: '#5B2D8E' }}
+            >
+              More information
+            </Link>
+          </div>
+        </div>
+      </section>
+      
+      {/* Biodiversity Protection Section */}
+      <section className="relative py-32 bg-cover bg-center" style={{ backgroundImage: 'url(/images/pexels-justin-wolfert.jpg)' }}>
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/40"></div>
+        
+        <div className="container-custom relative z-10">
+          <div className="max-w-2xl">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight font-poppins">
+              Together we protect local biodiversity
+            </h2>
+            <p className="text-lg text-white mb-8 leading-relaxed">
+              In this way we help to restore the balance between people and nature.
+            </p>
+            <Link 
+              href="/biodiversity" 
+              className="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-white font-semibold transition-all hover:shadow-lg"
+              style={{ background: '#C084FC' }}
+            >
+              More information
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Holiday Home in Nature Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container-custom">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 font-poppins">
+              Holiday home in the heart of nature
+            </h2>
+            <div className="text-gray-700 leading-relaxed space-y-4 text-base">
+              <p>
+                In a nature house, you can wonderfully escape the hustle and bustle of everyday life and completely unwind surrounded by nature. A nature house is a place where you gather with friends to celebrate life and where you can introduce your (grand)children to the beautiful European countryside. It's the ideal starting point for exploring rolling hills, expansive meadows, or towering mountains. You can fish, mountain bike, hike, or simply unwind with a book on a rainy day.
               </p>
-              <Link href="/host" className="inline-flex items-center gap-2 bg-white text-purple-900 font-semibold py-4 px-8 rounded-xl text-lg hover:bg-purple-50 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
-                Become a Host
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+              <p>
+                From cabins to villas, nature houses come in all shapes and sizes. They weather storms and are sometimes located in inhospitable regions, but always offer you, the holidaymaker, a pleasant place to stay. A nature house isn't just a place to sleep during your trip; it's a way of spending your holiday...
+              </p>
+            </div>
+            <div className="mt-8">
+              <Link 
+                href="/about" 
+                className="inline-flex items-center gap-2 text-gray-900 font-semibold hover:text-purple-700 transition-colors"
+              >
+                More about us
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
               </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="py-16 bg-white">
+        <div className="container-custom">
+          <div className="max-w-4xl mx-auto rounded-3xl p-12 text-center" style={{ background: 'linear-gradient(135deg, #F9A8D4, #F0ABFC, #E9D5FF)' }}>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 font-poppins">
+              Discover even more idyllic spots in nature.
+            </h2>
+            
+            <form className="flex flex-col md:flex-row gap-4 justify-center items-center mb-6">
+              <input 
+                type="text" 
+                placeholder="Your first name" 
+                className="px-6 py-3 rounded-lg border-b-2 border-gray-900 bg-transparent placeholder:text-gray-700 outline-none focus:border-purple-700 transition-colors w-full md:w-64"
+              />
+              <input 
+                type="email" 
+                placeholder="Your email address" 
+                className="px-6 py-3 rounded-lg border-b-2 border-gray-900 bg-transparent placeholder:text-gray-700 outline-none focus:border-purple-700 transition-colors w-full md:w-64"
+              />
+              <button 
+                type="submit"
+                className="px-8 py-3 rounded-xl text-white font-semibold transition-all hover:shadow-lg whitespace-nowrap"
+                style={{ background: '#5B2D8E' }}
+              >
+                Subscribe to newsletter
+              </button>
+            </form>
+
+            <div className="flex items-center justify-center gap-2 text-sm text-gray-700">
+              <input 
+                type="checkbox" 
+                id="privacy" 
+                className="w-4 h-4 rounded border-gray-900"
+              />
+              <label htmlFor="privacy">
+                I agree to the <Link href="/privacy" className="underline hover:text-purple-700">privacy policy</Link>.
+              </label>
             </div>
           </div>
         </div>
