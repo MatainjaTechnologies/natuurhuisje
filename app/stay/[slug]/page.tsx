@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation';
 import { MapPin, User, Users, Home, BedDouble, Bath, Calendar, Star } from 'lucide-react';
 import { GalleryMosaic } from '@/components/GalleryMosaic';
 import { BookingBox } from '@/components/BookingBox';
+import { promises as fs } from 'fs';
+import path from 'path';
 // import { createClient } from '@/utils/supabase/server';
 
 // Revalidate the data every 3600 seconds (1 hour)
@@ -14,9 +16,10 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   // const supabase = await createClient();
   const { slug } = await params;
   
-  // Load static data from JSON
-  const response = await fetch('http://localhost:3000/data/listings.json', { cache: 'no-store' });
-  const data = await response.json();
+  // Load static data from JSON file system
+  const filePath = path.join(process.cwd(), 'public', 'data', 'listings.json');
+  const fileContents = await fs.readFile(filePath, 'utf8');
+  const data = JSON.parse(fileContents);
   const listing = data.featuredListings.find((l: any) => l.slug === slug);
   
   // Mock reviews data
