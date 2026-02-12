@@ -250,7 +250,7 @@ export default function Home() {
       <section className="py-20 bg-gray-50">
         <div className="container-custom">
           <div className="mb-12">
-            <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 font-poppins">Verken per bestemming</h2>
+            <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 font-poppins text-center">Verken per bestemming</h2>
           </div>
           
           <div className="relative">
