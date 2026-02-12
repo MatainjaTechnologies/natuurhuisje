@@ -1,45 +1,45 @@
-{
+﻿{
   "locations": [
     {
       "id": "1",
       "name": "Amsterdam (NL)",
       "type": "city",
-      "country": "Netherlands",
+      "country": "Nederland",
       "icon": "map-pin"
     },
     {
       "id": "2",
       "name": "Veluwe (NL)",
       "type": "region",
-      "country": "Netherlands",
+      "country": "Nederland",
       "icon": "map-pin"
     },
     {
       "id": "3",
-      "name": "Belgium",
+      "name": "België",
       "type": "country",
-      "country": "Belgium",
+      "country": "België",
       "icon": "map-pin"
     },
     {
       "id": "4",
-      "name": "Ardennes (BE)",
+      "name": "Ardennen (BE)",
       "type": "region",
-      "country": "Belgium",
+      "country": "België",
       "icon": "map-pin"
     },
     {
       "id": "5",
       "name": "Limburg (NL)",
       "type": "region",
-      "country": "Netherlands",
+      "country": "Nederland",
       "icon": "map-pin"
     },
     {
       "id": "6",
       "name": "Zeeland (NL)",
       "type": "region",
-      "country": "Netherlands",
+      "country": "Nederland",
       "icon": "map-pin"
     }
   ],
@@ -49,56 +49,56 @@
       "name": "Tiny House",
       "type": "property",
       "icon": "home",
-      "description": "Compact and cozy tiny houses"
+      "description": "Compacte en gezellige tiny houses"
     },
     {
       "id": "2",
       "name": "Wellness",
       "type": "amenity",
       "icon": "sparkles",
-      "description": "Properties with wellness facilities"
+      "description": "Accommodaties met wellness faciliteiten"
     },
     {
       "id": "3",
-      "name": "Romantic overnight stays",
+      "name": "Romantische overnachtingen",
       "type": "category",
       "icon": "heart",
-      "description": "Perfect for couples"
+      "description": "Perfect voor koppels"
     },
     {
       "id": "4",
-      "name": "Treehouse",
+      "name": "Boomhut",
       "type": "property",
       "icon": "home",
-      "description": "Unique treehouses in nature"
+      "description": "Unieke boomhutten in de natuur"
     },
     {
       "id": "5",
       "name": "Glamping",
       "type": "property",
       "icon": "home",
-      "description": "Glamorous camping experiences"
+      "description": "Glamoureuze kampeerervaringen"
     },
     {
       "id": "6",
-      "name": "Pet-friendly",
+      "name": "Huisdiervriendelijk",
       "type": "amenity",
       "icon": "heart",
-      "description": "Pets are welcome"
+      "description": "Huisdieren zijn welkom"
     },
     {
       "id": "7",
-      "name": "Lakeside",
+      "name": "Aan het meer",
       "type": "location",
       "icon": "map-pin",
-      "description": "Properties near lakes"
+      "description": "Accommodaties nabij meren"
     },
     {
       "id": "8",
-      "name": "Forest retreat",
+      "name": "Bos retreat",
       "type": "location",
       "icon": "map-pin",
-      "description": "Surrounded by forest"
+      "description": "Omringd door bos"
     }
   ]
 }

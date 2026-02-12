@@ -1,0 +1,122 @@
+{
+  "natureHouses": [
+    {
+      "id": "1",
+      "label": "Woudhuisjes",
+      "href": "/search?type=woudhuisje",
+      "image": "/images/forest-house.jpg"
+    },
+    {
+      "id": "2",
+      "label": "Boshuisjes",
+      "href": "/search?type=boshuisje",
+      "image": "/images/cozy-cabin-forest.jpg"
+    },
+    {
+      "id": "3",
+      "label": "Berghuisjes",
+      "href": "/search?type=berghuisje",
+      "image": "/images/mountain-chalet.jpg"
+    },
+    {
+      "id": "4",
+      "label": "Meerhuisjes",
+      "href": "/search?type=meerhuisje",
+      "image": "/images/lakeside-cottage.jpg"
+    },
+    {
+      "id": "5",
+      "label": "Treehouses",
+      "href": "/search?type=treehouse",
+      "image": "/images/treehouse-adventure.jpg"
+    },
+    {
+      "id": "6",
+      "label": "Tiny Houses",
+      "href": "/search?type=tinyhouse",
+      "image": "/images/tiny-house-nature.jpg"
+    }
+  ],
+  "countries": [
+    {
+      "id": "1",
+      "label": "Nederland",
+      "href": "/search?country=nederland",
+      "image": "/images/nederland.jpg"
+    },
+    {
+      "id": "2",
+      "label": "België",
+      "href": "/search?country=belgie",
+      "image": "/images/belgium.jpg"
+    },
+    {
+      "id": "3",
+      "label": "Duitsland",
+      "href": "/search?country=duitsland",
+      "image": "/images/germany.jpg"
+    },
+    {
+      "id": "4",
+      "label": "Frankrijk",
+      "href": "/search?country=frankrijk",
+      "image": "/images/france.jpg"
+    },
+    {
+      "id": "5",
+      "label": "Oostenrijk",
+      "href": "/search?country=oostenrijk",
+      "image": "/images/austria.jpg"
+    },
+    {
+      "id": "6",
+      "label": "Zwitserland",
+      "href": "/search?country=zwitserland",
+      "image": "/images/switzerland.jpg"
+    },
+    {
+      "id": "7",
+      "label": "Italië",
+      "href": "/search?country=italie",
+      "image": "/images/italy.jpg"
+    }
+  ],
+  "regions": [
+    {
+      "id": "1",
+      "label": "Ardennen",
+      "href": "/search?region=ardennen",
+      "image": "/images/banner1.jpeg"
+    },
+    {
+      "id": "2",
+      "label": "Eifel",
+      "href": "/search?region=eifel",
+      "image": "/images/germany.jpg"
+    },
+    {
+      "id": "3",
+      "label": "Drenthe",
+      "href": "/search?region=drenthe",
+      "image": "/images/drenthe.jpg"
+    },
+    {
+      "id": "4",
+      "label": "Gelderland",
+      "href": "/search?region=gelderland",
+      "image": "/images/gelderland.jpg"
+    },
+    {
+      "id": "5",
+      "label": "Overijssel",
+      "href": "/search?region=overijssel",
+      "image": "/images/overijssel.jpg"
+    },
+    {
+      "id": "6",
+      "label": "Nederlandse Kust",
+      "href": "/search?region=nederlandse-kust",
+      "image": "/images/nederlandse-kust.jpg"
+    }
+  ]
+}

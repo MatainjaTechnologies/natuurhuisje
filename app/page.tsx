@@ -23,17 +23,55 @@ type Destination = {
   image: string;
 };
 
+type CarouselItem = {
+  id: string;
+  label: string;
+  type?: string;
+  country?: string;
+  region?: string;
+  image: string;
+  href: string;
+};
+
+type CarouselData = {
+  natureHouses: CarouselItem[];
+  countries: CarouselItem[];
+  regions: CarouselItem[];
+};
+
 type DataType = {
   featuredListings: Listing[];
   destinations: Destination[];
 };
 
 export default function Home() {
-  const carouselRef = useRef<HTMLDivElement>(null);
+  const natureHousesRef = useRef<HTMLDivElement>(null);
+  const countriesRef = useRef<HTMLDivElement>(null);
+  const regionsRef = useRef<HTMLDivElement>(null);
   const [data, setData] = useState<DataType>({
     featuredListings: [],
     destinations: []
   });
+  const [carouselData, setCarouselData] = useState<CarouselData>({
+    natureHouses: [],
+    countries: [],
+    regions: []
+  });
+
+  // Load carousel data
+  useEffect(() => {
+    const loadCarouselData = async () => {
+      try {
+        const response = await fetch('/data/homepage-carousels.json');
+        const data = await response.json();
+        setCarouselData(data);
+      } catch (error) {
+        console.error('Error loading carousel data:', error);
+      }
+    };
+
+    loadCarouselData();
+  }, []);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,11 +87,33 @@ export default function Home() {
       });
   }, []);
 
-  const scrollCarousel = (direction: 'left' | 'right') => {
-    if (carouselRef.current) {
+  const scrollNatureHouses = (direction: 'left' | 'right') => {
+    if (natureHousesRef.current) {
       const scrollAmount = 280; // Card width (256px) + gap (24px)
-      const newScrollPosition = carouselRef.current.scrollLeft + (direction === 'right' ? scrollAmount : -scrollAmount);
-      carouselRef.current.scrollTo({
+      const newScrollPosition = natureHousesRef.current.scrollLeft + (direction === 'right' ? scrollAmount : -scrollAmount);
+      natureHousesRef.current.scrollTo({
+        left: newScrollPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const scrollCountries = (direction: 'left' | 'right') => {
+    if (countriesRef.current) {
+      const scrollAmount = 280; // Card width (256px) + gap (24px)
+      const newScrollPosition = countriesRef.current.scrollLeft + (direction === 'right' ? scrollAmount : -scrollAmount);
+      countriesRef.current.scrollTo({
+        left: newScrollPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const scrollRegions = (direction: 'left' | 'right') => {
+    if (regionsRef.current) {
+      const scrollAmount = 280; // Card width (256px) + gap (24px)
+      const newScrollPosition = regionsRef.current.scrollLeft + (direction === 'right' ? scrollAmount : -scrollAmount);
+      regionsRef.current.scrollTo({
         left: newScrollPosition,
         behavior: 'smooth'
       });
@@ -103,7 +163,7 @@ export default function Home() {
         <div className="relative z-10 container-custom h-full min-h-[85vh] flex flex-col justify-center items-center text-center px-4 pt-20">
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2 mb-8">
             <span className="w-2 h-2 bg-purple-300 rounded-full animate-pulse"></span>
-            <span className="text-sm text-white/90 font-medium tracking-wide">Discover 500+ unique nature stays</span>
+            <span className="text-sm text-white/90 font-medium tracking-wide">Ontdek 500+ unieke natuurverblijven</span>
           </div>
           
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 max-w-4xl leading-tight font-poppins">
@@ -114,7 +174,7 @@ export default function Home() {
           </h1>
           
           <p className="text-base md:text-lg text-white/80 mb-12 max-w-2xl leading-relaxed">
-            Book unique cabins, treehouses and more, surrounded by the most beautiful natural settings
+            Boek unieke hutten, boomhutten en meer, omgeven door de mooiste natuurgebieden
           </p>
           
           {/* Search Dock */}
@@ -126,21 +186,21 @@ export default function Home() {
           <div className="flex flex-wrap justify-center gap-6 mt-10 text-white/60 text-sm">
             <div className="flex items-center gap-2">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-              <span>Free cancellation</span>
+              <span>Gratis annulering</span>
             </div>
             <div className="flex items-center gap-2">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-              <span>Verified properties</span>
+              <span>Geverifieerde accommodaties</span>
             </div>
             <div className="flex items-center gap-2">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-              <span>24/7 support</span>
+              <span>24/7 ondersteuning</span>
             </div>
           </div>
         </div>
       </section>
       
-      {/* Featured Listings Section */}
+      {/* Aanbevolen Accommodaties Sectie */}
       <section className="py-20 bg-white">
         <div className="container-custom">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12 gap-4">
@@ -186,17 +246,17 @@ export default function Home() {
         </div>
       </section>
       
-      {/* Property Types Section */}
+      {/* Ontdek Natuurhuisjes Sectie */}
       <section className="py-20 bg-gray-50">
         <div className="container-custom">
           <div className="mb-12">
-            <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 font-poppins">Browse by destination</h2>
+            <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 font-poppins">Verken per bestemming</h2>
           </div>
           
           <div className="relative">
             {/* Navigation Arrows */}
             <button 
-              onClick={() => scrollCarousel('left')}
+              onClick={() => scrollNatureHouses('left')}
               className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full bg-gray-800 shadow-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
             >
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -204,7 +264,7 @@ export default function Home() {
               </svg>
             </button>
             <button 
-              onClick={() => scrollCarousel('right')}
+              onClick={() => scrollNatureHouses('right')}
               className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full bg-gray-800 shadow-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
             >
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,31 +273,145 @@ export default function Home() {
             </button>
 
             {/* Carousel Container */}
-            <div ref={carouselRef} className="overflow-x-auto scrollbar-hide">
+            <div ref={natureHousesRef} className="overflow-x-auto scrollbar-hide">
               <div className="flex gap-4 pb-4">
-              {destinations.map((item) => (
-                <Link 
-                  key={item.country}
-                  href={`/search?country=${item.country.toLowerCase()}`}
-                  className="group block flex-shrink-0 w-64"
-                >
-                  <div className="relative h-40 overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-300">
-                    <img 
-                      src={item.image}
-                      alt={item.label}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/40"></div>
-                    
-                    {/* Label */}
-                    <div className="absolute top-4 left-4">
-                      <span className="inline-block px-4 py-1.5 bg-white rounded-full text-sm font-medium text-gray-900">
-                        {item.label}
-                      </span>
+                {carouselData.natureHouses.length > 0 ? carouselData.natureHouses.map((item) => (
+                  <Link 
+                    key={item.id}
+                    href={item.href}
+                    className="group block flex-shrink-0 w-72"
+                  >
+                    <div className="relative h-48 overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-300">
+                      <img 
+                        src={item.image}
+                        alt={item.label}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/30"></div>
+                      <div className="absolute top-4 left-4">
+                        <span className="inline-block px-4 py-2 bg-white rounded-full text-sm font-semibold text-gray-900">
+                          {item.label}
+                        </span>
+                      </div>
                     </div>
+                  </Link>
+                )) : (
+                  <div className="flex gap-4 pb-4">
+                    <div className="text-gray-500 text-center py-8">Carousel data wordt geladen...</div>
                   </div>
-                </Link>
-              ))}
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Meest Bezochte Landen Sectie */}
+      <section className="py-20 bg-white">
+        <div className="container-custom">
+          <div className="mb-8">
+            <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 font-poppins text-center">Meest bezochte landen</h2>
+          </div>
+          
+          <div className="relative">
+            {/* Navigation Arrows */}
+            <button 
+              onClick={() => scrollCountries('left')}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full bg-gray-800 shadow-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
+            >
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button 
+              onClick={() => scrollCountries('right')}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full bg-gray-800 shadow-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
+            >
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* Carousel Container */}
+            <div ref={countriesRef} className="overflow-x-auto scrollbar-hide">
+              <div className="flex gap-4 pb-4">
+                {carouselData.countries.map((item) => (
+                  <Link 
+                    key={item.id}
+                    href={item.href}
+                    className="group block flex-shrink-0 w-72"
+                  >
+                    <div className="relative h-48 overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-300">
+                      <img 
+                        src={item.image}
+                        alt={item.label}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/30"></div>
+                      <div className="absolute top-4 left-4">
+                        <span className="inline-block px-4 py-2 bg-white rounded-full text-sm font-semibold text-gray-900">
+                          {item.label}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Populaire Regio's Sectie */}
+      <section className="py-20 bg-gray-50">
+        <div className="container-custom">
+          <div className="mb-8">
+            <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 font-poppins text-center">Populaire regio's</h2>
+          </div>
+          
+          <div className="relative">
+            {/* Navigation Arrows */}
+            <button 
+              onClick={() => scrollRegions('left')}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full bg-gray-800 shadow-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
+            >
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button 
+              onClick={() => scrollRegions('right')}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full bg-gray-800 shadow-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
+            >
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* Carousel Container */}
+            <div ref={regionsRef} className="overflow-x-auto scrollbar-hide">
+              <div className="flex gap-4 pb-4">
+                {carouselData.regions.map((item) => (
+                  <Link 
+                    key={item.id}
+                    href={item.href}
+                    className="group block flex-shrink-0 w-72"
+                  >
+                    <div className="relative h-48 overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-300">
+                      <img 
+                        src={item.image}
+                        alt={item.label}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/30"></div>
+                      <div className="absolute top-4 left-4">
+                        <span className="inline-block px-4 py-2 bg-white rounded-full text-sm font-semibold text-gray-900">
+                          {item.label}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
               </div>
             </div>
           </div>

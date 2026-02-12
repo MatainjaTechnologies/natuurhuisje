@@ -22,6 +22,9 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: 'natuurhuisje - Find your perfect getaway in nature',
   description: 'Discover and book unique nature accommodations: cabins, treehouses, glamping, and more in the most beautiful natural settings.',
+  icons: {
+    icon: '/images/fav.ico',
+  },
 }
 
 export default function RootLayout({

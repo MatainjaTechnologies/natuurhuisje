@@ -44,12 +44,86 @@ export function SearchDock({
   const [pets, setPets] = useState(defaultPets);
   const [activeTab, setActiveTab] = useState<'where' | 'dates' | 'people' | null>(initialTab);
   const [dateSelectionType, setDateSelectionType] = useState<'arrival' | 'departure'>('arrival');
+  const [selectedArrival, setSelectedArrival] = useState<Date | null>(null);
+  const [selectedDeparture, setSelectedDeparture] = useState<Date | null>(null);
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
     defaultDateRange || {
       from: new Date(),
       to: addDays(new Date(), 7)
     }
   );
+
+  // Helper function to format date for display
+  const formatDateDisplay = (date: Date | null): string => {
+    if (!date) return 'Selecteer datum';
+    const days = ['zo', 'ma', 'di', 'wo', 'do', 'vr', 'za'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
+  };
+
+  // Helper function to calculate nights
+  const calculateNights = (): number => {
+    if (selectedArrival && selectedDeparture) {
+      const diffTime = Math.abs(selectedDeparture.getTime() - selectedArrival.getTime());
+      return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    }
+    return 0;
+  };
+
+  // Handle date selection
+  const handleDateSelect = (day: number, month: number, year: number) => {
+    const selectedDate = new Date(year, month, day);
+    
+    if (dateSelectionType === 'arrival') {
+      setSelectedArrival(selectedDate);
+      // Auto-switch to departure selection
+      setDateSelectionType('departure');
+      // If departure is before arrival, clear it
+      if (selectedDeparture && selectedDeparture <= selectedDate) {
+        setSelectedDeparture(null);
+        setDateRange({ from: selectedDate, to: undefined });
+      } else {
+        setDateRange({ from: selectedDate, to: selectedDeparture || undefined });
+      }
+    } else {
+      setSelectedDeparture(selectedDate);
+      // If departure is before arrival, swap them
+      if (selectedArrival && selectedDate < selectedArrival) {
+        setSelectedDeparture(selectedArrival);
+        setSelectedArrival(selectedDate);
+        setDateRange({ from: selectedDate, to: selectedArrival });
+      } else {
+        setDateRange({ from: selectedArrival || undefined, to: selectedDate });
+      }
+    }
+  };
+
+  // Check if a date is selected
+  const isDateSelected = (day: number, month: number, year: number): boolean => {
+    const date = new Date(year, month, day);
+    return Boolean((selectedArrival && date.getTime() === selectedArrival.getTime()) ||
+           (selectedDeparture && date.getTime() === selectedDeparture.getTime()));
+  };
+
+  // Check if date is in range
+  const isDateInRange = (day: number, month: number, year: number): boolean => {
+    if (!selectedArrival || !selectedDeparture) return false;
+    const date = new Date(year, month, day);
+    return date > selectedArrival && date < selectedDeparture;
+  };
+
+  // Check if date is start or end
+  const isDateStart = (day: number, month: number, year: number): boolean => {
+    if (!selectedArrival) return false;
+    const date = new Date(year, month, day);
+    return date.getTime() === selectedArrival.getTime();
+  };
+
+  const isDateEnd = (day: number, month: number, year: number): boolean => {
+    if (!selectedDeparture) return false;
+    const date = new Date(year, month, day);
+    return date.getTime() === selectedDeparture.getTime();
+  };
   
   // Search suggestions data
   const [suggestions, setSuggestions] = useState<{
@@ -143,7 +217,7 @@ export function SearchDock({
           >
             <Search className={`h-5 w-5 shrink-0 ${activeTab === 'where' ? 'text-white' : 'text-gray-500'}`} />
             <span className={`font-medium text-[15px] ${activeTab === 'where' ? 'text-white' : 'text-gray-900'}`}>
-              Where or what?
+              {location || 'Waar of wat?'}
             </span>
           </button>
 
@@ -156,7 +230,12 @@ export function SearchDock({
           >
             <CalendarIcon className={`h-5 w-5 shrink-0 ${activeTab === 'dates' ? 'text-white' : 'text-gray-500'}`} />
             <span className={`text-[15px] whitespace-nowrap ${activeTab === 'dates' ? 'text-white' : 'text-gray-900'}`}>
-              Choose dates
+              {selectedArrival && selectedDeparture 
+                ? `${format(selectedArrival, 'dd-MM')} - ${format(selectedDeparture, 'dd-MM')}`
+                : selectedArrival 
+                  ? `${format(selectedArrival, 'dd-MM')} - ?`
+                  : 'Kies datums'
+              }
             </span>
           </button>
 
@@ -169,7 +248,7 @@ export function SearchDock({
           >
             <Users className={`h-5 w-5 shrink-0 ${activeTab === 'people' ? 'text-white' : 'text-gray-500'}`} />
             <span className={`text-[15px] whitespace-nowrap ${activeTab === 'people' ? 'text-white' : 'text-gray-900'}`}>
-              People
+              {guests > 0 ? `${guests} ${guests === 1 ? 'persoon' : 'personen'}` : 'Personen'}
             </span>
           </button>
 
@@ -180,7 +259,7 @@ export function SearchDock({
               className="px-8 py-3 rounded-lg text-white font-semibold text-[15px] transition-all hover:shadow-lg whitespace-nowrap"
               style={{ background: '#10b981' }}
             >
-              Search
+              Zoeken
             </button>
           </div>
         </div>
@@ -191,7 +270,7 @@ export function SearchDock({
           <div className="p-6">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Search where or what</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Zoek waar of wat</h3>
               <button
                 onClick={() => setActiveTab(null)}
                 className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
@@ -205,7 +284,7 @@ export function SearchDock({
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="For example Amsterdam, Tiny House"
+                placeholder="Bijvoorbeeld Amsterdam, Tiny House"
                 className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
@@ -216,39 +295,51 @@ export function SearchDock({
             <div className="space-y-1 max-h-[300px] overflow-y-auto">
               {suggestions.locations.length === 0 && suggestions.categories.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
-                  Loading suggestions...
+                  Suggesties worden geladen...
                 </div>
               ) : (
                 <>
-                  {/* Location Suggestions */}
-                  {suggestions.locations.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        setLocation(item.name);
-                        setActiveTab(null);
-                      }}
-                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg transition-colors text-left"
-                    >
-                      <MapPin className="h-5 w-5 text-gray-600 shrink-0" />
-                      <span className="text-gray-900 font-medium">{item.name}</span>
-                    </button>
-                  ))}
+                  {/* Filtered Location Suggestions */}
+                  {suggestions.locations
+                    .filter(item => location === '' || item.name.toLowerCase().includes(location.toLowerCase()))
+                    .map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => {
+                          setLocation(item.name);
+                          setActiveTab(null);
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg transition-colors text-left"
+                      >
+                        <MapPin className="h-5 w-5 text-gray-600 shrink-0" />
+                        <span className="text-gray-900 font-medium">{item.name}</span>
+                      </button>
+                    ))}
 
-                  {/* Category Suggestions */}
-                  {suggestions.categories.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        setLocation(item.name);
-                        setActiveTab(null);
-                      }}
-                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg transition-colors text-left"
-                    >
-                      {getIcon(item.icon)}
-                      <span className="text-gray-900 font-medium">{item.name}</span>
-                    </button>
-                  ))}
+                  {/* Filtered Category Suggestions */}
+                  {suggestions.categories
+                    .filter(item => location === '' || item.name.toLowerCase().includes(location.toLowerCase()))
+                    .map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => {
+                          setLocation(item.name);
+                          setActiveTab(null);
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg transition-colors text-left"
+                      >
+                        {getIcon(item.icon)}
+                        <span className="text-gray-900 font-medium">{item.name}</span>
+                      </button>
+                    ))}
+                  
+                  {/* No results message */}
+                  {suggestions.locations.filter(item => location === '' || item.name.toLowerCase().includes(location.toLowerCase())).length === 0 &&
+                   suggestions.categories.filter(item => location === '' || item.name.toLowerCase().includes(location.toLowerCase())).length === 0 && location !== '' && (
+                    <div className="text-center py-8 text-gray-500">
+                      Geen resultaten gevonden voor "{location}"
+                    </div>
+                  )}
                 </>
               )}
             </div>
@@ -256,7 +347,7 @@ export function SearchDock({
             {/* View All Link */}
             <div className="mt-4 pt-4 border-t border-gray-200">
               <button className="text-blue-600 font-semibold hover:text-blue-700 transition-colors flex items-center gap-2">
-                View all
+                Bekijk alles
                 <span className="text-xl">→</span>
               </button>
             </div>
@@ -268,11 +359,21 @@ export function SearchDock({
         {activeTab === 'dates' && (
           <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 animate-in fade-in slide-in-from-top-2 duration-200 w-[800px] z-50 max-h-[600px] overflow-y-auto">
             <div className="p-6">
-              {/* Header */}
+              {/* Header with nights summary */}
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  {dateSelectionType === 'arrival' ? 'Select arrival date' : 'Select departure date'}
-                </h3>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {calculateNights() > 0 ? `${calculateNights()} nachten` : 'Selecteer datums'}
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {selectedArrival && selectedDeparture 
+                      ? `van ${formatDateDisplay(selectedArrival)} tot ${formatDateDisplay(selectedDeparture)}`
+                      : selectedArrival 
+                        ? `vanaf ${formatDateDisplay(selectedArrival)}`
+                        : 'Kies je verblijf'
+                    }
+                  </p>
+                </div>
                 <button
                   onClick={() => setActiveTab(null)}
                   className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
@@ -281,30 +382,53 @@ export function SearchDock({
                 </button>
               </div>
 
-              {/* Arrival/Departure Tabs */}
-              <div className="flex gap-2 mb-6">
-                <button 
-                  onClick={() => setDateSelectionType('arrival')}
-                  className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-colors ${
-                    dateSelectionType === 'arrival' 
-                      ? 'bg-blue-600 text-white' 
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  <span>Choose date</span>
-                  {dateSelectionType === 'arrival' && <span className="text-xs opacity-80">→</span>}
-                </button>
-                <button 
-                  onClick={() => setDateSelectionType('departure')}
-                  className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-colors ${
-                    dateSelectionType === 'departure' 
-                      ? 'bg-blue-600 text-white' 
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  <span>Choose date</span>
-                  {dateSelectionType === 'departure' && <span className="text-xs opacity-80">→</span>}
-                </button>
+              {/* Arrival and Departure Date Inputs */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-2">Aankomst</label>
+                  <button 
+                    onClick={() => setDateSelectionType('arrival')}
+                    className={`w-full px-4 py-3 rounded-lg border-2 text-left transition-colors ${
+                      dateSelectionType === 'arrival' 
+                        ? 'border-blue-600 bg-blue-50' 
+                        : 'border-gray-200 bg-white hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-900">
+                        {formatDateDisplay(selectedArrival)}
+                      </span>
+                      {dateSelectionType === 'arrival' && (
+                        <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      )}
+                    </div>
+                  </button>
+                </div>
+                
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-2">Vertrek</label>
+                  <button 
+                    onClick={() => setDateSelectionType('departure')}
+                    className={`w-full px-4 py-3 rounded-lg border-2 text-left transition-colors ${
+                      dateSelectionType === 'departure' 
+                        ? 'border-blue-600 bg-blue-50' 
+                        : 'border-gray-200 bg-white hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-900">
+                        {formatDateDisplay(selectedDeparture)}
+                      </span>
+                      {dateSelectionType === 'departure' && (
+                        <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      )}
+                    </div>
+                  </button>
+                </div>
               </div>
 
               {/* Dual Calendar */}
@@ -312,11 +436,11 @@ export function SearchDock({
                 {/* February 2026 */}
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <h4 className="font-semibold text-gray-900">February 2026</h4>
+                    <h4 className="font-semibold text-gray-900">Februari 2026</h4>
                   </div>
                   <div className="grid grid-cols-7 gap-1">
                     {/* Day headers */}
-                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+                    {['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'].map((day) => (
                       <div key={day} className="text-center text-xs font-medium text-gray-500 py-2">
                         {day}
                       </div>
@@ -329,7 +453,16 @@ export function SearchDock({
                     {Array.from({ length: 28 }, (_, i) => i + 1).map((date) => (
                       <button
                         key={date}
-                        className="aspect-square flex items-center justify-center text-sm rounded-lg hover:bg-gray-100 transition-colors text-gray-900"
+                        onClick={() => handleDateSelect(date, 1, 2026)}
+                        className={`aspect-square flex items-center justify-center text-sm transition-colors ${
+                          isDateSelected(date, 1, 2026)
+                            ? isDateStart(date, 1, 2026) || isDateEnd(date, 1, 2026)
+                              ? 'bg-blue-600 text-white rounded-lg font-semibold'
+                              : 'bg-blue-100 text-blue-900 font-medium'
+                            : isDateInRange(date, 1, 2026)
+                              ? 'bg-blue-100 text-blue-900 font-medium'
+                              : 'text-gray-900 hover:bg-gray-100 rounded-lg'
+                        }`}
                       >
                         {date}
                       </button>
@@ -340,7 +473,7 @@ export function SearchDock({
                 {/* March 2026 */}
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <h4 className="font-semibold text-gray-900">March 2026</h4>
+                    <h4 className="font-semibold text-gray-900">Maart 2026</h4>
                     <button className="p-1 hover:bg-gray-100 rounded-lg">
                       <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -349,7 +482,7 @@ export function SearchDock({
                   </div>
                   <div className="grid grid-cols-7 gap-1">
                     {/* Day headers */}
-                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+                    {['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'].map((day) => (
                       <div key={day} className="text-center text-xs font-medium text-gray-500 py-2">
                         {day}
                       </div>
@@ -362,7 +495,16 @@ export function SearchDock({
                     {Array.from({ length: 31 }, (_, i) => i + 1).map((date) => (
                       <button
                         key={date}
-                        className="aspect-square flex items-center justify-center text-sm rounded-lg hover:bg-gray-100 transition-colors text-gray-900"
+                        onClick={() => handleDateSelect(date, 2, 2026)}
+                        className={`aspect-square flex items-center justify-center text-sm transition-colors ${
+                          isDateSelected(date, 2, 2026)
+                            ? isDateStart(date, 2, 2026) || isDateEnd(date, 2, 2026)
+                              ? 'bg-blue-600 text-white rounded-lg font-semibold'
+                              : 'bg-blue-100 text-blue-900 font-medium'
+                            : isDateInRange(date, 2, 2026)
+                              ? 'bg-blue-100 text-blue-900 font-medium'
+                              : 'text-gray-900 hover:bg-gray-100 rounded-lg'
+                        }`}
                       >
                         {date}
                       </button>
@@ -374,13 +516,21 @@ export function SearchDock({
               {/* Action Buttons */}
               <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
                 <button 
-                  onClick={() => setActiveTab(null)}
-                  className="text-gray-600 font-medium hover:text-gray-800 transition-colors text-sm"
+                  onClick={() => {
+                    setSelectedArrival(null);
+                    setSelectedDeparture(null);
+                    setDateRange({ from: new Date(), to: addDays(new Date(), 7) });
+                    setDateSelectionType('arrival');
+                  }}
+                  className="text-blue-600 font-medium hover:text-blue-700 transition-colors text-sm"
                 >
-                  Skip
+                  Datums wissen
                 </button>
-                <button className="px-6 py-2.5 bg-teal-500 text-white rounded-lg font-medium hover:bg-teal-600 transition-colors text-sm">
-                  Next
+                <button 
+                  onClick={() => setActiveTab(null)}
+                  className="px-6 py-2.5 bg-teal-500 text-white rounded-lg font-medium hover:bg-teal-600 transition-colors text-sm"
+                >
+                  Volgende
                 </button>
               </div>
             </div>
@@ -393,7 +543,7 @@ export function SearchDock({
             <div className="p-6">
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-gray-900">Select number of persons</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Selecteer aantal personen</h3>
                 <button
                   onClick={() => setActiveTab(null)}
                   className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
@@ -419,7 +569,7 @@ export function SearchDock({
                   >
                     <Users className="h-5 w-5 text-gray-600 shrink-0" />
                     <span className="text-gray-900 font-medium">
-                      {num} {num === 1 ? 'person' : 'people'}
+                      {num} {num === 1 ? 'persoon' : 'personen'}
                     </span>
                   </button>
                 ))}

@@ -3,8 +3,8 @@
     {
       "id": "1",
       "slug": "cozy-cabin-forest",
-      "title": "Cozy Cabin in the Forest",
-      "location": "Gelderland, Netherlands",
+      "title": "Gezellige Hut in het Bos",
+      "location": "Gelderland, Nederland",
       "images": [
         "/images/cozy-cabin-forest.jpg",
         "/images/cozy-cabin-2.jpg",
@@ -19,8 +19,8 @@
     {
       "id": "2",
       "slug": "treehouse-adventure",
-      "title": "Treehouse Adventure",
-      "location": "Utrecht, Netherlands",
+      "title": "Boomhut Avontuur",
+      "location": "Utrecht, Nederland",
       "images": [
         "/images/treehouse-adventure.jpg",
         "/images/treehouse-2.jpg",
@@ -35,8 +35,8 @@
     {
       "id": "3",
       "slug": "luxury-glamping-tent",
-      "title": "Luxury Glamping Tent",
-      "location": "Limburg, Netherlands",
+      "title": "Luxe Glamping Tent",
+      "location": "Limburg, Nederland",
       "images": [
         "/images/luxury-glamping-tent.jpg",
         "/images/glamping-2.jpg",
@@ -51,8 +51,8 @@
     {
       "id": "4",
       "slug": "windmill-experience",
-      "title": "Experience a night in a Windmill from 1590",
-      "location": "Noord-Holland, Netherlands",
+      "title": "Ervaar een nacht in een Molen uit 1590",
+      "location": "Noord-Holland, Nederland",
       "images": [
         "/images/windmill-experience.jpg",
         "/images/windmill-2.jpg",
@@ -67,8 +67,8 @@
     {
       "id": "5",
       "slug": "lakeside-cottage",
-      "title": "Peaceful Lakeside Cottage",
-      "location": "Friesland, Netherlands",
+      "title": "Vredig Meerhuisje",
+      "location": "Friesland, Nederland",
       "images": [
         "/images/lakeside-cottage.jpg",
         "/images/lakeside-2.jpg",
@@ -83,8 +83,8 @@
     {
       "id": "6",
       "slug": "tiny-house-nature",
-      "title": "Modern Tiny House in Nature",
-      "location": "Drenthe, Netherlands",
+      "title": "Modern Tiny House in de Natuur",
+      "location": "Drenthe, Nederland",
       "images": [
         "/images/tiny-house-nature.jpg",
         "/images/tiny-house-2.jpg",
@@ -99,8 +99,8 @@
     {
       "id": "7",
       "slug": "mountain-chalet",
-      "title": "Rustic Mountain Chalet",
-      "location": "Overijssel, Netherlands",
+      "title": "Landelijk Bergchalet",
+      "location": "Overijssel, Nederland",
       "images": [
         "/images/mountain-chalet.jpg",
         "/images/chalet-2.jpg",
@@ -115,8 +115,8 @@
     {
       "id": "8",
       "slug": "countryside-villa",
-      "title": "Charming Countryside Villa",
-      "location": "Zeeland, Netherlands",
+      "title": "Charmant Buitenvilla",
+      "location": "Zeeland, Nederland",
       "images": [
         "/images/countryside-villa.jpg",
         "/images/villa-2.jpg",
@@ -131,39 +131,28 @@
   ],
   "destinations": [
     {
-      "country": "Netherlands",
-      "label": "Holiday homes Netherlands",
-      "image": "/images/nederland.jpg"
+      "id": "1",
+      "name": "Veluwe",
+      "description": "Prachtige natuurparken en bossen",
+      "image": "/images/veluwe.jpg"
     },
     {
-      "country": "Germany",
-      "label": "Holiday homes Germany",
-      "image": "/images/germany.jpg"
+      "id": "2",
+      "name": "Ardennen",
+      "description": "Rivierdalen en uitgestrekte wouden",
+      "image": "/images/ardennes.jpg"
     },
     {
-      "country": "Belgium",
-      "label": "Holiday homes Belgium",
-      "image": "/images/belgium.jpg"
+      "id": "3",
+      "name": "Eifel",
+      "description": "Vulkaangebied met dichte bossen",
+      "image": "/images/eifel.jpg"
     },
     {
-      "country": "France",
-      "label": "Holiday homes France",
-      "image": "/images/france.jpg"
-    },
-    {
-      "country": "Austria",
-      "label": "Holiday homes Austria",
-      "image": "/images/austria.jpg"
-    },
-    {
-      "country": "Switzerland",
-      "label": "Holiday homes Switzerland",
-      "image": "/images/switzerland.jpg"
-    },
-    {
-      "country": "Italy",
-      "label": "Holiday homes Italy",
-      "image": "/images/italy.jpg"
+      "id": "4",
+      "name": "Limburgse Heuvels",
+      "description": "Heuvelachtig landschap met kastelen",
+      "image": "/images/limburg.jpg"
     }
   ]
 }
