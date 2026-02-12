@@ -119,7 +119,7 @@ export default function Home() {
           
           {/* Search Dock */}
           <div className="w-full max-w-4xl">
-            <SearchDock variant="hero" />
+            <SearchDock variant="hero" maxWidth="max-w-4xl" />
           </div>
           
           {/* Trust badges */}
@@ -245,7 +245,7 @@ export default function Home() {
       </section>
 
       {/* Most Visited Section */}
-      <section className="py-20 bg-white">
+      {/* <section className="py-20 bg-white">
         <div className="container-custom">
           <div className="mb-12">
             <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 font-poppins">Most Visited</h2>
@@ -292,7 +292,7 @@ export default function Home() {
             </Link>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Recently Viewed Section */}
       <section className="py-20 bg-gray-50">

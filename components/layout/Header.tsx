@@ -13,7 +13,8 @@ interface HeaderProps {
 
 export function Header({ user }: HeaderProps) {
   const [showSearchBar, setShowSearchBar] = useState(false);
-  const [showSearchModal, setShowSearchModal] = useState(false);
+  const [showSearchDock, setShowSearchDock] = useState(false);
+  const [activeSearchTab, setActiveSearchTab] = useState<'where' | 'dates' | 'people' | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,6 +22,7 @@ export function Header({ user }: HeaderProps) {
         setShowSearchBar(true);
       } else {
         setShowSearchBar(false);
+        setShowSearchDock(false);
       }
     };
 
@@ -63,33 +65,57 @@ export function Header({ user }: HeaderProps) {
         
           {/* Search Bar - Shows on Scroll */}
           <div className={`hidden md:flex items-center transition-all duration-300 ${showSearchBar ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
-            <button 
-              onClick={() => setShowSearchModal(true)}
-              className="flex items-center bg-blue-50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-            >
-              {/* Where/What Input */}
-              <div className="flex items-center gap-2 px-5 py-3 bg-white rounded-l-xl">
-                <Search className="h-4 w-4 text-purple-600" />
-                <span className="text-sm text-gray-700 font-medium">Where or what?</span>
+            {!showSearchDock ? (
+              <div className="flex items-center bg-blue-50 rounded-xl overflow-hidden shadow-sm">
+                {/* Where/What Input */}
+                <button 
+                  onClick={() => {
+                    setActiveSearchTab('where');
+                    setShowSearchDock(true);
+                  }}
+                  className="flex items-center gap-2 px-5 py-3 bg-white rounded-l-xl hover:bg-gray-50 transition-colors"
+                >
+                  <Search className="h-4 w-4 text-purple-600" />
+                  <span className="text-sm text-gray-700 font-medium">Where or what?</span>
+                </button>
+                
+                {/* Date Picker */}
+                <button 
+                  onClick={() => {
+                    setActiveSearchTab('dates');
+                    setShowSearchDock(true);
+                  }}
+                  className="flex items-center gap-2 px-5 py-3 bg-white ml-px hover:bg-gray-50 transition-colors"
+                >
+                  <Calendar className="h-4 w-4 text-purple-600" />
+                  <span className="text-sm text-gray-700 font-medium">Choose dates</span>
+                </button>
+                
+                {/* Guests */}
+                <button 
+                  onClick={() => {
+                    setActiveSearchTab('people');
+                    setShowSearchDock(true);
+                  }}
+                  className="flex items-center gap-2 px-5 py-3 bg-white ml-px hover:bg-gray-50 transition-colors"
+                >
+                  <Users className="h-4 w-4 text-purple-600" />
+                  <span className="text-sm text-gray-700 font-medium">people</span>
+                </button>
+                
+                {/* Search Button */}
+                <button 
+                  onClick={() => setShowSearchDock(true)}
+                  className="bg-teal-500 text-white px-6 py-3 rounded-r-xl ml-px flex items-center justify-center hover:bg-teal-600 transition-colors"
+                >
+                  <Search className="h-5 w-5" />
+                </button>
               </div>
-              
-              {/* Date Picker */}
-              <div className="flex items-center gap-2 px-5 py-3 bg-white ml-px">
-                <Calendar className="h-4 w-4 text-purple-600" />
-                <span className="text-sm text-gray-700 font-medium">Choose dates</span>
+            ) : (
+              <div className="w-full max-w-3xl">
+                <SearchDock variant="compact" maxWidth="max-w-3xl" initialTab={activeSearchTab} />
               </div>
-              
-              {/* Guests */}
-              <div className="flex items-center gap-2 px-5 py-3 bg-white ml-px">
-                <Users className="h-4 w-4 text-purple-600" />
-                <span className="text-sm text-gray-700 font-medium">Guests</span>
-              </div>
-              
-              {/* Search Button */}
-              <div className="bg-teal-500 text-white px-6 py-3 rounded-r-xl ml-px flex items-center justify-center">
-                <Search className="h-5 w-5" />
-              </div>
-            </button>
+            )}
           </div>
         
           <div className="flex items-center gap-3">
@@ -121,21 +147,6 @@ export function Header({ user }: HeaderProps) {
         </div>
       </div>
 
-      {/* SearchDock Modal */}
-      {showSearchModal && (
-        <>
-          {/* Backdrop */}
-          <div 
-            className="fixed inset-0 bg-black/30 z-[100] animate-in fade-in duration-200"
-            onClick={() => setShowSearchModal(false)}
-          />
-          
-          {/* SearchDock Container */}
-          <div className="fixed top-32 left-0 right-0 z-[101] px-4 animate-in slide-in-from-top-4 fade-in duration-200">
-            <SearchDock maxWidth="max-w-4xl" />
-          </div>
-        </>
-      )}
     </header>
   );
 }

@@ -1,0 +1,104 @@
+{
+  "locations": [
+    {
+      "id": "1",
+      "name": "Amsterdam (NL)",
+      "type": "city",
+      "country": "Netherlands",
+      "icon": "map-pin"
+    },
+    {
+      "id": "2",
+      "name": "Veluwe (NL)",
+      "type": "region",
+      "country": "Netherlands",
+      "icon": "map-pin"
+    },
+    {
+      "id": "3",
+      "name": "Belgium",
+      "type": "country",
+      "country": "Belgium",
+      "icon": "map-pin"
+    },
+    {
+      "id": "4",
+      "name": "Ardennes (BE)",
+      "type": "region",
+      "country": "Belgium",
+      "icon": "map-pin"
+    },
+    {
+      "id": "5",
+      "name": "Limburg (NL)",
+      "type": "region",
+      "country": "Netherlands",
+      "icon": "map-pin"
+    },
+    {
+      "id": "6",
+      "name": "Zeeland (NL)",
+      "type": "region",
+      "country": "Netherlands",
+      "icon": "map-pin"
+    }
+  ],
+  "categories": [
+    {
+      "id": "1",
+      "name": "Tiny House",
+      "type": "property",
+      "icon": "home",
+      "description": "Compact and cozy tiny houses"
+    },
+    {
+      "id": "2",
+      "name": "Wellness",
+      "type": "amenity",
+      "icon": "sparkles",
+      "description": "Properties with wellness facilities"
+    },
+    {
+      "id": "3",
+      "name": "Romantic overnight stays",
+      "type": "category",
+      "icon": "heart",
+      "description": "Perfect for couples"
+    },
+    {
+      "id": "4",
+      "name": "Treehouse",
+      "type": "property",
+      "icon": "home",
+      "description": "Unique treehouses in nature"
+    },
+    {
+      "id": "5",
+      "name": "Glamping",
+      "type": "property",
+      "icon": "home",
+      "description": "Glamorous camping experiences"
+    },
+    {
+      "id": "6",
+      "name": "Pet-friendly",
+      "type": "amenity",
+      "icon": "heart",
+      "description": "Pets are welcome"
+    },
+    {
+      "id": "7",
+      "name": "Lakeside",
+      "type": "location",
+      "icon": "map-pin",
+      "description": "Properties near lakes"
+    },
+    {
+      "id": "8",
+      "name": "Forest retreat",
+      "type": "location",
+      "icon": "map-pin",
+      "description": "Surrounded by forest"
+    }
+  ]
+}
