@@ -1,7 +1,13 @@
 import { SearchDock } from '@/components/SearchDock';
 import { FiltersPanel } from '@/components/FiltersPanel';
 import { ListingCard } from '@/components/ListingCard';
-import { createClient } from '@/utils/supabase/server';
+import { MapModal } from '@/components/search/MapModal';
+import { PromotionalBanner } from '@/components/search/PromotionalBanner';
+import { AdditionalSections } from '@/components/search/AdditionalSections';
+import { SearchPageClient } from '@/components/search/SearchPageClient';
+import { promises as fs } from 'fs';
+import path from 'path';
+import UnoptimizedImage from '@/components/UnoptimizedImage';
 
 // Revalidate the data every 3600 seconds (1 hour)
 export const revalidate = 3600;
@@ -15,129 +21,140 @@ export default async function SearchPage({
     checkout?: string;
     guests?: string;
     pets?: string;
-    type?: string;
     filters?: string;
   }>;
 }) {
-  const supabase = await createClient();
   const params = await searchParams;
   
-  // Parse search parameters
-  const location = params.location || '';
+  // Extract search parameters
+  const location = params.location;
   const checkinDate = params.checkin ? new Date(params.checkin) : undefined;
   const checkoutDate = params.checkout ? new Date(params.checkout) : undefined;
   const guests = params.guests ? parseInt(params.guests) : undefined;
   const petsAllowed = params.pets === 'true';
-  const propertyType = params.type;
-  const filtersParam = params.filters ? params.filters.split(',') : [];
+  const filtersParam = params.filters;
   
-  // Set up Supabase query
-  let query = supabase
-    .from('listings')
-    .select('*')
-    .eq('is_published', true);
+  // Load data from JSON file (same as stay page)
+  const filePath = path.join(process.cwd(), 'public', 'data', 'listings.json');
+  const fileContents = await fs.readFile(filePath, 'utf8');
+  const data = JSON.parse(fileContents);
+  let listings = data.featuredListings;
   
-  // Apply filters
+  // Apply filters if provided
+  if (filtersParam) {
+    const activeFilters = filtersParam.split(',');
+    
+    // Filter by property types
+    const propertyTypeFilters = ['cabin', 'treehouse', 'tiny-house', 'glamping', 'farm'];
+    const selectedPropertyTypes = activeFilters.filter(f => propertyTypeFilters.includes(f));
+    
+    if (selectedPropertyTypes.length > 0) {
+      listings = listings.filter((listing: any) => {
+        const title = listing.title.toLowerCase();
+        return selectedPropertyTypes.some(type => 
+          title.includes(type.replace('-', ' ')) || 
+          title.includes(type.replace('-', ''))
+        );
+      });
+    }
+    
+    // Filter by amenities
+    const amenityFilters = ['wifi', 'pets', 'fireplace', 'pool', 'hot-tub', 'bbq'];
+    const selectedAmenities = activeFilters.filter(f => amenityFilters.includes(f));
+    
+    if (selectedAmenities.length > 0) {
+      // For now, just filter by pets since we don't have amenities data in JSON
+      if (selectedAmenities.includes('pets')) {
+        listings = listings.filter((listing: any) => 
+          listing.title.toLowerCase().includes('pet') || 
+          listing.title.toLowerCase().includes('animal')
+        );
+      }
+    }
+    
+    // Filter by features
+    const featureFilters = ['lake', 'mountain-view', 'beachfront', 'secluded', 'forest'];
+    const selectedFeatures = activeFilters.filter(f => featureFilters.includes(f));
+    
+    if (selectedFeatures.length > 0) {
+      listings = listings.filter((listing: any) => {
+        const title = listing.title.toLowerCase();
+        const location = listing.location.toLowerCase();
+        return selectedFeatures.some(feature => 
+          title.includes(feature.replace('-', ' ')) || 
+          location.includes(feature.replace('-', ' '))
+        );
+      });
+    }
+  }
+  
+  // Filter by location if provided
   if (location) {
-    query = query.ilike('location', `%${location}%`);
+    listings = listings.filter((listing: any) => 
+      listing.location.toLowerCase().includes(location.toLowerCase())
+    );
   }
   
-  if (guests) {
-    query = query.gte('max_guests', guests);
-  }
+  // Only show published listings
+  listings = listings.filter((listing: any) => listing.is_published);
   
-  if (petsAllowed) {
-    query = query.contains('amenities', ['pets']);
-  }
-  
-  if (propertyType) {
-    query = query.eq('property_type', propertyType);
-  }
-  
-  // Handle additional filters from FiltersPanel
-  const amenityFilters = filtersParam.filter(filter => 
-    ['wifi', 'fireplace', 'pool', 'hot-tub', 'bbq', 'lake', 'mountain-view', 'beachfront', 'secluded', 'forest'].includes(filter)
-  );
-  
-  if (amenityFilters.length > 0) {
-    // For each amenity, we need to check if it's in the amenities array
-    amenityFilters.forEach(amenity => {
-      query = query.contains('amenities', [amenity]);
-    });
-  }
-  
-  // Fetch listings
-  const { data: listings, error } = await query.order('created_at', { ascending: false }) as { data: any[] | null; error: any };
+  const error = null; // No error when using JSON data
   
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      {/* Search header with compact SearchDock */}
-      <section className="bg-white border-b border-border shadow-sm py-6">
-        <div className="container-custom">
-          <SearchDock 
-            variant="compact" 
-            defaultLocation={location}
-            defaultGuests={guests}
-            defaultPets={petsAllowed}
-            defaultDateRange={
-              checkinDate && checkoutDate 
-                ? { from: checkinDate, to: checkoutDate } 
-                : undefined
-            }
+      {/* Search header with background image */}
+      <section className="relative bg-white border-b border-neutral-200 shadow-sm h-[250px] group">
+        <div className="absolute inset-0 overflow-hidden">
+          <UnoptimizedImage
+            src="/images/pexels-justin-wolfert.jpg"
+            alt="Search background"
+            fill
+            className="object-cover group-hover:scale-110 transition-transform duration-500"
+            priority
           />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/20" />
+        </div>
+        <div className="relative z-10 h-full flex items-center justify-center">
+          <div className="w-full max-w-4xl px-4 md:px-6 lg:px-8">
+            <SearchDock 
+              variant="compact" 
+              defaultLocation={location}
+              defaultGuests={guests}
+              defaultPets={petsAllowed}
+              defaultDateRange={
+                checkinDate && checkoutDate 
+                  ? { from: checkinDate, to: checkoutDate } 
+                  : undefined
+              }
+            />
+          </div>
         </div>
       </section>
       
-      <div className="container-custom py-8">
-        <div className="flex flex-col lg:flex-row gap-6">
+      <div className="max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Filters sidebar */}
           <div className="w-full lg:w-1/4">
-            <FiltersPanel
-              className="sticky top-24"
-            />
+            <FiltersPanel className="sticky top-24" />
           </div>
           
           {/* Listings grid */}
           <div className="flex-1">
-            <div className="mb-6 flex justify-between items-center">
-              <h1 className="text-2xl font-semibold text-forest-900">
-                {listings?.length || 0} {listings?.length === 1 ? 'stay' : 'stays'} found
-                {location && ` in ${location}`}
-              </h1>
-            </div>
-            
-            {error && (
-              <div className="bg-rose-50 text-rose-700 p-4 rounded-md mb-6">
-                An error occurred while fetching listings. Please try again.
-              </div>
-            )}
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {listings && listings.length > 0 ? (
-                listings.map((listing) => (
-                  <ListingCard
-                    key={listing.id}
-                    id={listing.id}
-                    slug={listing.slug}
-                    title={listing.title}
-                    location={listing.location}
-                    images={listing.images}
-                    pricePerNight={listing.price_per_night}
-                    rating={listing.avg_rating}
-                  />
-                ))
-              ) : !error ? (
-                <div className="col-span-full text-center py-12">
-                  <h2 className="text-xl font-medium text-forest-700 mb-2">No listings found</h2>
-                  <p className="text-forest-600">
-                    Try adjusting your search filters or exploring a different location.
-                  </p>
-                </div>
-              ) : null}
-            </div>
+            <SearchPageClient
+              listings={listings || []}
+              error={error}
+              location={location}
+            />
           </div>
         </div>
       </div>
+
+      {/* Promotional Banner */}
+      <PromotionalBanner />
+
+      {/* Additional Sections */}
+      <AdditionalSections />
+
     </div>
   );
 }

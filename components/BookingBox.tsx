@@ -60,46 +60,45 @@ export function BookingBox({
   };
   
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 border border-border sticky top-24">
+    <div className="bg-white rounded-xl border border-neutral-200 shadow-sm p-6">
       <div className="mb-6">
         <div className="flex justify-between items-baseline">
-          <div className="text-forest-900">
-            <span className="text-xl font-semibold">€{pricePerNight}</span>
-            <span className="text-forest-600"> / night</span>
+          <div className="text-neutral-900">
+            <span className="text-3xl font-bold">€{pricePerNight}</span>
+            <span className="text-neutral-600 text-base font-normal"> / night</span>
           </div>
           
           {rating !== undefined && (
             <div className="text-sm">
-              <span className="text-forest-800 font-medium">{rating.toFixed(1)}</span>
-              <span className="text-forest-600"> · {reviewCount} reviews</span>
+              <span className="text-neutral-900 font-semibold">{rating.toFixed(1)}</span>
+              <span className="text-neutral-600"> · {reviewCount} reviews</span>
             </div>
           )}
         </div>
       </div>
       
-      <div className="border border-border rounded-xl overflow-hidden mb-4">
+      <div className="border border-neutral-300 rounded-lg overflow-hidden mb-4">
         {/* Date selection */}
-        <div className="p-3 border-b border-border">
+        <div className="p-4 border-b border-neutral-300">
           <div className="flex items-center">
-            <CalendarIcon className="h-5 w-5 text-forest-800 mr-2" />
+            <CalendarIcon className="h-5 w-5 text-neutral-700 mr-3" />
             <button 
               type="button" 
               className="w-full text-left outline-none"
               onClick={() => setIsCalendarOpen(!isCalendarOpen)}
             >
-              <div className="text-sm text-forest-600">Dates</div>
-              <div className="font-medium text-forest-900">{dateRangeText}</div>
+              <div className="text-xs text-neutral-600 mb-1">Dates</div>
+              <div className="font-medium text-neutral-900">{dateRangeText}</div>
             </button>
           </div>
           
           {isCalendarOpen && (
-            <div className="mt-2 p-2 bg-white rounded-lg border border-border">
-              {/* Here we would render the actual calendar picker component */}
+            <div className="mt-3 p-3 bg-neutral-50 rounded-lg border border-neutral-200">
               <div className="text-center py-4">
-                <p className="text-forest-600">Calendar picker would go here</p>
+                <p className="text-neutral-600">Calendar picker would go here</p>
                 <button
                   onClick={() => setIsCalendarOpen(false)}
-                  className="mt-2 px-4 py-2 bg-forest-100 text-forest-800 rounded-lg hover:bg-forest-200"
+                  className="mt-2 px-4 py-2 bg-white text-neutral-900 rounded-lg hover:bg-neutral-100 border border-neutral-300"
                 >
                   Close
                 </button>
@@ -109,29 +108,29 @@ export function BookingBox({
         </div>
         
         {/* Guests selection */}
-        <div className="p-3">
+        <div className="p-4">
           <div className="flex items-center">
-            <Users className="h-5 w-5 text-forest-800 mr-2" />
+            <Users className="h-5 w-5 text-neutral-700 mr-3" />
             <div className="flex-1">
-              <div className="text-sm text-forest-600">Guests</div>
-              <div className="font-medium text-forest-900">{guests} guests</div>
+              <div className="text-xs text-neutral-600 mb-1">Guests</div>
+              <div className="font-medium text-neutral-900">{guests} guests</div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <button
                 type="button"
-                className="p-1 rounded-full hover:bg-forest-100 disabled:opacity-50"
+                className="w-8 h-8 rounded-full border border-neutral-300 hover:border-neutral-900 disabled:opacity-30 disabled:hover:border-neutral-300 flex items-center justify-center transition-colors"
                 disabled={guests <= 1}
                 onClick={() => setGuests((prev) => Math.max(1, prev - 1))}
               >
-                <span className="w-5 h-5 flex items-center justify-center">-</span>
+                <span className="text-neutral-900">−</span>
               </button>
-              <span className="w-6 text-center">{guests}</span>
+              <span className="w-8 text-center font-medium">{guests}</span>
               <button
                 type="button"
-                className="p-1 rounded-full hover:bg-forest-100"
+                className="w-8 h-8 rounded-full border border-neutral-300 hover:border-neutral-900 flex items-center justify-center transition-colors"
                 onClick={() => setGuests((prev) => prev + 1)}
               >
-                <span className="w-5 h-5 flex items-center justify-center">+</span>
+                <span className="text-neutral-900">+</span>
               </button>
             </div>
           </div>
@@ -140,8 +139,8 @@ export function BookingBox({
       
       <button
         type="button"
-        className={`w-full btn-primary flex items-center justify-center ${
-          isSubmitting ? 'opacity-70' : ''
+        className={`w-full py-3.5 px-6 bg-neutral-900 text-white rounded-lg font-semibold hover:bg-neutral-800 transition-colors flex items-center justify-center ${
+          isSubmitting || nights === 0 ? 'opacity-50 cursor-not-allowed' : ''
         }`}
         disabled={isSubmitting || nights === 0}
         onClick={handleBooking}
@@ -167,28 +166,28 @@ export function BookingBox({
             Processing...
           </span>
         ) : (
-          'Book Now'
+          'Reserve'
         )}
       </button>
       
-      <div className="mt-4">
-        <div className="flex justify-between mb-2">
-          <div>€{pricePerNight} x {nights} nights</div>
+      <div className="mt-6 space-y-3 text-neutral-700">
+        <div className="flex justify-between text-sm">
+          <div className="underline">€{pricePerNight} x {nights} nights</div>
           <div>€{subtotal}</div>
         </div>
-        <div className="flex justify-between mb-2">
-          <div>Service fee</div>
+        <div className="flex justify-between text-sm">
+          <div className="underline">Service fee</div>
           <div>€{serviceFee}</div>
         </div>
-        <div className="border-t border-border my-3"></div>
-        <div className="flex justify-between font-semibold">
+        <div className="border-t border-neutral-200 pt-3"></div>
+        <div className="flex justify-between font-semibold text-neutral-900">
           <div>Total</div>
           <div>€{total}</div>
         </div>
       </div>
       
-      <div className="mt-4 text-sm text-forest-600 flex items-center gap-2">
-        <CheckCircle className="h-4 w-4 text-forest-700" />
+      <div className="mt-5 text-sm text-neutral-600 text-center flex items-center justify-center gap-2">
+        <CheckCircle className="h-4 w-4" />
         <span>You won't be charged yet</span>
       </div>
     </div>
