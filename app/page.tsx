@@ -57,6 +57,21 @@ export default function Home() {
     countries: [],
     regions: []
   });
+  const [hideHeroSearch, setHideHeroSearch] = useState(false);
+
+  // Handle scroll to hide hero search on mobile
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setHideHeroSearch(true);
+      } else {
+        setHideHeroSearch(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Load carousel data
   useEffect(() => {
@@ -126,9 +141,9 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="relative min-h-[85vh] w-full overflow-hidden -mt-20">
+      <section className="relative min-h-[85vh] w-full overflow-visible -mt-20 z-40">
         {/* Background Image Slider */}
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 overflow-hidden">
           <div className="relative w-full h-full">
             {/* Banner 1 */}
             <div className="absolute inset-0 animate-[fadeInOut_15s_ease-in-out_infinite]">
@@ -160,7 +175,7 @@ export default function Home() {
         </div>
         
         {/* Hero Content */}
-        <div className="relative z-10 container-custom h-full min-h-[85vh] flex flex-col justify-center items-center text-center px-4 pt-20">
+        <div className="relative z-10 container-custom h-full min-h-[85vh] flex flex-col justify-center items-center text-center px-4 pt-20 overflow-visible">
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2 mb-8">
             <span className="w-2 h-2 bg-purple-300 rounded-full animate-pulse"></span>
             <span className="text-sm text-white/90 font-medium tracking-wide">Ontdek 500+ unieke natuurverblijven</span>
@@ -177,9 +192,9 @@ export default function Home() {
             Boek unieke hutten, boomhutten en meer, omgeven door de mooiste natuurgebieden
           </p>
           
-          {/* Search Dock */}
-          <div className="w-full max-w-4xl">
-            <SearchDock variant="hero" maxWidth="max-w-4xl" />
+          {/* Search Dock - Hidden on mobile when scrolled */}
+          <div className={`w-full max-w-4xl relative z-50 transition-opacity duration-300 ${hideHeroSearch ? 'md:opacity-100 opacity-0 pointer-events-none md:pointer-events-auto' : 'opacity-100'}`}>
+            <SearchDock variant="hero" maxWidth="max-w-4xl"/>
           </div>
           
           {/* Trust badges */}

@@ -111,6 +111,9 @@ export function SearchDock({
           if (!dateInputRef.current) return;
 
           // Create new Lightpick instance
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          
           lightpickRef.current = new Lightpick({
             field: dateInputRef.current,
             singleDate: false,
@@ -118,6 +121,7 @@ export function SearchDock({
             numberOfColumns: 2,
             footer: true,
             inline: true,
+            minDate: today,
             onSelect: function (start: any, end: any) {
               if (start) {
                 setSelectedStartDate(start.toDate());
@@ -125,6 +129,9 @@ export function SearchDock({
               if (end) {
                 setSelectedEndDate(end.toDate());
               }
+            },
+            onClose: function () {
+              setActiveTab(null);
             },
           });
 
@@ -242,16 +249,16 @@ export function SearchDock({
 
   return (
     <div
-      className={`relative w-full ${maxWidth} mx-auto ${className}`}
+      className={`relative w-full ${maxWidth} mx-auto ${className} z-50`}
       ref={dropdownRef}
     >
       {/* Tabbed Search Bar */}
-      <div className="relative bg-white rounded-xl shadow-md overflow-visible">
-        <div className="flex items-center overflow-hidden rounded-xl">
+      <div className="relative bg-white rounded-xl shadow-md overflow-visible z-50">
+        <div className="grid md:flex items-center overflow-hidden rounded-xl">
           {/* Where or what Tab */}
           <button
             onClick={() => setActiveTab(activeTab === "where" ? null : "where")}
-            className={`flex items-center gap-2.5 px-6 ${height} flex-1 transition-colors rounded-l-xl ${
+            className={`relative flex items-center gap-2.5 px-6 ${height} flex-1 transition-colors rounded-l-xl ${
               activeTab === "where"
                 ? "bg-purple-600 text-white"
                 : "bg-white text-gray-900 hover:bg-gray-50"
@@ -265,12 +272,20 @@ export function SearchDock({
             >
               {location || "Waar of wat?"}
             </span>
+            {location.length > 0 && (
+              <button
+                onClick={() => setLocation("")}
+                className={`absolute right-0 top-1/2 -translate-y-1/2 p-1 rounded-lg transition-colors ${activeTab === "where" ? "text-white" : "text-gray-500 hover:bg-gray-100"}`}
+              >
+                <X className="h-5 w-5 cursor-pointer" />
+              </button>
+            )}
           </button>
 
           {/* Choose dates Tab */}
           <button
             onClick={() => setActiveTab(activeTab === "dates" ? null : "dates")}
-            className={`flex items-center gap-2.5 px-6 ${height} border-l border-gray-200 transition-colors ${
+            className={`relative flex items-center gap-2.5 px-6 ${height} border-b border-t md:border-b-0 md:border-t-0 border-l border-gray-200 transition-colors ${
               activeTab === "dates"
                 ? "bg-purple-600 text-white"
                 : "bg-white text-gray-900 hover:bg-gray-50"
@@ -283,11 +298,23 @@ export function SearchDock({
               className={`text-[15px] whitespace-nowrap ${activeTab === "dates" ? "text-white" : "text-gray-900"}`}
             >
               {selectedStartDate && selectedEndDate
-                ? `${format(selectedStartDate, "dd-MM")} - ${format(selectedEndDate, "dd-MM")}`
+                ? `${format(selectedStartDate, "MMMM d")} → ${format(selectedEndDate, "MMMM d")}`
                 : selectedStartDate
-                  ? `${format(selectedStartDate, "dd-MM")} - ?`
+                  ? `${format(selectedStartDate, "MMMM d")} → ?`
                   : "Kies datums"}
             </span>
+            {selectedStartDate && selectedEndDate && (
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedStartDate(null);
+                  setSelectedEndDate(null);
+                }}
+                className={`absolute right-0 top-1/2 -translate-y-1/2 p-1 rounded-lg transition-colors cursor-pointer ${activeTab === "dates" ? "text-white" : "text-gray-500 hover:bg-gray-100"}`}
+              >
+                <X className="h-5 w-5" />
+              </span>
+            )}
           </button>
 
           {/* People Tab */}
@@ -334,14 +361,12 @@ export function SearchDock({
                 <h3 className="text-lg font-semibold text-gray-900">
                   Zoek waar of wat
                 </h3>
-                {location.length > 0 && (
-                  <button
-                    onClick={() => setActiveTab(null)}
-                    className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
-                  >
-                    <X className="h-5 w-5 text-gray-500" />
-                  </button>
-                )}
+                <button
+                  onClick={() => setActiveTab(null)}
+                  className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <X className="h-5 w-5 text-gray-500" />
+                </button>
               </div>
 
               {/* Search Input */}
@@ -354,12 +379,14 @@ export function SearchDock({
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                 />
-                <button
-                  onClick={() => setActiveTab(null)}
-                  className="absolute right-10 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <X className="h-5 w-5 text-gray-500" />
-                </button>
+                {location.length > 0 && (
+                  <button
+                    onClick={() => setLocation("")}
+                    className="absolute right-10 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <X className="h-5 w-5 text-gray-500" />
+                  </button>
+                )}
               </div>
 
               {/* Suggestions */}
@@ -372,7 +399,8 @@ export function SearchDock({
                 ) : (
                   <>
                     {/* Filtered Location Suggestions */}
-                    {suggestions.locations.slice(0, 3)
+                    {suggestions.locations
+                      .slice(0, 3)
                       .filter(
                         (item) =>
                           location === "" ||
@@ -397,7 +425,8 @@ export function SearchDock({
                       ))}
 
                     {/* Filtered Category Suggestions */}
-                    {suggestions.categories.slice(0, 2)
+                    {suggestions.categories
+                      .slice(0, 2)
                       .filter(
                         (item) =>
                           location === "" ||
