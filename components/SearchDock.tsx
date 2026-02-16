@@ -257,7 +257,24 @@ export function SearchDock({
         <div className="grid md:flex items-center overflow-hidden rounded-xl">
           {/* Where or what Tab */}
           <button
-            onClick={() => setActiveTab(activeTab === "where" ? null : "where")}
+            onClick={() => {
+              if (window.innerWidth < 768) {
+                // On mobile, scroll down first if needed
+                if (window.scrollY <= 100) {
+                  window.scrollTo({ top: 101, behavior: 'smooth' });
+                  // Wait for scroll to complete, then open modal
+                  setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent('openHeaderSearch', { detail: { tab: 'where' } }));
+                  }, 300);
+                } else {
+                  // Already scrolled, open modal immediately
+                  window.dispatchEvent(new CustomEvent('openHeaderSearch', { detail: { tab: 'where' } }));
+                }
+              } else {
+                // On desktop, use normal dropdown
+                setActiveTab(activeTab === "where" ? null : "where");
+              }
+            }}
             className={`relative flex items-center gap-2.5 px-6 ${height} flex-1 transition-colors rounded-l-xl ${
               activeTab === "where"
                 ? "bg-purple-600 text-white"
@@ -284,7 +301,24 @@ export function SearchDock({
 
           {/* Choose dates Tab */}
           <button
-            onClick={() => setActiveTab(activeTab === "dates" ? null : "dates")}
+            onClick={() => {
+              if (window.innerWidth < 768) {
+                // On mobile, scroll down first if needed
+                if (window.scrollY <= 100) {
+                  window.scrollTo({ top: 101, behavior: 'smooth' });
+                  // Wait for scroll to complete, then open modal
+                  setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent('openHeaderSearch', { detail: { tab: 'dates' } }));
+                  }, 300);
+                } else {
+                  // Already scrolled, open modal immediately
+                  window.dispatchEvent(new CustomEvent('openHeaderSearch', { detail: { tab: 'dates' } }));
+                }
+              } else {
+                // On desktop, use normal dropdown
+                setActiveTab(activeTab === "dates" ? null : "dates");
+              }
+            }}
             className={`relative flex items-center gap-2.5 px-6 ${height} border-b border-t md:border-b-0 md:border-t-0 border-l border-gray-200 transition-colors ${
               activeTab === "dates"
                 ? "bg-purple-600 text-white"
@@ -319,9 +353,24 @@ export function SearchDock({
 
           {/* People Tab */}
           <button
-            onClick={() =>
-              setActiveTab(activeTab === "people" ? null : "people")
-            }
+            onClick={() => {
+              if (window.innerWidth < 768) {
+                // On mobile, scroll down first if needed
+                if (window.scrollY <= 100) {
+                  window.scrollTo({ top: 101, behavior: 'smooth' });
+                  // Wait for scroll to complete, then open modal
+                  setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent('openHeaderSearch', { detail: { tab: 'people' } }));
+                  }, 300);
+                } else {
+                  // Already scrolled, open modal immediately
+                  window.dispatchEvent(new CustomEvent('openHeaderSearch', { detail: { tab: 'people' } }));
+                }
+              } else {
+                // On desktop, use normal dropdown
+                setActiveTab(activeTab === "people" ? null : "people");
+              }
+            }}
             className={`flex items-center gap-2.5 px-6 ${height} border-l border-gray-200 transition-colors ${
               activeTab === "people"
                 ? "bg-purple-600 text-white"

@@ -90,6 +90,20 @@ export function Header({ user }: HeaderProps) {
     };
   }, [activeSearchTab]);
 
+  // Listen for custom events from SearchDock to open mobile modals
+  useEffect(() => {
+    const handleOpenHeaderSearch = (event: CustomEvent) => {
+      const { tab } = event.detail;
+      setActiveSearchTab(tab);
+    };
+
+    window.addEventListener('openHeaderSearch', handleOpenHeaderSearch as EventListener);
+
+    return () => {
+      window.removeEventListener('openHeaderSearch', handleOpenHeaderSearch as EventListener);
+    };
+  }, []);
+
   // Generate calendar months
   const generateCalendarMonths = (startMonth: Date, count: number) => {
     const months = [];
