@@ -181,14 +181,14 @@ export default function Home() {
             <span className="text-sm text-white/90 font-medium tracking-wide">Ontdek 500+ unieke natuurverblijven</span>
           </div>
           
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 max-w-4xl leading-tight font-poppins">
+          <h1 className="text-lg md:text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 max-w-4xl leading-tight font-poppins">
             De natuur opent je ogen.
             <span className="block mt-2 bg-gradient-to-r from-purple-200 via-pink-200 to-purple-200 bg-clip-text text-transparent">
               Vind hier jouw vakantiehuisje midden in de natuur.
             </span>
           </h1>
           
-          <p className="text-base md:text-lg text-white/80 mb-12 max-w-2xl leading-relaxed">
+          <p className="text-lg md:text-base md:text-lg text-white/80 mb-12 max-w-2xl leading-relaxed">
             Boek unieke hutten, boomhutten en meer, omgeven door de mooiste natuurgebieden
           </p>
           
