@@ -17,11 +17,17 @@ export default async function AccountPage() {
   }
   
   // Get user profile
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', session.user.id)
-    .single() as { data: any };
+  let profile: any = null;
+  try {
+    const { data } = await supabase
+      .from('users')
+      .select('*')
+      .eq('auth_user_id', session.user.id)
+      .single();
+    profile = data;
+  } catch (error) {
+    console.log('Profile fetch failed, using metadata fallback');
+  }
   
   // Get user's bookings
   const { data: bookings } = await supabase
@@ -46,8 +52,14 @@ export default async function AccountPage() {
     `)
     .eq('user_id', session.user.id) as { data: any[] | null };
   
-  // Format user name
-  const fullName = profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'User' : 'User';
+  // Format user name - prioritize metadata since it's more reliable
+  const firstName = session.user.user_metadata?.first_name;
+  const lastName = session.user.user_metadata?.last_name;
+  
+  const fullName = firstName && lastName ? 
+    `${firstName} ${lastName}` : 
+    profile?.display_name || 
+    (profile?.first_name && profile?.last_name ? `${profile.first_name} ${profile.last_name}` : 'User');
   
   return (
     <div className="bg-cream-50 min-h-screen">
@@ -57,9 +69,9 @@ export default async function AccountPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-8 border-b border-border">
             <div className="flex items-center gap-4">
               <div className="relative h-20 w-20 rounded-full overflow-hidden bg-forest-100">
-                {profile?.avatar_url ? (
+                {profile?.profile_image_url ? (
                   <Image
-                    src={profile.avatar_url}
+                    src={profile.profile_image_url}
                     alt={fullName}
                     fill
                     className="object-cover"

@@ -1,16 +1,12 @@
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
-import { createClient } from '@/utils/supabase/server';
-import { AuthForm } from '@/components/auth/AuthForm';
+'use client';
 
-export default async function LoginPage() {
-  const supabase = await createClient();
-  
-  const { data: { session } } = await supabase.auth.getSession();
-  
-  if (session) {
-    redirect('/');
-  }
+import { useState } from 'react';
+import Link from 'next/link';
+import { AuthForm } from '@/components/auth/AuthForm';
+import { LandlordRegistrationModal } from '@/components/auth/LandlordRegistrationModal';
+
+export default function LoginPage() {
+  const [isLandlordModalOpen, setIsLandlordModalOpen] = useState(false);
   
   return (
     <div className="flex min-h-[calc(100vh-80px)] items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -26,15 +22,27 @@ export default async function LoginPage() {
         
         <AuthForm type="login" />
         
-        <div className="text-center mt-4">
-          <p className="text-sm text-forest-600">
-            Don't have an account?{' '}
-            <Link href="/register" className="font-medium text-forest-800 hover:text-forest-900">
-              Sign up
-            </Link>
-          </p>
+        <div className="space-y-3 mt-6">
+          <Link 
+            href="/register?role=guest" 
+            className="flex w-full justify-center rounded-full bg-amber-100 px-4 py-3 text-sm font-semibold text-purple-700 shadow-sm hover:bg-amber-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 transition-colors"
+          >
+            Register as a guest
+          </Link>
+          
+          <button
+            onClick={() => setIsLandlordModalOpen(true)}
+            className="flex w-full justify-center rounded-full bg-amber-100 px-4 py-3 text-sm font-semibold text-purple-700 shadow-sm hover:bg-amber-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 transition-colors"
+          >
+            Register as a landlord
+          </button>
         </div>
       </div>
+      
+      <LandlordRegistrationModal 
+        isOpen={isLandlordModalOpen}
+        onClose={() => setIsLandlordModalOpen(false)}
+      />
     </div>
   );
 }

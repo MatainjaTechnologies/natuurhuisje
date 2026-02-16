@@ -18,6 +18,7 @@ import { Logo } from "@/components/Logo";
 import { SearchDock } from "@/components/SearchDock";
 import { useState, useEffect, useRef } from "react";
 import { format } from "date-fns";
+import { createClient } from '@/utils/supabase/client';
 
 interface HeaderProps {
   user?: User | null;
@@ -30,9 +31,87 @@ interface Suggestion {
   icon: string;
 }
 
-export function Header({ user }: HeaderProps) {
+export function Header({ user: propUser }: HeaderProps) {
   const dateInputRef = useRef<HTMLInputElement>(null);
   const lightpickRef = useRef<any>(null);
+  const supabase = createClient();
+  
+  const [user, setUser] = useState<User | null>(propUser || null);
+  const [userProfile, setUserProfile] = useState<{ display_name: string } | null>(null);
+
+  // Fetch user session on mount and when it changes
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      console.log('Header - User:', user);
+      
+      // Fetch user profile when user is available
+      if (user) {
+        // First try to get from database
+        const { data: profile, error } = await supabase
+          .from('users')
+          .select('display_name')
+          .eq('auth_user_id', user.id)
+          .single();
+        
+        console.log('Header - Profile query result:', { profile, error });
+        
+        if (profile) {
+          setUserProfile(profile);
+        } else {
+          console.log('Header - Using user metadata fallback');
+          // Fallback to user metadata
+          const firstName = user.user_metadata?.first_name;
+          const lastName = user.user_metadata?.last_name;
+          const displayName = firstName && lastName ? `${firstName} ${lastName}` : 'Account';
+          
+          setUserProfile({ display_name: displayName });
+        }
+      } else {
+        setUserProfile(null);
+      }
+    };
+    
+    getUser();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      console.log('Header - Auth state change:', session?.user);
+      
+      // Fetch profile when auth state changes
+      if (session?.user) {
+        const fetchProfile = async () => {
+          const { data: profile, error } = await supabase
+            .from('users')
+            .select('display_name')
+            .eq('auth_user_id', session.user.id)
+            .single();
+          
+          console.log('Header - Profile fetched:', { profile, error });
+          
+          if (profile) {
+            setUserProfile(profile);
+          } else {
+            console.log('Header - Using user metadata fallback');
+            // Fallback to user metadata
+            const firstName = session.user.user_metadata?.first_name;
+            const lastName = session.user.user_metadata?.last_name;
+            const displayName = firstName && lastName ? `${firstName} ${lastName}` : 'Account';
+            
+            setUserProfile({ display_name: displayName });
+          }
+        };
+        
+        fetchProfile();
+      } else {
+        setUserProfile(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase.auth]);
 
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [showSearchDock, setShowSearchDock] = useState(false);
@@ -647,12 +726,15 @@ export function Header({ user }: HeaderProps) {
                   </Link>
                   <Link
                     href="/account"
-                    className="p-2 rounded-xl text-white transition-all hover:shadow-md"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-white transition-all hover:shadow-md"
                     style={{
                       background: "linear-gradient(135deg, #7B3FA0, #5B2D8E)",
                     }}
                   >
-                    <UserIcon className="h-5 w-5" />
+                    <UserIcon className="h-4 w-4" />
+                    <span className="text-sm font-medium">
+                      {userProfile?.display_name || 'Account'}
+                    </span>
                   </Link>
                 </div>
               ) : (
@@ -664,6 +746,22 @@ export function Header({ user }: HeaderProps) {
                   }}
                 >
                   Inloggen
+                </Link>
+              )}
+
+              {/* Mobile User Account */}
+              {user && (
+                <Link
+                  href="/account"
+                  className="md:hidden flex items-center gap-2 px-3 py-2 rounded-xl text-white transition-all hover:shadow-md"
+                  style={{
+                    background: "linear-gradient(135deg, #7B3FA0, #5B2D8E)",
+                  }}
+                >
+                  <UserIcon className="h-4 w-4" />
+                  <span className="text-sm font-medium">
+                    {userProfile?.display_name?.split(' ')[0] || 'Account'}
+                  </span>
                 </Link>
               )}
 

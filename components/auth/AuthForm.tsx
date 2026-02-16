@@ -26,15 +26,18 @@ export function AuthForm({ type }: AuthFormProps) {
     
     try {
       if (type === 'login') {
-        const { error } = await supabase.auth.signInWithPassword({ 
+        const { data, error } = await supabase.auth.signInWithPassword({ 
           email, 
           password 
         });
+        
+        console.log('Login attempt:', { email, data, error });
         
         if (error) {
           throw new Error(error.message);
         }
         
+        console.log('Login successful, redirecting...');
         router.refresh();
         router.push('/');
       } else {
