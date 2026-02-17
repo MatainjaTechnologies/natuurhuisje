@@ -720,6 +720,7 @@ export function Header({ user: propUser }: HeaderProps) {
                 <div className="flex items-center gap-3">
                   <Link
                     href="/login"
+                    className="text-sm font-semibold px-5 py-2.5 rounded-xl text-white transition-all hover:shadow-md hover:-translate-y-0.5"
                     style={{ background: "linear-gradient(135deg, #7B3FA0, #5B2D8E)" }}
                   >
                   Inloggen
