@@ -1,10 +1,8 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ListingCard } from '@/components/ListingCard';
-import { BookingItem } from '@/components/account/BookingItem';
 import { createClient } from '@/utils/supabase/server';
+import { User, Grid, Building, MessageSquare, Heart, Calendar, HelpCircle, Settings, LogOut, Home } from 'lucide-react';
 
 export default async function AccountPage() {
   const supabase = await createClient();
@@ -16,7 +14,7 @@ export default async function AccountPage() {
     redirect('/login');
   }
   
-  // Get user profile
+  // Get user profile from users table
   let profile: any = null;
   try {
     const { data } = await supabase
@@ -62,97 +60,200 @@ export default async function AccountPage() {
     (profile?.first_name && profile?.last_name ? `${profile.first_name} ${profile.last_name}` : 'User');
   
   return (
-    <div className="bg-cream-50 min-h-screen">
-      <div className="container-custom py-12">
-        <div className="bg-white rounded-2xl shadow-sm p-8">
-          {/* Account Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-8 border-b border-border">
-            <div className="flex items-center gap-4">
-              <div className="relative h-20 w-20 rounded-full overflow-hidden bg-forest-100">
-                {profile?.profile_image_url ? (
-                  <Image
-                    src={profile.profile_image_url}
-                    alt={fullName}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-forest-500 text-2xl font-medium">
-                    {fullName.charAt(0)}
-                  </div>
-                )}
-              </div>
-              <div>
-                <h1 className="text-2xl font-semibold text-forest-900">{fullName}</h1>
-                <p className="text-forest-600">{session.user.email}</p>
-              </div>
+    <div className="flex h-screen bg-gray-50 py-6">
+      {/* Sidebar */}
+      <div className="w-64 bg-white shadow-sm border-r border-gray-200">
+        <div className="p-6">
+          <div className="flex items-center gap-1 mb-6">
+            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 border-2 border-white shadow-sm">
+              {profile?.avatar_url ? (
+                <img 
+                  src={profile.avatar_url} 
+                  alt={fullName}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-purple-600 text-white text-sm font-medium">
+                  {fullName.charAt(0).toUpperCase()}
+                </div>
+              )}
             </div>
-            <div className="flex gap-4">
-              <Link href="/account/profile" className="btn-outline">
-                Edit Profile
-              </Link>
-              <form action="/auth/signout" method="post">
-                <button type="submit" className="btn-outline text-rose-600 border-rose-300 hover:bg-rose-50">
-                  Sign Out
-                </button>
-              </form>
+            <div>
+              <h3 className="font-semibold text-gray-900">{fullName}</h3>
+              <p className="text-sm text-gray-600">{session.user.email}</p>
             </div>
           </div>
+        </div>
 
-          {/* Tabs */}
-          <Tabs defaultValue="bookings" className="w-full">
-            <TabsList className="mb-6">
-              <TabsTrigger value="bookings">My Bookings</TabsTrigger>
-              <TabsTrigger value="favorites">Favorites</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="bookings">
-              <div className="space-y-6">
-                {bookings && bookings.length > 0 ? (
-                  bookings.map((booking) => (
-                    <BookingItem key={booking.id} booking={booking} />
-                  ))
-                ) : (
-                  <div className="text-center py-12 bg-cream-50 rounded-xl">
-                    <h3 className="text-lg font-medium text-forest-700 mb-2">You haven't made any bookings yet</h3>
-                    <p className="text-forest-600 mb-6">Explore our unique stays and find your perfect nature getaway</p>
-                    <Link href="/search" className="btn-primary">
-                      Explore Stays
-                    </Link>
+        {/* Menu Items */}
+        <nav className="px-4">
+          <div className="space-y-1">
+            <Link
+              href="/account"
+              className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg bg-purple-50 text-purple-700 border-l-4 border-purple-600"
+            >
+              <Grid className="h-5 w-5" />
+              Overview
+            </Link>
+            <Link
+              href="/account/landlord"
+              className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <Building className="h-5 w-5" />
+              Landlord
+            </Link>
+            <Link
+              href="/account/messages"
+              className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <MessageSquare className="h-5 w-5" />
+              Messages
+            </Link>
+            <Link
+              href="/account/favorites"
+              className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <Heart className="h-5 w-5" />
+              Favorites
+            </Link>
+            <Link
+              href="/account/bookings"
+              className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <Calendar className="h-5 w-5" />
+              Bookings
+            </Link>
+            <Link
+              href="/account/profile"
+              className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <User className="h-5 w-5" />
+              Profile
+            </Link>
+            <Link
+              href="/account/change-password"
+              className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <Settings className="h-5 w-5" />
+              Change password
+            </Link>
+            <Link
+              href="/account/communication"
+              className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <MessageSquare className="h-5 w-5" />
+              Communication
+            </Link>
+          </div>
+
+          {/* Sign Out Button */}
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <form action="/auth/signout" method="post">
+              <button 
+                type="submit" 
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+              >
+                <LogOut className="h-5 w-5" />
+                Log out
+              </button>
+            </form>
+          </div>
+        </nav>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto">
+        <div className="p-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="mb-8">
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">Overview</h1>
+              <p className="text-gray-600">Welcome back! Here's what's happening with your properties today.</p>
+            </div>
+
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <div className="bg-white p-6 rounded-lg border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Total Properties</p>
+                    <p className="text-2xl font-bold text-gray-900">0</p>
                   </div>
-                )}
+                  <div className="p-3 bg-purple-100 rounded-lg">
+                    <Building className="h-6 w-6 text-purple-600" />
+                  </div>
+                </div>
               </div>
-            </TabsContent>
-            
-            <TabsContent value="favorites">
-              {favorites && favorites.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {favorites.map((favorite) => (
-                    <ListingCard
-                      key={favorite.id}
-                      id={favorite.listings.id}
-                      slug={favorite.listings.slug}
-                      title={favorite.listings.title}
-                      location={favorite.listings.location}
-                      images={favorite.listings.images}
-                      pricePerNight={favorite.listings.price_per_night}
-                      rating={favorite.listings.avg_rating}
-                      isFavorited={true}
-                      onToggleFavorite={() => {}}  // This would be handled client-side
-                    />
+              <div className="bg-white p-6 rounded-lg border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Active Bookings</p>
+                    <p className="text-2xl font-bold text-gray-900">{bookings?.length || 0}</p>
+                  </div>
+                  <div className="p-3 bg-green-100 rounded-lg">
+                    <Calendar className="h-6 w-6 text-green-600" />
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white p-6 rounded-lg border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Total Revenue</p>
+                    <p className="text-2xl font-bold text-gray-900">€0</p>
+                  </div>
+                  <div className="p-3 bg-blue-100 rounded-lg">
+                    <Home className="h-6 w-6 text-blue-600" />
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white p-6 rounded-lg border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Messages</p>
+                    <p className="text-2xl font-bold text-gray-900">0</p>
+                  </div>
+                  <div className="p-3 bg-yellow-100 rounded-lg">
+                    <MessageSquare className="h-6 w-6 text-yellow-600" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Recent Bookings */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Bookings</h2>
+              {bookings && bookings.length > 0 ? (
+                <div className="space-y-4">
+                  {bookings.slice(0, 5).map((booking) => (
+                    <div key={booking.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-4">
+                        {booking.listings?.images?.[0] && (
+                          <Image
+                            src={booking.listings.images[0]}
+                            alt={booking.listings.title}
+                            width={60}
+                            height={60}
+                            className="rounded-lg object-cover"
+                          />
+                        )}
+                        <div>
+                          <h3 className="font-medium text-gray-900">{booking.listings?.title}</h3>
+                          <p className="text-sm text-gray-600">
+                            {new Date(booking.check_in_date).toLocaleDateString()} - {new Date(booking.check_out_date).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-medium text-gray-900">€{booking.total_price}</p>
+                        <p className="text-sm text-gray-600">{booking.status}</p>
+                      </div>
+                    </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12 bg-cream-50 rounded-xl">
-                  <h3 className="text-lg font-medium text-forest-700 mb-2">You haven't saved any favorites yet</h3>
-                  <p className="text-forest-600 mb-6">Click the heart icon on listings you love to save them here</p>
-                  <Link href="/search" className="btn-primary">
-                    Explore Stays
-                  </Link>
-                </div>
+                <p className="text-gray-600">No bookings yet</p>
               )}
-            </TabsContent>
-          </Tabs>
+            </div>
+          </div>
         </div>
       </div>
     </div>

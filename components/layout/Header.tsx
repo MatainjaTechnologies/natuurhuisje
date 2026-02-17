@@ -37,7 +37,7 @@ export function Header({ user: propUser }: HeaderProps) {
   const supabase = createClient();
   
   const [user, setUser] = useState<User | null>(propUser || null);
-  const [userProfile, setUserProfile] = useState<{ display_name: string } | null>(null);
+  const [userProfile, setUserProfile] = useState<{ display_name: string; avatar_url?: string } | null>(null);
 
   // Fetch user session on mount and when it changes
   useEffect(() => {
@@ -51,7 +51,7 @@ export function Header({ user: propUser }: HeaderProps) {
         // First try to get from database
         const { data: profile, error } = await supabase
           .from('users')
-          .select('display_name')
+          .select('display_name, avatar_url')
           .eq('auth_user_id', user.id)
           .single();
         
@@ -85,7 +85,7 @@ export function Header({ user: propUser }: HeaderProps) {
         const fetchProfile = async () => {
           const { data: profile, error } = await supabase
             .from('users')
-            .select('display_name')
+            .select('display_name, avatar_url')
             .eq('auth_user_id', session.user.id)
             .single();
           
@@ -716,36 +716,47 @@ export function Header({ user: propUser }: HeaderProps) {
             </div>
 
             <div className="flex items-center gap-3">
-              {user ? (
+              {!user ? (
                 <div className="flex items-center gap-3">
                   <Link
-                    href="/host"
-                    className="hidden md:block text-sm btn-outline"
+                    href="/login"
+                    style={{ background: "linear-gradient(135deg, #7B3FA0, #5B2D8E)" }}
                   >
-                    Beheer accommodaties
-                  </Link>
-                  <Link
-                    href="/account"
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-white transition-all hover:shadow-md"
-                    style={{
-                      background: "linear-gradient(135deg, #7B3FA0, #5B2D8E)",
-                    }}
-                  >
-                    <UserIcon className="h-4 w-4" />
-                    <span className="text-sm font-medium">
-                      {userProfile?.display_name || 'Account'}
-                    </span>
-                  </Link>
+                  Inloggen
+                </Link>
                 </div>
-              ) : (
+              ) : null}
+
+              {/* Desktop User Account */}
+              {user && (
                 <Link
-                  href="/login"
-                  className="hidden md:block text-sm font-semibold px-5 py-2.5 rounded-xl text-white transition-all hover:shadow-md hover:-translate-y-0.5"
+                  href="/account"
+                  className="hidden md:flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-xl text-white transition-all hover:shadow-md hover:-translate-y-0.5"
                   style={{
                     background: "linear-gradient(135deg, #7B3FA0, #5B2D8E)",
                   }}
                 >
-                  Inloggen
+                  {userProfile?.avatar_url ? (
+                    <img 
+                      src={userProfile.avatar_url} 
+                      alt={userProfile?.display_name || 'Account'}
+                      className="h-4 w-4 rounded-full object-cover"
+                      onError={(e) => {
+                        console.error('Avatar failed to load:', userProfile.avatar_url);
+                        console.error('Full user profile:', userProfile);
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  ) : (
+                    <img 
+                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.display_name || 'User')}&background=7B3FA0&color=fff&size=16`}
+                      alt={userProfile?.display_name || 'Account'}
+                      className="h-4 w-4 rounded-full object-cover"
+                    />
+                  )}
+                  <span className="text-sm font-medium">
+                    {userProfile?.display_name || 'Account'}
+                  </span>
                 </Link>
               )}
 
@@ -758,7 +769,23 @@ export function Header({ user: propUser }: HeaderProps) {
                     background: "linear-gradient(135deg, #7B3FA0, #5B2D8E)",
                   }}
                 >
-                  <UserIcon className="h-4 w-4" />
+                  {userProfile?.avatar_url ? (
+                    <img 
+                      src={userProfile.avatar_url} 
+                      alt={userProfile?.display_name || 'Account'}
+                      className="h-4 w-4 rounded-full object-cover"
+                      onError={(e) => {
+                        console.error('Mobile avatar failed to load:', userProfile.avatar_url);
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  ) : (
+                    <img 
+                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.display_name || 'User')}&background=7B3FA0&color=fff&size=16`}
+                      alt={userProfile?.display_name || 'Account'}
+                      className="h-4 w-4 rounded-full object-cover"
+                    />
+                  )}
                   <span className="text-sm font-medium">
                     {userProfile?.display_name?.split(' ')[0] || 'Account'}
                   </span>
