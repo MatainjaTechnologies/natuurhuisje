@@ -13,6 +13,7 @@ import {
   Home,
   Sparkles,
   Heart,
+  ChevronDown,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { SearchDock } from "@/components/SearchDock";
@@ -132,6 +133,15 @@ export function Header({ user: propUser }: HeaderProps) {
   const [pets, setPets] = useState("");
   const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState<'NL' | 'EN' | 'DE' | 'FR'>('NL');
+  const languageDropdownRef = useRef<HTMLDivElement>(null);
+
+  const languages = [
+    { code: 'EN', name: 'English', flag: '/flags/gb.svg' },
+    { code: 'DE', name: 'Deutsch', flag: '/flags/de.svg' },
+    { code: 'FR', name: 'Français', flag: '/flags/fr.svg' },
+  ] as const;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -181,6 +191,18 @@ export function Header({ user: propUser }: HeaderProps) {
     return () => {
       window.removeEventListener('openHeaderSearch', handleOpenHeaderSearch as EventListener);
     };
+  }, []);
+
+  // Close language dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (languageDropdownRef.current && !languageDropdownRef.current.contains(event.target as Node)) {
+        setShowLanguageDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   // Generate calendar months
@@ -716,6 +738,45 @@ export function Header({ user: propUser }: HeaderProps) {
             </div>
 
             <div className="flex items-center gap-3">
+              {/* Language Selector */}
+              <div className="relative" ref={languageDropdownRef}>
+                <button
+                  onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  {selectedLanguage === 'NL' ? (
+                    <img src="/flags/nl.svg" alt="NL" className="w-6 h-6 object-cover rounded-full" />
+                  ) : (
+                    <img 
+                      src={languages.find(lang => lang.code === selectedLanguage)?.flag} 
+                      alt={selectedLanguage} 
+                      className="w-6 h-6 object-cover rounded-full" 
+                    />
+                  )}
+                  <span className="text-sm font-semibold text-gray-900">{selectedLanguage}</span>
+                  <ChevronDown className="h-4 w-4 text-gray-600" />
+                </button>
+
+                {/* Language Dropdown */}
+                {showLanguageDropdown && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                    {languages.map((language) => (
+                      <button
+                        key={language.code}
+                        onClick={() => {
+                          setSelectedLanguage(language.code as 'EN' | 'DE' | 'FR');
+                          setShowLanguageDropdown(false);
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                      >
+                        <img src={language.flag} alt={language.code} className="w-6 h-6 object-cover rounded-full" />
+                        <span className="text-sm font-medium text-gray-900">{language.name} ({language.code})</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               {!user ? (
                 <div className="flex items-center gap-3">
                   <Link
