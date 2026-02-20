@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import { User } from "@supabase/supabase-js";
 import {
   Menu,
@@ -33,6 +35,9 @@ interface Suggestion {
 }
 
 export function Header({ user: propUser }: HeaderProps) {
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
   const dateInputRef = useRef<HTMLInputElement>(null);
   const lightpickRef = useRef<any>(null);
   const supabase = createClient();
@@ -134,14 +139,20 @@ export function Header({ user: propUser }: HeaderProps) {
   const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<'NL' | 'EN' | 'DE' | 'FR'>('NL');
   const languageDropdownRef = useRef<HTMLDivElement>(null);
 
   const languages = [
-    { code: 'EN', name: 'English', flag: '/flags/gb.svg' },
-    { code: 'DE', name: 'Deutsch', flag: '/flags/de.svg' },
-    { code: 'FR', name: 'Français', flag: '/flags/fr.svg' },
+    { code: 'nl', name: 'Nederlands', flag: '/flags/nl.svg' },
+    { code: 'en', name: 'English', flag: '/flags/gb.svg' },
+    { code: 'de', name: 'Deutsch', flag: '/flags/de.svg' },
+    { code: 'fr', name: 'Français', flag: '/flags/fr.svg' },
   ] as const;
+
+  const handleLanguageChange = (newLocale: string) => {
+    const currentPath = pathname.replace(`/${locale}`, '');
+    router.push(`/${newLocale}${currentPath}`);
+    setShowLanguageDropdown(false);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -744,16 +755,12 @@ export function Header({ user: propUser }: HeaderProps) {
                   onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
                 >
-                  {selectedLanguage === 'NL' ? (
-                    <img src="/flags/nl.svg" alt="NL" className="w-6 h-6 object-cover rounded-full" />
-                  ) : (
-                    <img 
-                      src={languages.find(lang => lang.code === selectedLanguage)?.flag} 
-                      alt={selectedLanguage} 
-                      className="w-6 h-6 object-cover rounded-full" 
-                    />
-                  )}
-                  <span className="text-sm font-semibold text-gray-900">{selectedLanguage}</span>
+                  <img 
+                    src={languages.find(lang => lang.code === locale)?.flag} 
+                    alt={locale.toUpperCase()} 
+                    className="w-6 h-6 object-cover rounded-full" 
+                  />
+                  <span className="text-sm font-semibold text-gray-900">{locale.toUpperCase()}</span>
                   <ChevronDown className="h-4 w-4 text-gray-600" />
                 </button>
 
@@ -763,14 +770,13 @@ export function Header({ user: propUser }: HeaderProps) {
                     {languages.map((language) => (
                       <button
                         key={language.code}
-                        onClick={() => {
-                          setSelectedLanguage(language.code as 'EN' | 'DE' | 'FR');
-                          setShowLanguageDropdown(false);
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                        onClick={() => handleLanguageChange(language.code)}
+                        className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors ${
+                          locale === language.code ? 'bg-purple-50' : ''
+                        }`}
                       >
                         <img src={language.flag} alt={language.code} className="w-6 h-6 object-cover rounded-full" />
-                        <span className="text-sm font-medium text-gray-900">{language.name} ({language.code})</span>
+                        <span className="text-sm font-medium text-gray-900">{language.name} ({language.code.toUpperCase()})</span>
                       </button>
                     ))}
                   </div>
@@ -780,19 +786,24 @@ export function Header({ user: propUser }: HeaderProps) {
               {!user ? (
                 <div className="flex items-center gap-3">
                   <Link
-                    href="/login"
-                    className="text-sm font-semibold px-5 py-2.5 rounded-xl text-white transition-all hover:shadow-md hover:-translate-y-0.5"
-                    style={{ background: "linear-gradient(135deg, #7B3FA0, #5B2D8E)" }}
+                    href={`/${locale}/host`}
+                    className="text-sm font-semibold px-4 py-2 rounded-lg text-gray-900 hover:bg-gray-100 transition-colors"
                   >
-                  Inloggen
-                </Link>
+                    Verhuren
+                  </Link>
+                  <Link
+                    href={`/${locale}/login`}
+                    className="text-sm font-semibold px-4 py-2 rounded-lg text-gray-900 hover:bg-gray-100 transition-colors"
+                  >
+                    Aanmelden
+                  </Link>
                 </div>
               ) : null}
 
               {/* Desktop User Account */}
               {user && (
                 <Link
-                  href="/account"
+                  href={`/${locale}/account`}
                   className="hidden md:flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-xl text-white transition-all hover:shadow-md hover:-translate-y-0.5"
                   style={{
                     background: "linear-gradient(135deg, #7B3FA0, #5B2D8E)",
@@ -825,7 +836,7 @@ export function Header({ user: propUser }: HeaderProps) {
               {/* Mobile User Account */}
               {user && (
                 <Link
-                  href="/account"
+                  href={`/${locale}/account`}
                   className="md:hidden flex items-center gap-2 px-3 py-2 rounded-xl text-white transition-all hover:shadow-md"
                   style={{
                     background: "linear-gradient(135deg, #7B3FA0, #5B2D8E)",
