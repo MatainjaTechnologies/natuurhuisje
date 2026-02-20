@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
 import { User } from "@supabase/supabase-js";
 import {
   Menu,
@@ -35,15 +34,23 @@ interface Suggestion {
 }
 
 export function Header({ user: propUser }: HeaderProps) {
-  const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const dateInputRef = useRef<HTMLInputElement>(null);
   const lightpickRef = useRef<any>(null);
   const supabase = createClient();
   
+  const [locale, setLocale] = useState<string>('nl');
   const [user, setUser] = useState<User | null>(propUser || null);
   const [userProfile, setUserProfile] = useState<{ display_name: string; avatar_url?: string } | null>(null);
+
+  // Load locale from localStorage on mount
+  useEffect(() => {
+    const savedLocale = localStorage.getItem('locale');
+    if (savedLocale) {
+      setLocale(savedLocale);
+    }
+  }, []);
 
   // Fetch user session on mount and when it changes
   useEffect(() => {
@@ -149,8 +156,8 @@ export function Header({ user: propUser }: HeaderProps) {
   ] as const;
 
   const handleLanguageChange = (newLocale: string) => {
-    const currentPath = pathname.replace(`/${locale}`, '');
-    router.push(`/${newLocale}${currentPath}`);
+    setLocale(newLocale);
+    localStorage.setItem('locale', newLocale);
     setShowLanguageDropdown(false);
   };
 
@@ -748,20 +755,25 @@ export function Header({ user: propUser }: HeaderProps) {
               )}
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
+              {/* Heart Icon */}
+              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                <Heart className="h-5 w-5 text-gray-700" />
+              </button>
+
               {/* Language Selector */}
               <div className="relative" ref={languageDropdownRef}>
                 <button
                   onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="flex items-center gap-1.5 hover:bg-gray-100 px-2 py-1.5 rounded-lg transition-colors"
                 >
                   <img 
                     src={languages.find(lang => lang.code === locale)?.flag} 
                     alt={locale.toUpperCase()} 
-                    className="w-6 h-6 object-cover rounded-full" 
+                    className="w-5 h-5 object-cover rounded-full" 
                   />
-                  <span className="text-sm font-semibold text-gray-900">{locale.toUpperCase()}</span>
-                  <ChevronDown className="h-4 w-4 text-gray-600" />
+                  <span className="text-sm font-medium text-gray-900">{locale.toUpperCase()}</span>
+                  <ChevronDown className="h-3.5 w-3.5 text-gray-600" />
                 </button>
 
                 {/* Language Dropdown */}
@@ -783,28 +795,26 @@ export function Header({ user: propUser }: HeaderProps) {
                 )}
               </div>
 
+              {/* Rent out and To register buttons / User Account */}
               {!user ? (
-                <div className="flex items-center gap-3">
+                <>
                   <Link
-                    href={`/${locale}/host`}
-                    className="text-sm font-semibold px-4 py-2 rounded-lg text-gray-900 hover:bg-gray-100 transition-colors"
+                    href={`/${locale}/login`}
+                    className="text-sm font-medium px-4 py-2 rounded-lg text-gray-900 hover:bg-gray-100 transition-colors"
                   >
-                    Verhuren
+                    Rent out
                   </Link>
                   <Link
                     href={`/${locale}/login`}
-                    className="text-sm font-semibold px-4 py-2 rounded-lg text-gray-900 hover:bg-gray-100 transition-colors"
+                    className="text-sm font-medium px-4 py-2 rounded-lg text-gray-900 hover:bg-gray-100 transition-colors"
                   >
-                    Aanmelden
+                    To register
                   </Link>
-                </div>
-              ) : null}
-
-              {/* Desktop User Account */}
-              {user && (
+                </>
+              ) : (
                 <Link
                   href={`/${locale}/account`}
-                  className="hidden md:flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-xl text-white transition-all hover:shadow-md hover:-translate-y-0.5"
+                  className="flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg text-white transition-all hover:shadow-md"
                   style={{
                     background: "linear-gradient(135deg, #7B3FA0, #5B2D8E)",
                   }}
@@ -816,7 +826,6 @@ export function Header({ user: propUser }: HeaderProps) {
                       className="h-4 w-4 rounded-full object-cover"
                       onError={(e) => {
                         console.error('Avatar failed to load:', userProfile.avatar_url);
-                        console.error('Full user profile:', userProfile);
                         e.currentTarget.style.display = 'none';
                       }}
                     />
@@ -827,39 +836,10 @@ export function Header({ user: propUser }: HeaderProps) {
                       className="h-4 w-4 rounded-full object-cover"
                     />
                   )}
-                  <span className="text-sm font-medium">
+                  <span className="hidden md:inline">
                     {userProfile?.display_name || 'Account'}
                   </span>
-                </Link>
-              )}
-
-              {/* Mobile User Account */}
-              {user && (
-                <Link
-                  href={`/${locale}/account`}
-                  className="md:hidden flex items-center gap-2 px-3 py-2 rounded-xl text-white transition-all hover:shadow-md"
-                  style={{
-                    background: "linear-gradient(135deg, #7B3FA0, #5B2D8E)",
-                  }}
-                >
-                  {userProfile?.avatar_url ? (
-                    <img 
-                      src={userProfile.avatar_url} 
-                      alt={userProfile?.display_name || 'Account'}
-                      className="h-4 w-4 rounded-full object-cover"
-                      onError={(e) => {
-                        console.error('Mobile avatar failed to load:', userProfile.avatar_url);
-                        e.currentTarget.style.display = 'none';
-                      }}
-                    />
-                  ) : (
-                    <img 
-                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.display_name || 'User')}&background=7B3FA0&color=fff&size=16`}
-                      alt={userProfile?.display_name || 'Account'}
-                      className="h-4 w-4 rounded-full object-cover"
-                    />
-                  )}
-                  <span className="text-sm font-medium">
+                  <span className="md:hidden">
                     {userProfile?.display_name?.split(' ')[0] || 'Account'}
                   </span>
                 </Link>
