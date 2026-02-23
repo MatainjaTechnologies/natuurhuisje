@@ -21,9 +21,15 @@ const poppins = Poppins({
   weight: ['400', '500', '600', '700'],
 })
 
-export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
-  const dict = await getDictionary(lang);
+  
+  // Validate that lang is a supported locale
+  if (!i18n.locales.includes(lang as Locale)) {
+    throw new Error(`Unsupported locale: ${lang}`);
+  }
+  
+  const dict = await getDictionary(lang as Locale);
   
   return {
     title: 'natuurhuisje - Find your perfect getaway in nature',
@@ -43,18 +49,25 @@ export default async function RootLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ lang: Locale }>;
+  params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
   
+  // Validate that lang is a supported locale
+  if (!i18n.locales.includes(lang as Locale)) {
+    throw new Error(`Unsupported locale: ${lang}`);
+  }
+  
+  const validatedLang = lang as Locale;
+  
   return (
-    <html lang={lang} className={[inter.variable, poppins.variable].join(' ')}>
+    <html lang={validatedLang} className={[inter.variable, poppins.variable].join(' ')}>
       <body className="font-sans antialiased">
-        <Header lang={lang} />
+        <Header lang={validatedLang} />
         <main className="min-h-screen pt-20">
           {children}
         </main>
-        <Footer lang={lang} />
+        <Footer lang={validatedLang} />
       </body>
     </html>
   )
