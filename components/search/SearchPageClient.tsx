@@ -4,14 +4,16 @@ import { useState } from 'react';
 import { ListingCard } from '@/components/ListingCard';
 import { MapModal } from './MapModal';
 import { Map } from 'lucide-react';
+import type { Locale } from '@/i18n/config';
 
 interface SearchPageClientProps {
   listings: any[];
   error: any;
   location?: string;
+  lang: Locale;
 }
 
-export function SearchPageClient({ listings, error, location }: SearchPageClientProps) {
+export function SearchPageClient({ listings, error, location, lang }: SearchPageClientProps) {
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [displayCount, setDisplayCount] = useState(15);
 
@@ -32,10 +34,10 @@ export function SearchPageClient({ listings, error, location }: SearchPageClient
         
         <button
           onClick={() => setIsMapOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 border border-neutral-900 text-neutral-900 rounded-lg font-semibold hover:bg-neutral-50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
         >
-          <Map size={20} />
-          <span className="hidden sm:inline">Map</span>
+          <Map className="h-4 w-4" />
+          <span>Show map</span>
         </button>
       </div>
       
@@ -57,6 +59,7 @@ export function SearchPageClient({ listings, error, location }: SearchPageClient
               images={listing.images}
               pricePerNight={listing.price_per_night}
               rating={listing.avg_rating}
+              lang={lang}
             />
           ))
         ) : !error ? (
