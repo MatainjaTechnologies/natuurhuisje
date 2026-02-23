@@ -506,32 +506,6 @@ function LocationStep({ data, updateData, onNext }: any) {
         >
           Next
         </button>
-        <p>Include at least 10 photos, including at least one of the exterior of the nature cottage. Also show the interior and surroundings, so guests get a good idea. Make sure there are no logos or watermarks on the photos.</p>
-        <a href="#" className="text-[#5b2d8e] underline font-medium">Read more tips on adding photos here</a>
-        {showMore && (
-          <div>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet nulla auctor, vestibulum magna sed, convallis ex.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet nulla auctor, vestibulum magna sed, convallis ex.</p>
-          </div>
-        )}
-        <button onClick={() => setShowMore(!showMore)} className="text-[#5b2d8e] underline font-medium">
-          {showMore ? 'Show less' : 'Show more'}
-        </button>
-      </div>
-
-      <div className="border-2 border-dashed border-gray-300 rounded-2xl p-12 flex flex-col items-center justify-center text-center hover:border-[#5b2d8e] transition-colors bg-gray-50/50">
-        <button className="bg-[#5b2d8e] text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2 hover:bg-[#4a2475] transition-colors shadow-sm">
-          <span className="text-xl">↑</span> Upload photos
-        </button>
-      </div>
-
-      <div className="pt-8 flex justify-end border-t border-gray-100">
-        <button 
-          onClick={onNext}
-          className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors"
-        >
-          Next
-        </button>
       </div>
     </div>
   );
@@ -698,6 +672,46 @@ function ExtraCostsModal({ isOpen, onClose, selected, onUpdate }: any) {
           <button onClick={handleSave} className="px-6 py-2 rounded-lg bg-[#5b2d8e] text-white font-medium hover:bg-[#4a2475]">Add</button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function PhotosStep({ data, updateData, onNext }: any) {
+  return (
+    <div className="space-y-8 animate-fade-in">
+      <h2 className="text-3xl font-serif text-[#1D331D]">Photos</h2>
+      <p className="text-xl font-serif text-[#1D331D] italic">Add photos of your nature house</p>
+      
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-2">
+        <p className="text-sm font-medium text-blue-900">Photo requirements:</p>
+        <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+          <li>Include at least 10 photos</li>
+          <li>Show the exterior of the nature cottage</li>
+          <li>Display interior rooms and amenities</li>
+          <li>Include surroundings and nature areas</li>
+          <li>No logos or watermarks on photos</li>
+        </ul>
+        <a href="#" className="text-sm text-blue-600 underline hover:text-blue-800">Read more tips on adding photos here</a>
+      </div>
+      
+      <div className="space-y-4">
+        <label className="block text-sm font-bold text-[#1D331D]">Photos</label>
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+          <div className="text-gray-400">
+            <p>Photo upload functionality will be implemented here</p>
+            <p className="text-sm mt-2">For now, this is a placeholder component</p>
+          </div>
+        </div>
+      </div>
+      
+      <div className="pt-8 flex justify-end border-t border-gray-100">
+      <button 
+        onClick={onNext}
+        className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors flex items-center gap-2"
+      >
+        Next
+      </button>
+    </div>
     </div>
   );
 }
