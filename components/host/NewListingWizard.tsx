@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { 
   LayoutList, 
   MapPin, 
@@ -14,7 +14,9 @@ import {
   Leaf, 
   ClipboardList,
   ChevronRight,
-  CheckCircle
+  CheckCircle,
+  X,
+  Plus
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -677,6 +679,56 @@ function ExtraCostsModal({ isOpen, onClose, selected, onUpdate }: any) {
 }
 
 function PhotosStep({ data, updateData, onNext }: any) {
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const filesArray = Array.from(event.target.files);
+      setSelectedFiles((prevFiles) => [...prevFiles, ...filesArray]);
+
+      filesArray.forEach((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreviews((prevPreviews) => [...prevPreviews, reader.result as string]);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  }, []);
+
+  const handleRemoveImage = useCallback((index: number) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    setImagePreviews((prevPreviews) => prevPreviews.filter((_, i) => i !== index));
+  }, []);
+
+  const handleDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  }, []);
+
+  const handleDrop = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.dataTransfer.files) {
+      const filesArray = Array.from(event.dataTransfer.files);
+      setSelectedFiles((prevFiles) => [...prevFiles, ...filesArray]);
+
+      filesArray.forEach((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreviews((prevPreviews) => [...prevPreviews, reader.result as string]);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  }, []);
+
+  const handleClickUpload = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
   return (
     <div className="space-y-8 animate-fade-in">
       <h2 className="text-3xl font-serif text-[#1D331D]">Photos</h2>
@@ -695,23 +747,81 @@ function PhotosStep({ data, updateData, onNext }: any) {
       </div>
       
       <div className="space-y-4">
-        <label className="block text-sm font-bold text-[#1D331D]">Photos</label>
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-          <div className="text-gray-400">
-            <p>Photo upload functionality will be implemented here</p>
-            <p className="text-sm mt-2">For now, this is a placeholder component</p>
+        <label className="block text-sm font-bold text-[#1D331D]">
+          Photos ({selectedFiles.length} selected)
+        </label>
+        
+        {/* Upload Area */}
+        <div 
+          className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-gray-400 transition-colors"
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onClick={handleClickUpload}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <div className="text-gray-500">
+            <Camera className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+            <p className="text-lg font-medium">Click to upload or drag and drop</p>
+            <p className="text-sm mt-2">PNG, JPG, GIF up to 10MB each</p>
           </div>
         </div>
+
+        {/* Image Previews */}
+        {imagePreviews.length > 0 && (
+          <div className="mt-6">
+            <h3 className="text-sm font-medium text-gray-700 mb-4">Selected Photos</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {imagePreviews.map((preview, index) => (
+                <div key={index} className="relative group">
+                  <div className="aspect-square rounded-lg overflow-hidden border border-gray-200">
+                    <img
+                      src={preview}
+                      alt={`Preview ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <button
+                    onClick={() => handleRemoveImage(index)}
+                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                  <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                    {index + 1}
+                  </div>
+                </div>
+              ))}
+              
+              {/* Add More Photos Button */}
+              <div 
+                className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-gray-400 transition-colors"
+                onClick={handleClickUpload}
+              >
+                <div className="text-center">
+                  <Plus className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-500">Add more</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
       
       <div className="pt-8 flex justify-end border-t border-gray-100">
-      <button 
-        onClick={onNext}
-        className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors flex items-center gap-2"
-      >
-        Next
-      </button>
-    </div>
+        <button 
+          onClick={onNext}
+          className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors flex items-center gap-2"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }
