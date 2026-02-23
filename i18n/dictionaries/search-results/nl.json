@@ -1,0 +1,49 @@
+{
+  "title": "Zoekresultaten",
+  "filters": {
+    "title": "Filters",
+    "priceRange": "Prijsbereik",
+    "perNight": "per nacht",
+    "propertyType": "Type accommodatie",
+    "amenities": "Voorzieningen",
+    "rating": "Beoordeling",
+    "starsAndUp": "sterren en hoger",
+    "clearAll": "Alles wissen",
+    "apply": "Filters toepassen"
+  },
+  "sort": {
+    "sortBy": "Sorteer op",
+    "recommended": "Aanbevolen",
+    "priceLowToHigh": "Prijs: Laag naar Hoog",
+    "priceHighToLow": "Prijs: Hoog naar Laag",
+    "rating": "Beoordeling",
+    "newest": "Nieuwste"
+  },
+  "results": {
+    "found": "accommodaties gevonden",
+    "noResults": "Geen accommodaties gevonden",
+    "noResultsDescription": "Probeer je filters of zoekcriteria aan te passen",
+    "loading": "Accommodaties laden...",
+    "showingResults": "Weergave",
+    "of": "van"
+  },
+  "propertyTypes": {
+    "cabin": "Hut",
+    "treehouse": "Boomhut",
+    "cottage": "Huisje",
+    "villa": "Villa",
+    "chalet": "Chalet",
+    "tent": "Tent",
+    "yurt": "Yurt"
+  },
+  "amenities": {
+    "wifi": "WiFi",
+    "parking": "Parkeren",
+    "kitchen": "Keuken",
+    "pool": "Zwembad",
+    "petFriendly": "Huisdiervriendelijk",
+    "fireplace": "Open haard",
+    "hottub": "Hottub",
+    "bbq": "BBQ"
+  }
+}

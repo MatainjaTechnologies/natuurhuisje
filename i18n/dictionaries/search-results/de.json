@@ -1,0 +1,49 @@
+{
+  "title": "Suchergebnisse",
+  "filters": {
+    "title": "Filter",
+    "priceRange": "Preisspanne",
+    "perNight": "pro Nacht",
+    "propertyType": "Unterkunftsart",
+    "amenities": "Ausstattung",
+    "rating": "Bewertung",
+    "starsAndUp": "Sterne und höher",
+    "clearAll": "Alle löschen",
+    "apply": "Filter anwenden"
+  },
+  "sort": {
+    "sortBy": "Sortieren nach",
+    "recommended": "Empfohlen",
+    "priceLowToHigh": "Preis: Niedrig bis Hoch",
+    "priceHighToLow": "Preis: Hoch bis Niedrig",
+    "rating": "Bewertung",
+    "newest": "Neueste"
+  },
+  "results": {
+    "found": "Unterkünfte gefunden",
+    "noResults": "Keine Unterkünfte gefunden",
+    "noResultsDescription": "Versuchen Sie, Ihre Filter oder Suchkriterien anzupassen",
+    "loading": "Unterkünfte werden geladen...",
+    "showingResults": "Anzeige",
+    "of": "von"
+  },
+  "propertyTypes": {
+    "cabin": "Hütte",
+    "treehouse": "Baumhaus",
+    "cottage": "Ferienhaus",
+    "villa": "Villa",
+    "chalet": "Chalet",
+    "tent": "Zelt",
+    "yurt": "Jurte"
+  },
+  "amenities": {
+    "wifi": "WLAN",
+    "parking": "Parkplatz",
+    "kitchen": "Küche",
+    "pool": "Pool",
+    "petFriendly": "Haustierfreundlich",
+    "fireplace": "Kamin",
+    "hottub": "Whirlpool",
+    "bbq": "Grill"
+  }
+}

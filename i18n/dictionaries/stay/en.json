@@ -1,0 +1,95 @@
+{
+  "details": {
+    "guests": "guests",
+    "bedrooms": "bedrooms",
+    "beds": "beds",
+    "bathrooms": "bathrooms",
+    "night": "night",
+    "nights": "nights",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "reserve": "Reserve",
+    "bookNow": "Book Now",
+    "checkAvailability": "Check Availability",
+    "instantBooking": "Instant Booking",
+    "hostedBy": "Hosted by",
+    "superhost": "Superhost"
+  },
+  "sections": {
+    "overview": "Overview",
+    "amenities": "Amenities",
+    "location": "Location",
+    "reviews": "Reviews",
+    "availability": "Availability",
+    "houseRules": "House Rules",
+    "cancellationPolicy": "Cancellation Policy"
+  },
+  "amenities": {
+    "title": "What this place offers",
+    "showAll": "Show all amenities",
+    "wifi": "WiFi",
+    "parking": "Free parking",
+    "kitchen": "Kitchen",
+    "pool": "Pool",
+    "petFriendly": "Pet friendly",
+    "fireplace": "Fireplace",
+    "hottub": "Hot tub",
+    "bbq": "BBQ grill",
+    "tv": "TV",
+    "heating": "Heating",
+    "airConditioning": "Air conditioning",
+    "washer": "Washer",
+    "dryer": "Dryer"
+  },
+  "booking": {
+    "pricePerNight": "per night",
+    "totalPrice": "Total",
+    "serviceFee": "Service fee",
+    "cleaningFee": "Cleaning fee",
+    "taxes": "Taxes",
+    "selectDates": "Select dates",
+    "guests": "Guests",
+    "youWontBeChargedYet": "You won't be charged yet"
+  },
+  "reviews": {
+    "reviews": "reviews",
+    "rating": "Rating",
+    "cleanliness": "Cleanliness",
+    "accuracy": "Accuracy",
+    "checkIn": "Check-in",
+    "communication": "Communication",
+    "location": "Location",
+    "value": "Value",
+    "showAllReviews": "Show all reviews",
+    "noReviews": "No reviews yet",
+    "beTheFirst": "Be the first to review this property"
+  },
+  "location": {
+    "exactLocation": "Exact location provided after booking",
+    "nearby": "Nearby attractions"
+  },
+  "houseRules": {
+    "checkInAfter": "Check-in after",
+    "checkOutBefore": "Check-out before",
+    "maxGuests": "Maximum guests",
+    "smokingAllowed": "Smoking allowed",
+    "petsAllowed": "Pets allowed",
+    "eventsAllowed": "Events allowed",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "host": {
+    "about": "About the host",
+    "joinedIn": "Joined in",
+    "responseRate": "Response rate",
+    "responseTime": "Response time",
+    "contactHost": "Contact host"
+  },
+  "safety": {
+    "title": "Safety & property",
+    "smokeAlarm": "Smoke alarm",
+    "carbonMonoxideAlarm": "Carbon monoxide alarm",
+    "firstAidKit": "First aid kit",
+    "fireExtinguisher": "Fire extinguisher"
+  }
+}

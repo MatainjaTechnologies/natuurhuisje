@@ -1,0 +1,49 @@
+{
+  "login": {
+    "title": "Bon retour",
+    "subtitle": "Connectez-vous à votre compte",
+    "email": "Adresse e-mail",
+    "emailPlaceholder": "Entrez votre e-mail",
+    "password": "Mot de passe",
+    "passwordPlaceholder": "Entrez votre mot de passe",
+    "rememberMe": "Se souvenir de moi",
+    "forgotPassword": "Mot de passe oublié?",
+    "loginButton": "Se connecter",
+    "noAccount": "Vous n'avez pas de compte?",
+    "signUp": "S'inscrire",
+    "orContinueWith": "Ou continuer avec",
+    "errors": {
+      "invalidCredentials": "E-mail ou mot de passe invalide",
+      "emailRequired": "L'e-mail est requis",
+      "passwordRequired": "Le mot de passe est requis"
+    }
+  },
+  "register": {
+    "title": "Créez votre compte",
+    "subtitle": "Rejoignez natuurhuisje aujourd'hui",
+    "firstName": "Prénom",
+    "firstNamePlaceholder": "Entrez votre prénom",
+    "lastName": "Nom de famille",
+    "lastNamePlaceholder": "Entrez votre nom de famille",
+    "email": "Adresse e-mail",
+    "emailPlaceholder": "Entrez votre e-mail",
+    "password": "Mot de passe",
+    "passwordPlaceholder": "Créez un mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
+    "agreeToTerms": "J'accepte les",
+    "termsOfService": "Conditions d'utilisation",
+    "and": "et",
+    "privacyPolicy": "Politique de confidentialité",
+    "registerButton": "Créer un compte",
+    "haveAccount": "Vous avez déjà un compte?",
+    "signIn": "Se connecter",
+    "orContinueWith": "Ou continuer avec",
+    "errors": {
+      "emailRequired": "L'e-mail est requis",
+      "passwordRequired": "Le mot de passe est requis",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "termsRequired": "Vous devez accepter les conditions"
+    }
+  }
+}

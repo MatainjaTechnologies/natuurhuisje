@@ -1,0 +1,63 @@
+{
+  "header": {
+    "banner": {
+      "nature": "Midden in de natuur",
+      "away": "Weg van de massa",
+      "contribute": "Draag bij aan natuurprojecten"
+    },
+    "search": {
+      "where": "Waar of wat?",
+      "wherePlaceholder": "Bijvoorbeeld Amsterdam, Tiny House",
+      "dates": "Kies datums",
+      "people": "personen",
+      "guests": "gasten",
+      "search": "Zoeken",
+      "next": "Volgende",
+      "clearDates": "Datums wissen",
+      "selectPeople": "Selecteer aantal personen",
+      "person": "persoon",
+      "persons": "personen",
+      "nights": "nachten",
+      "selectDates": "Selecteer datums",
+      "showNextMonths": "Toon volgende maanden",
+      "from": "van",
+      "to": "tot"
+    },
+    "days": {
+      "mon": "Ma",
+      "tue": "Di",
+      "wed": "Wo",
+      "thu": "Do",
+      "fri": "Vr",
+      "sat": "Za",
+      "sun": "Zo"
+    },
+    "account": "Account",
+    "login": "Inloggen",
+    "logout": "Uitloggen",
+    "register": "Registreren"
+  },
+  "home": {
+    "hero": {
+      "title": "Vind jouw perfecte uitje in de natuur",
+      "subtitle": "Ontdek unieke accommodaties in de mooiste natuurlijke omgevingen"
+    },
+    "featured": "Uitgelichte Verblijven",
+    "destinations": "Populaire Bestemmingen",
+    "categories": "Bladeren op Categorie"
+  },
+  "footer": {
+    "about": "Over ons",
+    "contact": "Contact",
+    "terms": "Algemene voorwaarden",
+    "privacy": "Privacybeleid",
+    "rights": "Alle rechten voorbehouden"
+  },
+  "common": {
+    "perNight": "per nacht",
+    "viewDetails": "Bekijk Details",
+    "bookNow": "Boek Nu",
+    "loading": "Laden...",
+    "error": "Er is een fout opgetreden"
+  }
+}

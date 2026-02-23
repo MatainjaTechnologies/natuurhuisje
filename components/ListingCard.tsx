@@ -4,6 +4,7 @@ import Link from 'next/link';
 import UnoptimizedImage from './UnoptimizedImage';
 import { Heart, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
+import type { Locale } from '@/i18n/config';
 
 interface ListingCardProps {
   id: string;
@@ -16,6 +17,7 @@ interface ListingCardProps {
   isFavorited?: boolean;
   onToggleFavorite?: (id: string) => void;
   showImageCarousel?: boolean;
+  lang: Locale;
 }
 
 export function ListingCard({
@@ -29,6 +31,7 @@ export function ListingCard({
   isFavorited = false,
   onToggleFavorite,
   showImageCarousel = true,
+  lang,
 }: ListingCardProps) {
   const [favorited, setFavorited] = useState(isFavorited);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -70,7 +73,7 @@ export function ListingCard({
 
   return (
     <Link
-      href={`/stay/${slug}`}
+      href={`/${lang}/stay/${slug}`}
       className="group block"
     >
       <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">

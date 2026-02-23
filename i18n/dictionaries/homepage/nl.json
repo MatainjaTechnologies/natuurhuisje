@@ -1,0 +1,58 @@
+{
+  "hero": {
+    "badge": "Ontdek 500+ unieke natuurverblijven",
+    "title": "De natuur opent je ogen.",
+    "subtitle": "Vind hier jouw vakantiehuisje midden in de natuur.",
+    "description": "Boek unieke hutten, boomhutten en meer, omgeven door de mooiste natuurgebieden",
+    "trustBadges": {
+      "cancellation": "Gratis annulering",
+      "verified": "Geverifieerde accommodaties",
+      "support": "24/7 ondersteuning"
+    }
+  },
+  "sections": {
+    "oftenBooked": "Vaak geboekt op natuurhuisje",
+    "viewAll": "Bekijk alles",
+    "exploreByDestination": "Verken per bestemming",
+    "mostVisitedCountries": "Meest bezochte landen",
+    "popularRegions": "Populaire regio's",
+    "recentlyViewed": "Recent bekeken",
+    "continueWhereYouLeftOff": "Ga verder waar je gebleven was",
+    "browseMore": "Bekijk meer accommodaties"
+  },
+  "rentOut": {
+    "title": "Wil je jouw plek verhuren?",
+    "conservation": {
+      "title": "Draag bij aan het behoud van de natuur",
+      "description": "Met jouw boeking draag je bij aan lokale natuurprojecten."
+    },
+    "targetGroup": {
+      "title": "Bereik de juiste doelgroep",
+      "description": "Door deel uit te maken van een exclusief aanbod bereik je de juiste mensen."
+    },
+    "youDecide": {
+      "title": "Jij bepaalt",
+      "description": "Behoud volledige controle over je beschikbaarheid, tarieven en hoe je communiceert met gasten."
+    },
+    "moreInfo": "Meer informatie"
+  },
+  "biodiversity": {
+    "title": "Samen beschermen we de lokale biodiversiteit",
+    "description": "Op deze manier helpen we het evenwicht tussen mens en natuur te herstellen.",
+    "moreInfo": "Meer informatie"
+  },
+  "holidayHome": {
+    "title": "Vakantiehuisje in het hart van de natuur",
+    "paragraph1": "In een natuurhuisje kun je heerlijk ontsnappen aan de drukte van alledag en volledig tot rust komen, omringd door de natuur. Een natuurhuisje is een plek waar je met vrienden samenkomt om het leven te vieren en waar je je (klein)kinderen kunt laten kennismaken met het prachtige Europese platteland. Het is het ideale startpunt voor het verkennen van glooiende heuvels, uitgestrekte weiden of torenhoge bergen. Je kunt vissen, mountainbiken, wandelen of gewoon ontspannen met een boek op een regenachtige dag.",
+    "paragraph2": "Van hutten tot villa's, natuurhuisjes zijn er in alle soorten en maten. Ze doorstaan stormen en bevinden zich soms in onherbergzame streken, maar bieden jou, de vakantieganger, altijd een aangename plek om te verblijven. Een natuurhuisje is niet alleen een plek om te slapen tijdens je reis; het is een manier om je vakantie door te brengen...",
+    "moreAboutUs": "Meer over ons"
+  },
+  "newsletter": {
+    "title": "Ontdek nog meer idyllische plekjes in de natuur.",
+    "firstNamePlaceholder": "Je voornaam",
+    "emailPlaceholder": "Je e-mailadres",
+    "subscribe": "Inschrijven voor nieuwsbrief",
+    "privacyText": "Ik ga akkoord met het",
+    "privacyLink": "privacybeleid"
+  }
+}

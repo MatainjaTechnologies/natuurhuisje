@@ -1,0 +1,63 @@
+{
+  "header": {
+    "banner": {
+      "nature": "In the middle of nature",
+      "away": "Away from the crowds",
+      "contribute": "Contribute to nature projects"
+    },
+    "search": {
+      "where": "Where or what?",
+      "wherePlaceholder": "For example Amsterdam, Tiny House",
+      "dates": "Choose dates",
+      "people": "people",
+      "guests": "guests",
+      "search": "Search",
+      "next": "Next",
+      "clearDates": "Clear dates",
+      "selectPeople": "Select number of people",
+      "person": "person",
+      "persons": "persons",
+      "nights": "nights",
+      "selectDates": "Select dates",
+      "showNextMonths": "Show next months",
+      "from": "from",
+      "to": "to"
+    },
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
+    "account": "Account",
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register"
+  },
+  "home": {
+    "hero": {
+      "title": "Find your perfect getaway in nature",
+      "subtitle": "Discover unique accommodations in the most beautiful natural settings"
+    },
+    "featured": "Featured Stays",
+    "destinations": "Popular Destinations",
+    "categories": "Browse by Category"
+  },
+  "footer": {
+    "about": "About",
+    "contact": "Contact",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "rights": "All rights reserved"
+  },
+  "common": {
+    "perNight": "per night",
+    "viewDetails": "View Details",
+    "bookNow": "Book Now",
+    "loading": "Loading...",
+    "error": "An error occurred"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "hero": {
+    "badge": "Entdecken Sie über 500 einzigartige Naturunterkünfte",
+    "title": "Die Natur öffnet Ihre Augen.",
+    "subtitle": "Finden Sie hier Ihr Ferienhaus mitten in der Natur.",
+    "description": "Buchen Sie einzigartige Hütten, Baumhäuser und mehr, umgeben von den schönsten Naturgebieten",
+    "trustBadges": {
+      "cancellation": "Kostenlose Stornierung",
+      "verified": "Verifizierte Unterkünfte",
+      "support": "24/7 Unterstützung"
+    }
+  },
+  "sections": {
+    "oftenBooked": "Oft gebucht auf natuurhuisje",
+    "viewAll": "Alle anzeigen",
+    "exploreByDestination": "Nach Reiseziel erkunden",
+    "mostVisitedCountries": "Meistbesuchte Länder",
+    "popularRegions": "Beliebte Regionen",
+    "recentlyViewed": "Kürzlich angesehen",
+    "continueWhereYouLeftOff": "Dort weitermachen, wo Sie aufgehört haben",
+    "browseMore": "Weitere Unterkünfte durchsuchen"
+  },
+  "rentOut": {
+    "title": "Möchten Sie Ihren Platz vermieten?",
+    "conservation": {
+      "title": "Zum Naturschutz beitragen",
+      "description": "Mit Ihrer Buchung tragen Sie zu lokalen Naturprojekten bei."
+    },
+    "targetGroup": {
+      "title": "Erreichen Sie die richtige Zielgruppe",
+      "description": "Durch die Teilnahme an einem exklusiven Angebot erreichen Sie die richtigen Menschen."
+    },
+    "youDecide": {
+      "title": "Sie entscheiden",
+      "description": "Behalten Sie die volle Kontrolle über Ihre Verfügbarkeit, Preise und wie Sie mit Gästen kommunizieren."
+    },
+    "moreInfo": "Mehr Informationen"
+  },
+  "biodiversity": {
+    "title": "Gemeinsam schützen wir die lokale Biodiversität",
+    "description": "Auf diese Weise helfen wir, das Gleichgewicht zwischen Mensch und Natur wiederherzustellen.",
+    "moreInfo": "Mehr Informationen"
+  },
+  "holidayHome": {
+    "title": "Ferienhaus im Herzen der Natur",
+    "paragraph1": "In einem Naturhaus können Sie wunderbar dem Trubel des Alltags entfliehen und inmitten der Natur völlig entspannen. Ein Naturhaus ist ein Ort, an dem Sie sich mit Freunden treffen, um das Leben zu feiern, und wo Sie Ihre (Enkel-)Kinder mit der wunderschönen europäischen Landschaft vertraut machen können. Es ist der ideale Ausgangspunkt für die Erkundung sanfter Hügel, weitläufiger Wiesen oder hoher Berge. Sie können angeln, Mountainbike fahren, wandern oder einfach an einem regnerischen Tag mit einem Buch entspannen.",
+    "paragraph2": "Von Hütten bis zu Villen gibt es Naturhäuser in allen Formen und Größen. Sie trotzen Stürmen und befinden sich manchmal in unwirtlichen Regionen, bieten Ihnen, dem Urlauber, aber immer einen angenehmen Aufenthaltsort. Ein Naturhaus ist nicht nur ein Schlafplatz während Ihrer Reise; es ist eine Art, Ihren Urlaub zu verbringen...",
+    "moreAboutUs": "Mehr über uns"
+  },
+  "newsletter": {
+    "title": "Entdecken Sie noch mehr idyllische Orte in der Natur.",
+    "firstNamePlaceholder": "Ihr Vorname",
+    "emailPlaceholder": "Ihre E-Mail-Adresse",
+    "subscribe": "Für Newsletter anmelden",
+    "privacyText": "Ich stimme der",
+    "privacyLink": "Datenschutzerklärung zu"
+  }
+}

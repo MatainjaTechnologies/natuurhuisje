@@ -1,0 +1,95 @@
+{
+  "details": {
+    "guests": "voyageurs",
+    "bedrooms": "chambres",
+    "beds": "lits",
+    "bathrooms": "salles de bain",
+    "night": "nuit",
+    "nights": "nuits",
+    "checkIn": "Arrivée",
+    "checkOut": "Départ",
+    "reserve": "Réserver",
+    "bookNow": "Réserver maintenant",
+    "checkAvailability": "Vérifier la disponibilité",
+    "instantBooking": "Réservation instantanée",
+    "hostedBy": "Hébergé par",
+    "superhost": "Superhôte"
+  },
+  "sections": {
+    "overview": "Aperçu",
+    "amenities": "Équipements",
+    "location": "Emplacement",
+    "reviews": "Avis",
+    "availability": "Disponibilité",
+    "houseRules": "Règles de la maison",
+    "cancellationPolicy": "Politique d'annulation"
+  },
+  "amenities": {
+    "title": "Ce que ce logement propose",
+    "showAll": "Afficher tous les équipements",
+    "wifi": "WiFi",
+    "parking": "Parking gratuit",
+    "kitchen": "Cuisine",
+    "pool": "Piscine",
+    "petFriendly": "Animaux acceptés",
+    "fireplace": "Cheminée",
+    "hottub": "Jacuzzi",
+    "bbq": "Barbecue",
+    "tv": "TV",
+    "heating": "Chauffage",
+    "airConditioning": "Climatisation",
+    "washer": "Lave-linge",
+    "dryer": "Sèche-linge"
+  },
+  "booking": {
+    "pricePerNight": "par nuit",
+    "totalPrice": "Total",
+    "serviceFee": "Frais de service",
+    "cleaningFee": "Frais de ménage",
+    "taxes": "Taxes",
+    "selectDates": "Sélectionner les dates",
+    "guests": "Voyageurs",
+    "youWontBeChargedYet": "Vous ne serez pas encore facturé"
+  },
+  "reviews": {
+    "reviews": "avis",
+    "rating": "Note",
+    "cleanliness": "Propreté",
+    "accuracy": "Exactitude",
+    "checkIn": "Arrivée",
+    "communication": "Communication",
+    "location": "Emplacement",
+    "value": "Rapport qualité-prix",
+    "showAllReviews": "Afficher tous les avis",
+    "noReviews": "Pas encore d'avis",
+    "beTheFirst": "Soyez le premier à évaluer ce logement"
+  },
+  "location": {
+    "exactLocation": "Emplacement exact fourni après la réservation",
+    "nearby": "Attractions à proximité"
+  },
+  "houseRules": {
+    "checkInAfter": "Arrivée après",
+    "checkOutBefore": "Départ avant",
+    "maxGuests": "Nombre maximum de voyageurs",
+    "smokingAllowed": "Fumer autorisé",
+    "petsAllowed": "Animaux autorisés",
+    "eventsAllowed": "Événements autorisés",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "host": {
+    "about": "À propos de l'hôte",
+    "joinedIn": "Membre depuis",
+    "responseRate": "Taux de réponse",
+    "responseTime": "Temps de réponse",
+    "contactHost": "Contacter l'hôte"
+  },
+  "safety": {
+    "title": "Sécurité & propriété",
+    "smokeAlarm": "Détecteur de fumée",
+    "carbonMonoxideAlarm": "Détecteur de monoxyde de carbone",
+    "firstAidKit": "Trousse de premiers secours",
+    "fireExtinguisher": "Extincteur"
+  }
+}

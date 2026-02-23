@@ -1,0 +1,58 @@
+{
+  "hero": {
+    "badge": "Discover 500+ unique nature stays",
+    "title": "Nature opens your eyes.",
+    "subtitle": "Find your holiday home in the heart of nature here.",
+    "description": "Book unique cabins, treehouses and more, surrounded by the most beautiful nature areas",
+    "trustBadges": {
+      "cancellation": "Free cancellation",
+      "verified": "Verified accommodations",
+      "support": "24/7 support"
+    }
+  },
+  "sections": {
+    "oftenBooked": "Often booked on natuurhuisje",
+    "viewAll": "View all",
+    "exploreByDestination": "Explore by destination",
+    "mostVisitedCountries": "Most visited countries",
+    "popularRegions": "Popular regions",
+    "recentlyViewed": "Recently Viewed",
+    "continueWhereYouLeftOff": "Continue where you left off",
+    "browseMore": "Browse More Properties"
+  },
+  "rentOut": {
+    "title": "Want to rent out your place?",
+    "conservation": {
+      "title": "Contribute to the conservation of nature",
+      "description": "With your booking you contribute to local nature projects."
+    },
+    "targetGroup": {
+      "title": "Reach the right target group",
+      "description": "By being part of an exclusive offer you reach the right people."
+    },
+    "youDecide": {
+      "title": "You decide",
+      "description": "Keep full control over your availability, rates, and how you communicate with guests."
+    },
+    "moreInfo": "More information"
+  },
+  "biodiversity": {
+    "title": "Together we protect local biodiversity",
+    "description": "In this way we help to restore the balance between people and nature.",
+    "moreInfo": "More information"
+  },
+  "holidayHome": {
+    "title": "Holiday home in the heart of nature",
+    "paragraph1": "In a nature house, you can wonderfully escape the hustle and bustle of everyday life and completely unwind surrounded by nature. A nature house is a place where you gather with friends to celebrate life and where you can introduce your (grand)children to the beautiful European countryside. It's the ideal starting point for exploring rolling hills, expansive meadows, or towering mountains. You can fish, mountain bike, hike, or simply unwind with a book on a rainy day.",
+    "paragraph2": "From cabins to villas, nature houses come in all shapes and sizes. They weather storms and are sometimes located in inhospitable regions, but always offer you, the holidaymaker, a pleasant place to stay. A nature house isn't just a place to sleep during your trip; it's a way of spending your holiday...",
+    "moreAboutUs": "More about us"
+  },
+  "newsletter": {
+    "title": "Discover even more idyllic spots in nature.",
+    "firstNamePlaceholder": "Your first name",
+    "emailPlaceholder": "Your email address",
+    "subscribe": "Subscribe to newsletter",
+    "privacyText": "I agree to the",
+    "privacyLink": "privacy policy"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "header": {
+    "banner": {
+      "nature": "Au milieu de la nature",
+      "away": "Loin de la foule",
+      "contribute": "Contribuer aux projets nature"
+    },
+    "search": {
+      "where": "Où ou quoi?",
+      "wherePlaceholder": "Par exemple Amsterdam, Tiny House",
+      "dates": "Choisir les dates",
+      "people": "personnes",
+      "guests": "invités",
+      "search": "Rechercher",
+      "next": "Suivant",
+      "clearDates": "Effacer les dates",
+      "selectPeople": "Sélectionner le nombre de personnes",
+      "person": "personne",
+      "persons": "personnes",
+      "nights": "nuits",
+      "selectDates": "Sélectionner les dates",
+      "showNextMonths": "Afficher les mois suivants",
+      "from": "de",
+      "to": "à"
+    },
+    "days": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Jeu",
+      "fri": "Ven",
+      "sat": "Sam",
+      "sun": "Dim"
+    },
+    "account": "Compte",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "register": "S'inscrire"
+  },
+  "home": {
+    "hero": {
+      "title": "Trouvez votre escapade parfaite dans la nature",
+      "subtitle": "Découvrez des hébergements uniques dans les plus beaux cadres naturels"
+    },
+    "featured": "Séjours en vedette",
+    "destinations": "Destinations populaires",
+    "categories": "Parcourir par catégorie"
+  },
+  "footer": {
+    "about": "À propos",
+    "contact": "Contact",
+    "terms": "Conditions d'utilisation",
+    "privacy": "Politique de confidentialité",
+    "rights": "Tous droits réservés"
+  },
+  "common": {
+    "perNight": "par nuit",
+    "viewDetails": "Voir les détails",
+    "bookNow": "Réserver maintenant",
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite"
+  }
+}

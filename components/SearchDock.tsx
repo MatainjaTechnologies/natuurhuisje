@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import {
   Calendar as CalendarIcon,
   Search,
@@ -13,6 +13,8 @@ import {
   X,
 } from "lucide-react";
 import { format } from "date-fns";
+import type { Locale } from '@/i18n/config';
+import { getSearchDictionary } from '@/i18n/get-search-dictionary';
 
 interface SearchDockProps {
   variant?: "hero" | "compact";
@@ -24,6 +26,7 @@ interface SearchDockProps {
   maxWidth?: string;
   height?: string;
   initialTab?: "where" | "dates" | "people" | null;
+  lang?: Locale;
 }
 
 interface Suggestion {
@@ -43,11 +46,15 @@ export function SearchDock({
   maxWidth = "max-w-full",
   height = "py-3",
   initialTab = null,
+  lang,
 }: SearchDockProps) {
   const router = useRouter();
+  const params = useParams();
+  const currentLang = (lang || params?.lang || 'nl') as Locale;
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dateInputRef = useRef<HTMLInputElement>(null);
   const lightpickRef = useRef<any>(null);
+  const [t, setT] = useState<any>(null);
 
   const [location, setLocation] = useState(defaultLocation);
   const [guests, setGuests] = useState(defaultGuests);
@@ -61,6 +68,14 @@ export function SearchDock({
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(
     defaultDateRange?.to || null,
   );
+
+  useEffect(() => {
+    const loadTranslations = async () => {
+      const translations = await getSearchDictionary(currentLang);
+      setT(translations);
+    };
+    loadTranslations();
+  }, [currentLang]);
 
   // Load Lightpick CSS and moment.js
   useEffect(() => {
@@ -244,8 +259,12 @@ export function SearchDock({
       searchParams.set("pets", "true");
     }
 
-    router.push(`/search?${searchParams.toString()}`);
+    router.push(`/${currentLang}/search?${searchParams.toString()}`);
   };
+
+  if (!t) {
+    return null;
+  }
 
   return (
     <div
@@ -287,7 +306,7 @@ export function SearchDock({
             <span
               className={`font-medium text-[15px] ${activeTab === "where" ? "text-white" : "text-gray-900"}`}
             >
-              {location || "Waar of wat?"}
+              {location || t.searchDock.whereOrWhat}
             </span>
             {location.length > 0 && (
               <button
@@ -335,7 +354,7 @@ export function SearchDock({
                 ? `${format(selectedStartDate, "MMMM d")} → ${format(selectedEndDate, "MMMM d")}`
                 : selectedStartDate
                   ? `${format(selectedStartDate, "MMMM d")} → ?`
-                  : "Kies datums"}
+                  : t.searchDock.chooseDates}
             </span>
             {selectedStartDate && selectedEndDate && (
               <span
@@ -384,8 +403,8 @@ export function SearchDock({
               className={`text-[15px] whitespace-nowrap ${activeTab === "people" ? "text-white" : "text-gray-900"}`}
             >
               {guests > 0
-                ? `${guests} ${guests === 1 ? "persoon" : "personen"}`
-                : "Personen"}
+                ? `${guests} ${guests === 1 ? t.searchDock.person : t.searchDock.persons}`
+                : t.searchDock.people}
             </span>
           </button>
 
@@ -396,7 +415,7 @@ export function SearchDock({
               className="px-8 py-3 rounded-lg text-white font-semibold text-[15px] transition-all hover:shadow-lg whitespace-nowrap"
               style={{ background: "#10b981" }}
             >
-              Zoeken
+              {t.searchDock.search}
             </button>
           </div>
         </div>

@@ -1,0 +1,95 @@
+{
+  "details": {
+    "guests": "gasten",
+    "bedrooms": "slaapkamers",
+    "beds": "bedden",
+    "bathrooms": "badkamers",
+    "night": "nacht",
+    "nights": "nachten",
+    "checkIn": "Inchecken",
+    "checkOut": "Uitchecken",
+    "reserve": "Reserveren",
+    "bookNow": "Nu boeken",
+    "checkAvailability": "Beschikbaarheid controleren",
+    "instantBooking": "Direct boeken",
+    "hostedBy": "Aangeboden door",
+    "superhost": "Superhost"
+  },
+  "sections": {
+    "overview": "Overzicht",
+    "amenities": "Voorzieningen",
+    "location": "Locatie",
+    "reviews": "Beoordelingen",
+    "availability": "Beschikbaarheid",
+    "houseRules": "Huisregels",
+    "cancellationPolicy": "Annuleringsbeleid"
+  },
+  "amenities": {
+    "title": "Wat deze plek biedt",
+    "showAll": "Alle voorzieningen tonen",
+    "wifi": "WiFi",
+    "parking": "Gratis parkeren",
+    "kitchen": "Keuken",
+    "pool": "Zwembad",
+    "petFriendly": "Huisdiervriendelijk",
+    "fireplace": "Open haard",
+    "hottub": "Hottub",
+    "bbq": "BBQ grill",
+    "tv": "TV",
+    "heating": "Verwarming",
+    "airConditioning": "Airconditioning",
+    "washer": "Wasmachine",
+    "dryer": "Droger"
+  },
+  "booking": {
+    "pricePerNight": "per nacht",
+    "totalPrice": "Totaal",
+    "serviceFee": "Servicekosten",
+    "cleaningFee": "Schoonmaakkosten",
+    "taxes": "Belastingen",
+    "selectDates": "Selecteer datums",
+    "guests": "Gasten",
+    "youWontBeChargedYet": "Je wordt nog niet in rekening gebracht"
+  },
+  "reviews": {
+    "reviews": "beoordelingen",
+    "rating": "Beoordeling",
+    "cleanliness": "Netheid",
+    "accuracy": "Nauwkeurigheid",
+    "checkIn": "Inchecken",
+    "communication": "Communicatie",
+    "location": "Locatie",
+    "value": "Prijs-kwaliteit",
+    "showAllReviews": "Alle beoordelingen tonen",
+    "noReviews": "Nog geen beoordelingen",
+    "beTheFirst": "Wees de eerste om deze accommodatie te beoordelen"
+  },
+  "location": {
+    "exactLocation": "Exacte locatie verstrekt na boeking",
+    "nearby": "Nabijgelegen attracties"
+  },
+  "houseRules": {
+    "checkInAfter": "Inchecken na",
+    "checkOutBefore": "Uitchecken voor",
+    "maxGuests": "Maximum aantal gasten",
+    "smokingAllowed": "Roken toegestaan",
+    "petsAllowed": "Huisdieren toegestaan",
+    "eventsAllowed": "Evenementen toegestaan",
+    "yes": "Ja",
+    "no": "Nee"
+  },
+  "host": {
+    "about": "Over de host",
+    "joinedIn": "Lid sinds",
+    "responseRate": "Responspercentage",
+    "responseTime": "Responstijd",
+    "contactHost": "Contact host"
+  },
+  "safety": {
+    "title": "Veiligheid & eigendom",
+    "smokeAlarm": "Rookmelder",
+    "carbonMonoxideAlarm": "Koolmonoxidemelder",
+    "firstAidKit": "EHBO-kit",
+    "fireExtinguisher": "Brandblusser"
+  }
+}

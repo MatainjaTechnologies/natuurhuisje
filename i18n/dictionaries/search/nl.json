@@ -1,0 +1,19 @@
+{
+  "searchDock": {
+    "whereOrWhat": "Waar of wat?",
+    "chooseDates": "Kies datums",
+    "people": "Personen",
+    "person": "persoon",
+    "persons": "personen",
+    "search": "Zoeken",
+    "suggestions": {
+      "popularDestinations": "Populaire bestemmingen",
+      "accommodationTypes": "Accommodatie types"
+    }
+  },
+  "headerSearch": {
+    "whereOrWhat": "Waar of wat?",
+    "chooseDates": "Kies datums",
+    "persons": "personen"
+  }
+}

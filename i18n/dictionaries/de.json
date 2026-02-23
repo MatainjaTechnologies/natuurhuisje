@@ -1,0 +1,63 @@
+{
+  "header": {
+    "banner": {
+      "nature": "Mitten in der Natur",
+      "away": "Weg von den Massen",
+      "contribute": "Tragen Sie zu Naturprojekten bei"
+    },
+    "search": {
+      "where": "Wo oder was?",
+      "wherePlaceholder": "Zum Beispiel Amsterdam, Tiny House",
+      "dates": "Daten wählen",
+      "people": "Personen",
+      "guests": "Gäste",
+      "search": "Suchen",
+      "next": "Weiter",
+      "clearDates": "Daten löschen",
+      "selectPeople": "Anzahl der Personen auswählen",
+      "person": "Person",
+      "persons": "Personen",
+      "nights": "Nächte",
+      "selectDates": "Daten auswählen",
+      "showNextMonths": "Nächste Monate anzeigen",
+      "from": "von",
+      "to": "bis"
+    },
+    "days": {
+      "mon": "Mo",
+      "tue": "Di",
+      "wed": "Mi",
+      "thu": "Do",
+      "fri": "Fr",
+      "sat": "Sa",
+      "sun": "So"
+    },
+    "account": "Konto",
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "register": "Registrieren"
+  },
+  "home": {
+    "hero": {
+      "title": "Finden Sie Ihren perfekten Rückzugsort in der Natur",
+      "subtitle": "Entdecken Sie einzigartige Unterkünfte in den schönsten natürlichen Umgebungen"
+    },
+    "featured": "Empfohlene Aufenthalte",
+    "destinations": "Beliebte Reiseziele",
+    "categories": "Nach Kategorie durchsuchen"
+  },
+  "footer": {
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "terms": "Nutzungsbedingungen",
+    "privacy": "Datenschutz",
+    "rights": "Alle Rechte vorbehalten"
+  },
+  "common": {
+    "perNight": "pro Nacht",
+    "viewDetails": "Details anzeigen",
+    "bookNow": "Jetzt buchen",
+    "loading": "Wird geladen...",
+    "error": "Ein Fehler ist aufgetreten"
+  }
+}

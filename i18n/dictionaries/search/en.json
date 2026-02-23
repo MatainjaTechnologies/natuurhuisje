@@ -1,0 +1,19 @@
+{
+  "searchDock": {
+    "whereOrWhat": "Where or what?",
+    "chooseDates": "Choose dates",
+    "people": "People",
+    "person": "person",
+    "persons": "persons",
+    "search": "Search",
+    "suggestions": {
+      "popularDestinations": "Popular destinations",
+      "accommodationTypes": "Accommodation types"
+    }
+  },
+  "headerSearch": {
+    "whereOrWhat": "Where or what?",
+    "chooseDates": "Choose dates",
+    "persons": "persons"
+  }
+}

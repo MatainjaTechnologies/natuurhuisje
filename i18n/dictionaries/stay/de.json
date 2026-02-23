@@ -1,0 +1,95 @@
+{
+  "details": {
+    "guests": "Gäste",
+    "bedrooms": "Schlafzimmer",
+    "beds": "Betten",
+    "bathrooms": "Badezimmer",
+    "night": "Nacht",
+    "nights": "Nächte",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "reserve": "Reservieren",
+    "bookNow": "Jetzt buchen",
+    "checkAvailability": "Verfügbarkeit prüfen",
+    "instantBooking": "Sofortbuchung",
+    "hostedBy": "Gastgeber",
+    "superhost": "Superhost"
+  },
+  "sections": {
+    "overview": "Übersicht",
+    "amenities": "Ausstattung",
+    "location": "Lage",
+    "reviews": "Bewertungen",
+    "availability": "Verfügbarkeit",
+    "houseRules": "Hausregeln",
+    "cancellationPolicy": "Stornierungsbedingungen"
+  },
+  "amenities": {
+    "title": "Was dieser Ort bietet",
+    "showAll": "Alle Ausstattungsmerkmale anzeigen",
+    "wifi": "WLAN",
+    "parking": "Kostenlose Parkplätze",
+    "kitchen": "Küche",
+    "pool": "Pool",
+    "petFriendly": "Haustierfreundlich",
+    "fireplace": "Kamin",
+    "hottub": "Whirlpool",
+    "bbq": "Grillplatz",
+    "tv": "TV",
+    "heating": "Heizung",
+    "airConditioning": "Klimaanlage",
+    "washer": "Waschmaschine",
+    "dryer": "Trockner"
+  },
+  "booking": {
+    "pricePerNight": "pro Nacht",
+    "totalPrice": "Gesamt",
+    "serviceFee": "Servicegebühr",
+    "cleaningFee": "Reinigungsgebühr",
+    "taxes": "Steuern",
+    "selectDates": "Daten auswählen",
+    "guests": "Gäste",
+    "youWontBeChargedYet": "Sie werden noch nicht belastet"
+  },
+  "reviews": {
+    "reviews": "Bewertungen",
+    "rating": "Bewertung",
+    "cleanliness": "Sauberkeit",
+    "accuracy": "Genauigkeit",
+    "checkIn": "Check-in",
+    "communication": "Kommunikation",
+    "location": "Lage",
+    "value": "Preis-Leistung",
+    "showAllReviews": "Alle Bewertungen anzeigen",
+    "noReviews": "Noch keine Bewertungen",
+    "beTheFirst": "Seien Sie der Erste, der diese Unterkunft bewertet"
+  },
+  "location": {
+    "exactLocation": "Genaue Lage nach Buchung angegeben",
+    "nearby": "Sehenswürdigkeiten in der Nähe"
+  },
+  "houseRules": {
+    "checkInAfter": "Check-in nach",
+    "checkOutBefore": "Check-out vor",
+    "maxGuests": "Maximale Gästeanzahl",
+    "smokingAllowed": "Rauchen erlaubt",
+    "petsAllowed": "Haustiere erlaubt",
+    "eventsAllowed": "Veranstaltungen erlaubt",
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "host": {
+    "about": "Über den Gastgeber",
+    "joinedIn": "Mitglied seit",
+    "responseRate": "Antwortrate",
+    "responseTime": "Antwortzeit",
+    "contactHost": "Gastgeber kontaktieren"
+  },
+  "safety": {
+    "title": "Sicherheit & Eigentum",
+    "smokeAlarm": "Rauchmelder",
+    "carbonMonoxideAlarm": "Kohlenmonoxidmelder",
+    "firstAidKit": "Erste-Hilfe-Set",
+    "fireExtinguisher": "Feuerlöscher"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "hero": {
+    "badge": "Découvrez plus de 500 hébergements nature uniques",
+    "title": "La nature ouvre vos yeux.",
+    "subtitle": "Trouvez ici votre maison de vacances au cœur de la nature.",
+    "description": "Réservez des cabanes uniques, des cabanes dans les arbres et plus encore, entourées par les plus beaux espaces naturels",
+    "trustBadges": {
+      "cancellation": "Annulation gratuite",
+      "verified": "Hébergements vérifiés",
+      "support": "Support 24/7"
+    }
+  },
+  "sections": {
+    "oftenBooked": "Souvent réservé sur natuurhuisje",
+    "viewAll": "Voir tout",
+    "exploreByDestination": "Explorer par destination",
+    "mostVisitedCountries": "Pays les plus visités",
+    "popularRegions": "Régions populaires",
+    "recentlyViewed": "Récemment consultés",
+    "continueWhereYouLeftOff": "Continuer là où vous vous êtes arrêté",
+    "browseMore": "Parcourir plus de propriétés"
+  },
+  "rentOut": {
+    "title": "Vous voulez louer votre logement?",
+    "conservation": {
+      "title": "Contribuer à la conservation de la nature",
+      "description": "Avec votre réservation, vous contribuez aux projets nature locaux."
+    },
+    "targetGroup": {
+      "title": "Atteindre le bon public cible",
+      "description": "En faisant partie d'une offre exclusive, vous atteignez les bonnes personnes."
+    },
+    "youDecide": {
+      "title": "Vous décidez",
+      "description": "Gardez le contrôle total sur votre disponibilité, vos tarifs et la façon dont vous communiquez avec les invités."
+    },
+    "moreInfo": "Plus d'informations"
+  },
+  "biodiversity": {
+    "title": "Ensemble, nous protégeons la biodiversité locale",
+    "description": "De cette façon, nous aidons à restaurer l'équilibre entre les gens et la nature.",
+    "moreInfo": "Plus d'informations"
+  },
+  "holidayHome": {
+    "title": "Maison de vacances au cœur de la nature",
+    "paragraph1": "Dans une maison nature, vous pouvez merveilleusement échapper à l'agitation de la vie quotidienne et vous détendre complètement entouré par la nature. Une maison nature est un endroit où vous vous réunissez avec des amis pour célébrer la vie et où vous pouvez présenter à vos (petits-)enfants la belle campagne européenne. C'est le point de départ idéal pour explorer des collines vallonnées, de vastes prairies ou de hautes montagnes. Vous pouvez pêcher, faire du VTT, randonner ou simplement vous détendre avec un livre un jour de pluie.",
+    "paragraph2": "Des cabanes aux villas, les maisons nature existent dans toutes les formes et tailles. Elles résistent aux tempêtes et se trouvent parfois dans des régions inhospitalières, mais offrent toujours au vacancier un endroit agréable pour séjourner. Une maison nature n'est pas seulement un endroit pour dormir pendant votre voyage; c'est une façon de passer vos vacances...",
+    "moreAboutUs": "En savoir plus sur nous"
+  },
+  "newsletter": {
+    "title": "Découvrez encore plus de lieux idylliques dans la nature.",
+    "firstNamePlaceholder": "Votre prénom",
+    "emailPlaceholder": "Votre adresse e-mail",
+    "subscribe": "S'abonner à la newsletter",
+    "privacyText": "J'accepte la",
+    "privacyLink": "politique de confidentialité"
+  }
+}

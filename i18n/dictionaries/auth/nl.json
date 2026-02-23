@@ -1,0 +1,49 @@
+{
+  "login": {
+    "title": "Welkom terug",
+    "subtitle": "Log in op je account",
+    "email": "E-mailadres",
+    "emailPlaceholder": "Voer je e-mailadres in",
+    "password": "Wachtwoord",
+    "passwordPlaceholder": "Voer je wachtwoord in",
+    "rememberMe": "Onthoud mij",
+    "forgotPassword": "Wachtwoord vergeten?",
+    "loginButton": "Inloggen",
+    "noAccount": "Heb je nog geen account?",
+    "signUp": "Registreren",
+    "orContinueWith": "Of ga verder met",
+    "errors": {
+      "invalidCredentials": "Ongeldig e-mailadres of wachtwoord",
+      "emailRequired": "E-mailadres is verplicht",
+      "passwordRequired": "Wachtwoord is verplicht"
+    }
+  },
+  "register": {
+    "title": "Maak je account aan",
+    "subtitle": "Word vandaag lid van natuurhuisje",
+    "firstName": "Voornaam",
+    "firstNamePlaceholder": "Voer je voornaam in",
+    "lastName": "Achternaam",
+    "lastNamePlaceholder": "Voer je achternaam in",
+    "email": "E-mailadres",
+    "emailPlaceholder": "Voer je e-mailadres in",
+    "password": "Wachtwoord",
+    "passwordPlaceholder": "Maak een wachtwoord",
+    "confirmPassword": "Bevestig wachtwoord",
+    "confirmPasswordPlaceholder": "Bevestig je wachtwoord",
+    "agreeToTerms": "Ik ga akkoord met de",
+    "termsOfService": "Servicevoorwaarden",
+    "and": "en",
+    "privacyPolicy": "Privacybeleid",
+    "registerButton": "Account aanmaken",
+    "haveAccount": "Heb je al een account?",
+    "signIn": "Inloggen",
+    "orContinueWith": "Of ga verder met",
+    "errors": {
+      "emailRequired": "E-mailadres is verplicht",
+      "passwordRequired": "Wachtwoord is verplicht",
+      "passwordMismatch": "Wachtwoorden komen niet overeen",
+      "termsRequired": "Je moet akkoord gaan met de voorwaarden"
+    }
+  }
+}

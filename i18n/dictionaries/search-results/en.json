@@ -1,0 +1,49 @@
+{
+  "title": "Search Results",
+  "filters": {
+    "title": "Filters",
+    "priceRange": "Price Range",
+    "perNight": "per night",
+    "propertyType": "Property Type",
+    "amenities": "Amenities",
+    "rating": "Rating",
+    "starsAndUp": "stars & up",
+    "clearAll": "Clear all",
+    "apply": "Apply filters"
+  },
+  "sort": {
+    "sortBy": "Sort by",
+    "recommended": "Recommended",
+    "priceLowToHigh": "Price: Low to High",
+    "priceHighToLow": "Price: High to Low",
+    "rating": "Rating",
+    "newest": "Newest"
+  },
+  "results": {
+    "found": "properties found",
+    "noResults": "No properties found",
+    "noResultsDescription": "Try adjusting your filters or search criteria",
+    "loading": "Loading properties...",
+    "showingResults": "Showing",
+    "of": "of"
+  },
+  "propertyTypes": {
+    "cabin": "Cabin",
+    "treehouse": "Treehouse",
+    "cottage": "Cottage",
+    "villa": "Villa",
+    "chalet": "Chalet",
+    "tent": "Tent",
+    "yurt": "Yurt"
+  },
+  "amenities": {
+    "wifi": "WiFi",
+    "parking": "Parking",
+    "kitchen": "Kitchen",
+    "pool": "Pool",
+    "petFriendly": "Pet Friendly",
+    "fireplace": "Fireplace",
+    "hottub": "Hot Tub",
+    "bbq": "BBQ"
+  }
+}

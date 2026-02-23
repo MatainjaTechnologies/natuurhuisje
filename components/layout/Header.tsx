@@ -21,9 +21,13 @@ import { SearchDock } from "@/components/SearchDock";
 import { useState, useEffect, useRef } from "react";
 import { format } from "date-fns";
 import { createClient } from '@/utils/supabase/client';
+import type { Locale } from '@/i18n/config';
+import { switchLanguage } from '@/lib/navigation';
+import { getSearchDictionary } from '@/i18n/get-search-dictionary';
 
 interface HeaderProps {
   user?: User | null;
+  lang: Locale;
 }
 
 interface Suggestion {
@@ -33,24 +37,29 @@ interface Suggestion {
   icon: string;
 }
 
-export function Header({ user: propUser }: HeaderProps) {
+export function Header({ user: propUser, lang }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const dateInputRef = useRef<HTMLInputElement>(null);
   const lightpickRef = useRef<any>(null);
   const supabase = createClient();
   
-  const [locale, setLocale] = useState<string>('nl');
+  const [locale, setLocale] = useState<Locale>(lang);
   const [user, setUser] = useState<User | null>(propUser || null);
   const [userProfile, setUserProfile] = useState<{ display_name: string; avatar_url?: string } | null>(null);
+  const [searchT, setSearchT] = useState<any>(null);
 
-  // Load locale from localStorage on mount
   useEffect(() => {
-    const savedLocale = localStorage.getItem('locale');
-    if (savedLocale) {
-      setLocale(savedLocale);
-    }
-  }, []);
+    setLocale(lang);
+  }, [lang]);
+
+  useEffect(() => {
+    const loadSearchTranslations = async () => {
+      const translations = await getSearchDictionary(locale);
+      setSearchT(translations);
+    };
+    loadSearchTranslations();
+  }, [locale]);
 
   // Fetch user session on mount and when it changes
   useEffect(() => {
@@ -155,10 +164,18 @@ export function Header({ user: propUser }: HeaderProps) {
     { code: 'fr', name: 'Français', flag: '/flags/fr.svg' },
   ] as const;
 
-  const handleLanguageChange = (newLocale: string) => {
+  const handleLanguageChange = (newLocale: Locale) => {
+    const newPath = switchLanguage(pathname, newLocale);
+    
+    // Set cookie for language persistence
+    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
+    
+    // Update local state
     setLocale(newLocale);
-    localStorage.setItem('locale', newLocale);
     setShowLanguageDropdown(false);
+    
+    // Use full page reload to ensure all content updates
+    window.location.href = newPath;
   };
 
   useEffect(() => {
@@ -704,7 +721,7 @@ export function Header({ user: propUser }: HeaderProps) {
                   >
                     <Search className="h-4 w-4 text-purple-600" />
                     <span className="text-sm text-gray-700 font-medium">
-                      Waar of wat?
+                      {searchT?.headerSearch?.whereOrWhat || 'Waar of wat?'}
                     </span>
                   </button>
 
@@ -718,7 +735,7 @@ export function Header({ user: propUser }: HeaderProps) {
                   >
                     <Calendar className="h-4 w-4 text-purple-600" />
                     <span className="text-sm text-gray-700 font-medium">
-                      Kies datums
+                      {searchT?.headerSearch?.chooseDates || 'Kies datums'}
                     </span>
                   </button>
 
@@ -732,7 +749,7 @@ export function Header({ user: propUser }: HeaderProps) {
                   >
                     <Users className="h-4 w-4 text-purple-600" />
                     <span className="text-sm text-gray-700 font-medium">
-                      personen
+                      {searchT?.headerSearch?.persons || 'personen'}
                     </span>
                   </button>
 
@@ -750,6 +767,7 @@ export function Header({ user: propUser }: HeaderProps) {
                     variant="compact"
                     maxWidth="max-w-3xl"
                     initialTab={activeSearchTab}
+                    lang={locale}
                   />
                 </div>
               )}
@@ -768,11 +786,11 @@ export function Header({ user: propUser }: HeaderProps) {
                   className="flex items-center gap-1.5 hover:bg-gray-100 px-2 py-1.5 rounded-lg transition-colors"
                 >
                   <img 
-                    src={languages.find(lang => lang.code === locale)?.flag} 
-                    alt={locale.toUpperCase()} 
+                    src={languages.find(l => l.code === locale)?.flag || '/flags/gb.svg'} 
+                    alt={locale?.toUpperCase() || 'EN'} 
                     className="w-5 h-5 object-cover rounded-full" 
                   />
-                  <span className="text-sm font-medium text-gray-900">{locale.toUpperCase()}</span>
+                  <span className="text-sm font-medium text-gray-900">{locale?.toUpperCase() || 'EN'}</span>
                   <ChevronDown className="h-3.5 w-3.5 text-gray-600" />
                 </button>
 

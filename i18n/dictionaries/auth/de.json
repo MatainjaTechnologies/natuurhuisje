@@ -1,0 +1,49 @@
+{
+  "login": {
+    "title": "Willkommen zurück",
+    "subtitle": "Melden Sie sich bei Ihrem Konto an",
+    "email": "E-Mail-Adresse",
+    "emailPlaceholder": "Geben Sie Ihre E-Mail ein",
+    "password": "Passwort",
+    "passwordPlaceholder": "Geben Sie Ihr Passwort ein",
+    "rememberMe": "Angemeldet bleiben",
+    "forgotPassword": "Passwort vergessen?",
+    "loginButton": "Anmelden",
+    "noAccount": "Noch kein Konto?",
+    "signUp": "Registrieren",
+    "orContinueWith": "Oder fortfahren mit",
+    "errors": {
+      "invalidCredentials": "Ungültige E-Mail oder Passwort",
+      "emailRequired": "E-Mail ist erforderlich",
+      "passwordRequired": "Passwort ist erforderlich"
+    }
+  },
+  "register": {
+    "title": "Erstellen Sie Ihr Konto",
+    "subtitle": "Werden Sie heute Mitglied bei natuurhuisje",
+    "firstName": "Vorname",
+    "firstNamePlaceholder": "Geben Sie Ihren Vornamen ein",
+    "lastName": "Nachname",
+    "lastNamePlaceholder": "Geben Sie Ihren Nachnamen ein",
+    "email": "E-Mail-Adresse",
+    "emailPlaceholder": "Geben Sie Ihre E-Mail ein",
+    "password": "Passwort",
+    "passwordPlaceholder": "Erstellen Sie ein Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "confirmPasswordPlaceholder": "Bestätigen Sie Ihr Passwort",
+    "agreeToTerms": "Ich stimme den",
+    "termsOfService": "Nutzungsbedingungen",
+    "and": "und",
+    "privacyPolicy": "Datenschutzrichtlinien",
+    "registerButton": "Konto erstellen",
+    "haveAccount": "Haben Sie bereits ein Konto?",
+    "signIn": "Anmelden",
+    "orContinueWith": "Oder fortfahren mit",
+    "errors": {
+      "emailRequired": "E-Mail ist erforderlich",
+      "passwordRequired": "Passwort ist erforderlich",
+      "passwordMismatch": "Passwörter stimmen nicht überein",
+      "termsRequired": "Sie müssen den Bedingungen zustimmen"
+    }
+  }
+}

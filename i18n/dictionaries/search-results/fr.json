@@ -1,0 +1,49 @@
+{
+  "title": "Résultats de recherche",
+  "filters": {
+    "title": "Filtres",
+    "priceRange": "Fourchette de prix",
+    "perNight": "par nuit",
+    "propertyType": "Type de propriété",
+    "amenities": "Équipements",
+    "rating": "Évaluation",
+    "starsAndUp": "étoiles et plus",
+    "clearAll": "Tout effacer",
+    "apply": "Appliquer les filtres"
+  },
+  "sort": {
+    "sortBy": "Trier par",
+    "recommended": "Recommandé",
+    "priceLowToHigh": "Prix: Bas à Élevé",
+    "priceHighToLow": "Prix: Élevé à Bas",
+    "rating": "Évaluation",
+    "newest": "Plus récent"
+  },
+  "results": {
+    "found": "propriétés trouvées",
+    "noResults": "Aucune propriété trouvée",
+    "noResultsDescription": "Essayez d'ajuster vos filtres ou critères de recherche",
+    "loading": "Chargement des propriétés...",
+    "showingResults": "Affichage",
+    "of": "de"
+  },
+  "propertyTypes": {
+    "cabin": "Cabane",
+    "treehouse": "Cabane dans les arbres",
+    "cottage": "Chalet",
+    "villa": "Villa",
+    "chalet": "Chalet",
+    "tent": "Tente",
+    "yurt": "Yourte"
+  },
+  "amenities": {
+    "wifi": "WiFi",
+    "parking": "Parking",
+    "kitchen": "Cuisine",
+    "pool": "Piscine",
+    "petFriendly": "Animaux acceptés",
+    "fireplace": "Cheminée",
+    "hottub": "Jacuzzi",
+    "bbq": "Barbecue"
+  }
+}
