@@ -105,7 +105,7 @@ export async function updateBookingStatus(bookingId: string, status: 'confirmed'
   }
   
   // Revalidate relevant paths
-  revalidatePath("/host/bookings");
+  revalidatePath("/[lang]/host/bookings");
   
   return { success: true };
 }

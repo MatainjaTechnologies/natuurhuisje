@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   LayoutList, 
   MapPin, 
@@ -14,10 +14,46 @@ import {
   Leaf, 
   ClipboardList,
   ChevronRight,
+  ChevronLeft,
   CheckCircle,
   X,
   Plus
 } from 'lucide-react';
+
+// Unified checkbox handler
+const handleCheckboxToggle = (item: string, selectedItems: string[], setSelectedItems: (items: string[]) => void) => {
+  setSelectedItems(
+    selectedItems.includes(item)
+      ? selectedItems.filter(i => i !== item)
+      : [...selectedItems, item]
+  );
+};
+
+// Unified checkbox component
+const UnifiedCheckbox = ({ 
+  checked, 
+  onChange, 
+  label, 
+  className = "",
+  disabled = false 
+}: {
+  checked: boolean;
+  onChange: () => void;
+  label?: React.ReactNode;
+  className?: string;
+  disabled?: boolean;
+}) => (
+  <label className={`flex items-center gap-3 cursor-pointer ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}>
+    <input 
+      type="checkbox" 
+      className="w-5 h-5 rounded border-gray-300 text-[#59A559] focus:ring-[#59A559]"
+      checked={checked}
+      onChange={onChange}
+      disabled={disabled}
+    />
+    {label}
+  </label>
+);
 import { useRouter } from 'next/navigation';
 
 // Step definitions
@@ -127,29 +163,29 @@ export function NewListingWizard() {
   const renderStepContent = () => {
     switch (currentStep) {
       case 'general':
-        return <GeneralStep data={formData} updateData={setFormData} onNext={() => handleNext('general')} />;
+        return <GeneralStep data={formData} updateData={setFormData} onNext={() => handleNext('general')} onPrevious={() => handlePrevious('general')} />;
       case 'location':
-        return <LocationStep data={formData} updateData={setFormData} onNext={() => handleNext('location')} />;
+        return <LocationStep data={formData} updateData={setFormData} onNext={() => handleNext('location')} onPrevious={() => handlePrevious('location')} />;
       case 'photos':
-        return <PhotosStep data={formData} updateData={setFormData} onNext={() => handleNext('photos')} />;
+        return <PhotosStep data={formData} updateData={setFormData} onNext={() => handleNext('photos')} onPrevious={() => handlePrevious('photos')} />;
       case 'pricing':
-        return <PricingStep data={formData} updateData={setFormData} onNext={() => handleNext('pricing')} />;
+        return <PricingStep data={formData} updateData={setFormData} onNext={() => handleNext('pricing')} onPrevious={() => handlePrevious('pricing')} />;
       case 'availability':
-        return <AvailabilityStep data={formData} updateData={setFormData} onNext={() => handleNext('availability')} />;
+        return <AvailabilityStep data={formData} updateData={setFormData} onNext={() => handleNext('availability')} onPrevious={() => handlePrevious('availability')} />;
       case 'calendar':
-        return <CalendarStep data={formData} updateData={setFormData} onNext={() => handleNext('calendar')} />;
+        return <CalendarStep data={formData} updateData={setFormData} onNext={() => handleNext('calendar')} onPrevious={() => handlePrevious('calendar')} />;
       case 'bedrooms':
-        return <BedroomsStep data={formData} updateData={setFormData} onNext={() => handleNext('bedrooms')} />;
+        return <BedroomsStep data={formData} updateData={setFormData} onNext={() => handleNext('bedrooms')} onPrevious={() => handlePrevious('bedrooms')} />;
       case 'description':
-        return <DescriptionStep data={formData} updateData={setFormData} onNext={() => handleNext('description')} />;
+        return <DescriptionStep data={formData} updateData={setFormData} onNext={() => handleNext('description')} onPrevious={() => handlePrevious('description')} />;
       case 'stay_details':
-        return <StayDetailsStep data={formData} updateData={setFormData} onNext={() => handleNext('stay_details')} />;
+        return <StayDetailsStep data={formData} updateData={setFormData} onNext={() => handleNext('stay_details')} onPrevious={() => handlePrevious('stay_details')} />;
       case 'sustainability':
-        return <SustainabilityStep data={formData} updateData={setFormData} onNext={() => handleNext('sustainability')} />;
+        return <SustainabilityStep data={formData} updateData={setFormData} onNext={() => handleNext('sustainability')} onPrevious={() => handlePrevious('sustainability')} />;
       case 'house_rules':
-        return <HouseRulesStep data={formData} updateData={setFormData} onNext={() => handleNext('house_rules')} />;
+        return <HouseRulesStep data={formData} updateData={setFormData} onNext={() => handleNext('house_rules')} onPrevious={() => handlePrevious('house_rules')} />;
       default:
-        return <div>Step content for {currentStep} coming soon...</div>;
+        return <GeneralStep data={formData} updateData={setFormData} onNext={() => handleNext('general')} onPrevious={() => handlePrevious('general')} />;
     }
   };
 
@@ -161,11 +197,27 @@ export function NewListingWizard() {
     }
   };
 
+  const handlePrevious = (currentStepId: string) => {
+    const currentIndex = STEPS.findIndex(s => s.id === currentStepId);
+    if (currentIndex > 0) {
+      setCurrentStep(STEPS[currentIndex - 1].id);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-[#F8F4E3]">
       {/* Sidebar */}
       <aside className="w-64 bg-[#F8F4E3] border-r border-[#E5E5E5] sticky h-full overflow-y-auto hidden md:block">
         <div className="p-6">
+          {/* Back Button */}
+          <button
+            onClick={() => router.push('/account/landlord')}
+            className="w-full flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-lg transition-colors text-gray-600 hover:text-[#244224] hover:bg-white/50 mb-6"
+          >
+            <ChevronLeft size={18} className="text-gray-400" />
+            <span>Back to Account</span>
+          </button>
+          
           <div className="w-8 h-1 bg-[#244224] mb-8 rounded-full"></div>
           <nav className="space-y-1">
             {STEPS.map((step) => {
@@ -201,6 +253,17 @@ export function NewListingWizard() {
 
       {/* Main Content */}
       <main className="flex-1 p-8">
+        {/* Mobile Back Button */}
+        <div className="md:hidden mb-6">
+          <button
+            onClick={() => router.push('/en/account/landlord')}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors text-gray-600 hover:text-[#244224] hover:bg-white/50"
+          >
+            <ChevronLeft size={16} className="text-gray-400" />
+            <span>Back to Account</span>
+          </button>
+        </div>
+        
         <div className="mx-auto bg-white rounded-xl shadow-sm border border-gray-100 min-h-[600px] p-8">
           {renderStepContent()}
         </div>
@@ -210,7 +273,7 @@ export function NewListingWizard() {
 }
 
 // Temporary placeholder components for steps
-function GeneralStep({ data, updateData, onNext }: any) {
+function GeneralStep({ data, updateData, onNext, onPrevious }: any) {
   return (
     <div className="space-y-8 animate-fade-in">
       <h2 className="text-3xl font-serif text-[#1D331D]">General</h2>
@@ -220,7 +283,8 @@ function GeneralStep({ data, updateData, onNext }: any) {
           <label className="block text-sm font-bold text-[#1D331D]">Accommodation name</label>
           <input 
             type="text" 
-            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559]"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400"
+            placeholder="Enter accommodation name"
             value={data.accommodationName}
             onChange={(e) => updateData({...data, accommodationName: e.target.value})}
           />
@@ -229,7 +293,7 @@ function GeneralStep({ data, updateData, onNext }: any) {
         <div className="space-y-2">
           <label className="block text-sm font-bold text-[#1D331D]">Type</label>
           <select 
-            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] cursor-pointer appearance-none"
             value={data.type}
             onChange={(e) => updateData({...data, type: e.target.value})}
           >
@@ -261,7 +325,7 @@ function GeneralStep({ data, updateData, onNext }: any) {
           <label className="block text-sm font-bold text-[#1D331D]">Max. person</label>
           <input 
             type="number" 
-            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559]"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400"
             value={data.maxPerson}
             onChange={(e) => updateData({...data, maxPerson: parseInt(e.target.value)})}
           />
@@ -270,7 +334,7 @@ function GeneralStep({ data, updateData, onNext }: any) {
         <div className="space-y-2">
           <label className="block text-sm font-bold text-[#1D331D]">Living situation</label>
           <select 
-            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] cursor-pointer appearance-none"
             value={data.livingSituation}
             onChange={(e) => updateData({...data, livingSituation: e.target.value})}
           >
@@ -285,7 +349,7 @@ function GeneralStep({ data, updateData, onNext }: any) {
       <div className="space-y-2">
         <label className="block text-sm font-bold text-[#1D331D]">Location</label>
         <select 
-          className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white"
+          className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] cursor-pointer appearance-none"
           value={data.location}
           onChange={(e) => updateData({...data, location: e.target.value})}
         >
@@ -303,40 +367,85 @@ function GeneralStep({ data, updateData, onNext }: any) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label className="block text-sm font-bold text-[#1D331D] flex items-center gap-2">
-            Plot size around accommodation <span className="text-gray-400">ⓘ</span>
+            Plot size around accommodation 
+            <div className="relative group">
+              <span 
+                className="text-gray-400 cursor-help transition-colors hover:text-gray-600"
+                onMouseEnter={(e) => {
+                  const tooltip = e.currentTarget.nextElementSibling as HTMLElement;
+                  const arrow = tooltip?.querySelector('.arrow') as HTMLElement;
+                  if (!tooltip || !arrow) return;
+                  
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const tooltipHeight = 80;
+                  const spaceBelow = window.innerHeight - rect.bottom;
+                  
+                  if (spaceBelow < tooltipHeight + 10) {
+                    tooltip.style.top = 'auto';
+                    tooltip.style.bottom = '100%';
+                    tooltip.style.marginBottom = '8px';
+                    tooltip.style.marginTop = '0';
+                    arrow.style.borderTopColor = '#1f2937';
+                    arrow.style.borderBottomColor = 'transparent';
+                    arrow.style.top = '100%';
+                    arrow.style.bottom = 'auto';
+                    arrow.style.marginTop = '-1px';
+                    arrow.style.marginBottom = '0';
+                  } else {
+                    tooltip.style.top = '100%';
+                    tooltip.style.bottom = 'auto';
+                    tooltip.style.marginTop = '8px';
+                    tooltip.style.marginBottom = '0';
+                    arrow.style.borderBottomColor = '#1f2937';
+                    arrow.style.borderTopColor = 'transparent';
+                    arrow.style.bottom = '100%';
+                    arrow.style.top = 'auto';
+                    arrow.style.marginBottom = '-1px';
+                    arrow.style.marginTop = '0';
+                  }
+                }}
+              >ⓘ</span>
+              <div className="absolute right-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform scale-95 group-hover:scale-100 z-10 w-64 shadow-lg p-3 bg-gray-900 text-white text-sm rounded-lg">
+                <div className="arrow absolute right-4 bottom-full -mb-1 transition-all duration-200">
+                  <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                </div>
+                The amount of square meters of your plot.
+              </div>
+            </div>
           </label>
           <input 
             type="text" 
-            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559]"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400"
+            placeholder="Enter plot size in square meters"
             value={data.plotSize}
             onChange={(e) => updateData({...data, plotSize: e.target.value})}
           />
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-bold text-[#1D331D]">
+          <label className="block text-sm font-bold text-[#1D331D] flex items-center gap-2">
             Is your house closer than 10m from the nearest neighbour? (Door to door)
           </label>
           <div className="flex gap-4 mt-3">
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label className="flex items-center gap-2 cursor-pointer group">
               <input 
                 type="radio" 
                 name="neighbors"
+                className="w-5 h-5 text-[#59A559] focus:ring-2 focus:ring-[#59A559]/20 transition-all duration-200 group-hover:scale-110"
                 checked={data.isNearNeighbors === true}
                 onChange={() => updateData({...data, isNearNeighbors: true})}
-                className="w-5 h-5 text-[#59A559] focus:ring-[#59A559]"
               />
-              <span>Yes</span>
+              <span className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200">Yes</span>
             </label>
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label className="flex items-center gap-2 cursor-pointer group">
               <input 
                 type="radio" 
                 name="neighbors"
+                className="w-5 h-5 text-[#59A559] focus:ring-2 focus:ring-[#59A559]/20 transition-all duration-200 group-hover:scale-110"
                 checked={data.isNearNeighbors === false}
                 onChange={() => updateData({...data, isNearNeighbors: false})}
-                className="w-5 h-5 text-[#59A559] focus:ring-[#59A559]"
               />
-              <span>No</span>
+              <span className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200">No</span>
             </label>
           </div>
         </div>
@@ -345,10 +454,54 @@ function GeneralStep({ data, updateData, onNext }: any) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label className="block text-sm font-bold text-[#1D331D] flex items-center gap-2">
-            Registration number <span className="text-gray-400">ⓘ</span>
+            Registration number 
+            <div className="relative group">
+              <span 
+                className="text-gray-400 cursor-help transition-colors hover:text-gray-600"
+                onMouseEnter={(e) => {
+                  const tooltip = e.currentTarget.nextElementSibling as HTMLElement;
+                  const arrow = tooltip?.querySelector('.arrow') as HTMLElement;
+                  if (!tooltip || !arrow) return;
+                  
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const tooltipHeight = 120;
+                  const spaceBelow = window.innerHeight - rect.bottom;
+                  
+                  if (spaceBelow < tooltipHeight + 10) {
+                    tooltip.style.top = 'auto';
+                    tooltip.style.bottom = '100%';
+                    tooltip.style.marginBottom = '8px';
+                    tooltip.style.marginTop = '0';
+                    arrow.style.borderTopColor = '#1f2937';
+                    arrow.style.borderBottomColor = 'transparent';
+                    arrow.style.top = '100%';
+                    arrow.style.bottom = 'auto';
+                    arrow.style.marginTop = '-1px';
+                    arrow.style.marginBottom = '0';
+                  } else {
+                    tooltip.style.top = '100%';
+                    tooltip.style.bottom = 'auto';
+                    tooltip.style.marginTop = '8px';
+                    tooltip.style.marginBottom = '0';
+                    arrow.style.borderBottomColor = '#1f2937';
+                    arrow.style.borderTopColor = 'transparent';
+                    arrow.style.bottom = '100%';
+                    arrow.style.top = 'auto';
+                    arrow.style.marginBottom = '-1px';
+                    arrow.style.marginTop = '0';
+                  }
+                }}
+              >ⓘ</span>
+              <div className="absolute right-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform scale-95 group-hover:scale-100 z-10 w-64 shadow-lg p-3 bg-gray-900 text-white text-sm rounded-lg">
+                <div className="arrow absolute right-4 bottom-full -mb-1 transition-all duration-200">
+                  <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                </div>
+                In certain cities, regions or countries it is mandatory to have a registration number when renting your accommodation. You receive this number from your government.
+              </div>
+            </div>
           </label>
           <select 
-            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] cursor-pointer appearance-none bg-white"
             value={data.registrationNumberOption}
             onChange={(e) => updateData({...data, registrationNumberOption: e.target.value})}
           >
@@ -362,7 +515,8 @@ function GeneralStep({ data, updateData, onNext }: any) {
           <label className="block text-sm font-bold text-[#1D331D]">Registration number</label>
           <input 
             type="text" 
-            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-gray-50"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:border-gray-400 disabled:hover:shadow-none disabled:focus:scale-100"
+            placeholder="Enter registration number"
             disabled={data.registrationNumberOption !== 'I have a registration number'}
             value={data.registrationNumber}
             onChange={(e) => updateData({...data, registrationNumber: e.target.value})}
@@ -371,18 +525,22 @@ function GeneralStep({ data, updateData, onNext }: any) {
       </div>
 
       <div className="pt-4">
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input 
-            type="checkbox" 
-            className="mt-1 w-5 h-5 rounded border-gray-300 text-[#59A559] focus:ring-[#59A559]"
-            checked={data.hasPublicTransport}
-            onChange={(e) => updateData({...data, hasPublicTransport: e.target.checked})}
-          />
-          <span className="text-gray-700">There is a public transport opportunity at a maximum of one km from the naturehouse</span>
-        </label>
+        <UnifiedCheckbox
+          checked={data.hasPublicTransport}
+          onChange={() => updateData({...data, hasPublicTransport: !data.hasPublicTransport})}
+          label={<span className="text-gray-700">There is a public transport opportunity at a maximum of one km from the naturehouse</span>}
+          className="items-start"
+        />
       </div>
 
-      <div className="pt-8 flex justify-end border-t border-gray-100">
+      <div className="pt-8 flex justify-between border-t border-gray-100">
+        <button 
+          onClick={onPrevious}
+          disabled
+          className="bg-gray-100 text-gray-400 px-8 py-3 rounded-lg font-medium cursor-not-allowed flex items-center gap-2"
+        >
+          Previous
+        </button>
         <button 
           onClick={onNext}
           className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors flex items-center gap-2"
@@ -394,7 +552,7 @@ function GeneralStep({ data, updateData, onNext }: any) {
   );
 }
 
-function LocationStep({ data, updateData, onNext }: any) {
+function LocationStep({ data, updateData, onNext, onPrevious }: any) {
   return (
     <div className="space-y-8 animate-fade-in">
       <h2 className="text-3xl font-serif text-[#1D331D]">Location</h2>
@@ -403,7 +561,7 @@ function LocationStep({ data, updateData, onNext }: any) {
       <div className="space-y-2">
         <label className="block text-sm font-bold text-[#1D331D]">Country</label>
         <select 
-          className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white"
+          className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] cursor-pointer appearance-none"
           value={data.country}
           onChange={(e) => updateData({...data, country: e.target.value})}
         >
@@ -417,7 +575,7 @@ function LocationStep({ data, updateData, onNext }: any) {
       <div className="space-y-2">
         <label className="block text-sm font-bold text-[#1D331D]">Region</label>
         <select 
-          className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white"
+          className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] cursor-pointer appearance-none"
           value={data.region}
           onChange={(e) => updateData({...data, region: e.target.value})}
         >
@@ -432,7 +590,8 @@ function LocationStep({ data, updateData, onNext }: any) {
           <label className="block text-sm font-bold text-[#1D331D]">Street</label>
           <input 
             type="text" 
-            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559]"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400"
+            placeholder="Enter street name"
             value={data.street}
             onChange={(e) => updateData({...data, street: e.target.value})}
           />
@@ -442,7 +601,8 @@ function LocationStep({ data, updateData, onNext }: any) {
           <label className="block text-sm font-bold text-[#1D331D]">Number</label>
           <input 
             type="text" 
-            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559]"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400"
+            placeholder="Enter house number"
             value={data.number}
             onChange={(e) => updateData({...data, number: e.target.value})}
           />
@@ -454,7 +614,8 @@ function LocationStep({ data, updateData, onNext }: any) {
           <label className="block text-sm font-bold text-[#1D331D]">Postal code</label>
           <input 
             type="text" 
-            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559]"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400"
+            placeholder="Enter postal code"
             value={data.postalCode}
             onChange={(e) => updateData({...data, postalCode: e.target.value})}
           />
@@ -464,7 +625,8 @@ function LocationStep({ data, updateData, onNext }: any) {
           <label className="block text-sm font-bold text-[#1D331D]">Place</label>
           <input 
             type="text" 
-            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559]"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400"
+            placeholder="Enter city/place"
             value={data.place}
             onChange={(e) => updateData({...data, place: e.target.value})}
           />
@@ -473,35 +635,85 @@ function LocationStep({ data, updateData, onNext }: any) {
 
       <div className="space-y-4">
         <label className="block text-sm font-bold text-[#1D331D] flex items-center gap-2">
-          Land registration number <span className="text-gray-400">ⓘ</span>
+          Land registration number 
+          <div className="relative group">
+            <span 
+              className="text-gray-400 cursor-help transition-colors hover:text-gray-600"
+              onMouseEnter={(e) => {
+                const tooltip = e.currentTarget.nextElementSibling as HTMLElement;
+                const arrow = tooltip?.querySelector('.arrow') as HTMLElement;
+                if (!tooltip || !arrow) return;
+                
+                const rect = e.currentTarget.getBoundingClientRect();
+                const tooltipHeight = 120;
+                const spaceBelow = window.innerHeight - rect.bottom;
+                
+                if (spaceBelow < tooltipHeight + 10) {
+                  tooltip.style.top = 'auto';
+                  tooltip.style.bottom = '100%';
+                  tooltip.style.marginBottom = '8px';
+                  tooltip.style.marginTop = '0';
+                  arrow.style.borderTopColor = '#1f2937';
+                  arrow.style.borderBottomColor = 'transparent';
+                  arrow.style.top = '100%';
+                  arrow.style.bottom = 'auto';
+                  arrow.style.marginTop = '-1px';
+                  arrow.style.marginBottom = '0';
+                } else {
+                  tooltip.style.top = '100%';
+                  tooltip.style.bottom = 'auto';
+                  tooltip.style.marginTop = '8px';
+                  tooltip.style.marginBottom = '0';
+                  arrow.style.borderBottomColor = '#1f2937';
+                  arrow.style.borderTopColor = 'transparent';
+                  arrow.style.bottom = '100%';
+                  arrow.style.top = 'auto';
+                  arrow.style.marginBottom = '-1px';
+                  arrow.style.marginTop = '0';
+                }
+              }}
+            >ⓘ</span>
+            <div className="absolute right-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform scale-95 group-hover:scale-100 z-10 w-64 shadow-lg p-3 bg-gray-900 text-white text-sm rounded-lg">
+              <div className="arrow absolute right-4 bottom-full -mb-1 transition-all duration-200">
+                <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+              </div>
+              The land registration number is needed to complete the information on activities of nature houses.
+            </div>
+          </div>
         </label>
         <div className="space-y-3">
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-2 cursor-pointer group">
             <input 
               type="radio" 
               name="landRegistration"
-              className="w-5 h-5 text-[#59A559] focus:ring-[#59A559]"
+              className="w-5 h-5 text-[#59A559] focus:ring-2 focus:ring-[#59A559]/20 transition-all duration-200 group-hover:scale-110"
               value="available"
               checked={data.landRegistrationOption === 'available'}
               onChange={(e) => updateData({...data, landRegistrationOption: e.target.value})}
             />
-            <span>Number is available</span>
+            <span className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200">Yes, I have a land registration number</span>
           </label>
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-2 cursor-pointer group">
             <input 
               type="radio" 
               name="landRegistration"
-              className="w-5 h-5 text-[#59A559] focus:ring-[#59A559]"
+              className="w-5 h-5 text-[#59A559] focus:ring-2 focus:ring-[#59A559]/20 transition-all duration-200 group-hover:scale-110"
               value="not_applicable"
               checked={data.landRegistrationOption === 'not_applicable'}
               onChange={(e) => updateData({...data, landRegistrationOption: e.target.value})}
             />
-            <span>Number not applicable</span>
+            <span className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200">No, not applicable</span>
           </label>
         </div>
       </div>
 
-      <div className="pt-8 flex justify-end border-t border-gray-100">
+      <div className="pt-8 flex justify-between border-t border-gray-100">
+        <button 
+          onClick={onPrevious}
+          className="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors flex items-center gap-2"
+        >
+          Previous
+        </button>
         <button 
           onClick={onNext}
           className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors flex items-center gap-2"
@@ -574,15 +786,11 @@ function FacilitiesModal({ isOpen, onClose, selected, onUpdate }: any) {
                   return (
                     <div key={item} className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <label className="flex items-center gap-3 cursor-pointer">
-                          <input 
-                            type="checkbox"
-                            className="w-5 h-5 rounded border-gray-300 text-[#59A559] focus:ring-[#59A559]"
-                            checked={isSelected}
-                            onChange={() => handleToggle(item)}
-                          />
-                          <span>{item}</span>
-                        </label>
+                        <UnifiedCheckbox
+                          checked={isSelected}
+                          onChange={() => handleToggle(item)}
+                          label={<span>{item}</span>}
+                        />
                         {needsPrice && isSelected && (
                           <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                             <span className="text-sm text-gray-600">Price:</span>
@@ -655,15 +863,12 @@ function ExtraCostsModal({ isOpen, onClose, selected, onUpdate }: any) {
               <h4 className="font-bold text-lg text-[#1D331D] mb-3">{category}</h4>
               <div className="space-y-3">
                 {items.map((item) => (
-                  <label key={item} className="flex items-center gap-3 cursor-pointer">
-                    <input 
-                      type="checkbox"
-                      className="w-5 h-5 rounded border-gray-300 text-[#59A559] focus:ring-[#59A559]"
-                      checked={localSelected.includes(item)}
-                      onChange={() => handleToggle(item)}
-                    />
-                    <span>{item}</span>
-                  </label>
+                  <UnifiedCheckbox
+                    key={item}
+                    checked={localSelected.includes(item)}
+                    onChange={() => handleToggle(item)}
+                    label={<span>{item}</span>}
+                  />
                 ))}
               </div>
             </div>
@@ -678,7 +883,7 @@ function ExtraCostsModal({ isOpen, onClose, selected, onUpdate }: any) {
   );
 }
 
-function PhotosStep({ data, updateData, onNext }: any) {
+function PhotosStep({ data, updateData, onNext, onPrevious }: any) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -814,7 +1019,13 @@ function PhotosStep({ data, updateData, onNext }: any) {
         )}
       </div>
       
-      <div className="pt-8 flex justify-end border-t border-gray-100">
+      <div className="pt-8 flex justify-between border-t border-gray-100">
+        <button 
+          onClick={onPrevious}
+          className="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors flex items-center gap-2"
+        >
+          Previous
+        </button>
         <button 
           onClick={onNext}
           className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors flex items-center gap-2"
@@ -826,7 +1037,7 @@ function PhotosStep({ data, updateData, onNext }: any) {
   );
 }
 
-function PricingStep({ data, updateData, onNext }: any) {
+function PricingStep({ data, updateData, onNext, onPrevious }: any) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [isExtraCostsModalOpen, setIsExtraCostsModalOpen] = useState(false);
@@ -841,7 +1052,14 @@ function PricingStep({ data, updateData, onNext }: any) {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <h2 className="text-3xl font-serif text-[#1D331D]">Base price</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-serif text-[#1D331D]">Pricing</h2>
+        <button className="flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-purple-300 bg-purple-50 text-purple-700 hover:border-purple-400 hover:bg-purple-100 hover:shadow-md transition-all duration-300 transform hover:scale-[1.02]">
+          <span className="font-bold text-lg">:</span>
+          <span>More</span>
+        </button>
+      </div>
+      <h2 className="text-2xl font-serif text-[#1D331D]">Base price</h2>
       
       <div className="text-gray-600">
         <p>In the rates, you set the base price and extra costs for a stay. Later, you can set prices for specific periods in the calendar. <a href="#" className="text-[#5b2d8e] underline">Learn more about setting your prices.</a></p>
@@ -854,7 +1072,7 @@ function PricingStep({ data, updateData, onNext }: any) {
           <input 
             type="number" 
             placeholder="0.00"
-            className="w-full pl-8 pr-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559]"
+            className="w-full pl-8 pr-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400"
             value={data.pricePerNight}
             onChange={(e) => updateData({...data, pricePerNight: e.target.value})}
           />
@@ -1052,7 +1270,53 @@ function PricingStep({ data, updateData, onNext }: any) {
             <div className="px-4 pb-4 border-t border-gray-200">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div className="space-y-2">
-                  <label className="block text-sm font-bold text-[#1D331D]">Total price weekend</label>
+                  <label className="block text-sm font-bold text-[#1D331D] flex items-center gap-2">
+                    Total price weekend 
+                    <div className="relative group">
+                      <span 
+                        className="text-gray-400 cursor-help transition-colors hover:text-gray-600"
+                        onMouseEnter={(e) => {
+                          const tooltip = e.currentTarget.nextElementSibling as HTMLElement;
+                          const arrow = tooltip?.querySelector('.arrow') as HTMLElement;
+                          if (!tooltip || !arrow) return;
+                          
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const tooltipHeight = 80;
+                          const spaceBelow = window.innerHeight - rect.bottom;
+                          
+                          if (spaceBelow < tooltipHeight + 10) {
+                            tooltip.style.top = 'auto';
+                            tooltip.style.bottom = '100%';
+                            tooltip.style.marginBottom = '8px';
+                            tooltip.style.marginTop = '0';
+                            arrow.style.borderTopColor = '#1f2937';
+                            arrow.style.borderBottomColor = 'transparent';
+                            arrow.style.top = '100%';
+                            arrow.style.bottom = 'auto';
+                            arrow.style.marginTop = '-1px';
+                            arrow.style.marginBottom = '0';
+                          } else {
+                            tooltip.style.top = '100%';
+                            tooltip.style.bottom = 'auto';
+                            tooltip.style.marginTop = '8px';
+                            tooltip.style.marginBottom = '0';
+                            arrow.style.borderBottomColor = '#1f2937';
+                            arrow.style.borderTopColor = 'transparent';
+                            arrow.style.bottom = '100%';
+                            arrow.style.top = 'auto';
+                            arrow.style.marginBottom = '-1px';
+                            arrow.style.marginTop = '0';
+                          }
+                        }}
+                      >ⓘ</span>
+                      <div className="absolute right-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform scale-95 group-hover:scale-100 z-10 w-64 shadow-lg p-3 bg-gray-900 text-white text-sm rounded-lg">
+                        <div className="arrow absolute right-4 bottom-full -mb-1 transition-all duration-200">
+                          <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                        </div>
+                        Set the total price for weekend stays (Friday to Sunday).
+                      </div>
+                    </div>
+                  </label>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">€</span>
                     <input 
@@ -1072,7 +1336,53 @@ function PricingStep({ data, updateData, onNext }: any) {
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="block text-sm font-bold text-[#1D331D]">Total price long weekend</label>
+                  <label className="block text-sm font-bold text-[#1D331D] flex items-center gap-2">
+                    Total price long weekend 
+                    <div className="relative group">
+                      <span 
+                        className="text-gray-400 cursor-help transition-colors hover:text-gray-600"
+                        onMouseEnter={(e) => {
+                          const tooltip = e.currentTarget.nextElementSibling as HTMLElement;
+                          const arrow = tooltip?.querySelector('.arrow') as HTMLElement;
+                          if (!tooltip || !arrow) return;
+                          
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const tooltipHeight = 80;
+                          const spaceBelow = window.innerHeight - rect.bottom;
+                          
+                          if (spaceBelow < tooltipHeight + 10) {
+                            tooltip.style.top = 'auto';
+                            tooltip.style.bottom = '100%';
+                            tooltip.style.marginBottom = '8px';
+                            tooltip.style.marginTop = '0';
+                            arrow.style.borderTopColor = '#1f2937';
+                            arrow.style.borderBottomColor = 'transparent';
+                            arrow.style.top = '100%';
+                            arrow.style.bottom = 'auto';
+                            arrow.style.marginTop = '-1px';
+                            arrow.style.marginBottom = '0';
+                          } else {
+                            tooltip.style.top = '100%';
+                            tooltip.style.bottom = 'auto';
+                            tooltip.style.marginTop = '8px';
+                            tooltip.style.marginBottom = '0';
+                            arrow.style.borderBottomColor = '#1f2937';
+                            arrow.style.borderTopColor = 'transparent';
+                            arrow.style.bottom = '100%';
+                            arrow.style.top = 'auto';
+                            arrow.style.marginBottom = '-1px';
+                            arrow.style.marginTop = '0';
+                          }
+                        }}
+                      >ⓘ</span>
+                      <div className="absolute right-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform scale-95 group-hover:scale-100 z-10 w-64 shadow-lg p-3 bg-gray-900 text-white text-sm rounded-lg">
+                        <div className="arrow absolute right-4 bottom-full -mb-1 transition-all duration-200">
+                          <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                        </div>
+                        Set the total price for long weekend stays (Friday to Monday).
+                      </div>
+                    </div>
+                  </label>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">€</span>
                     <input 
@@ -1092,7 +1402,53 @@ function PricingStep({ data, updateData, onNext }: any) {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-bold text-[#1D331D]">Total price during the week</label>
+                  <label className="block text-sm font-bold text-[#1D331D] flex items-center gap-2">
+                    Total price during the week 
+                    <div className="relative group">
+                      <span 
+                        className="text-gray-400 cursor-help transition-colors hover:text-gray-600"
+                        onMouseEnter={(e) => {
+                          const tooltip = e.currentTarget.nextElementSibling as HTMLElement;
+                          const arrow = tooltip?.querySelector('.arrow') as HTMLElement;
+                          if (!tooltip || !arrow) return;
+                          
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const tooltipHeight = 80;
+                          const spaceBelow = window.innerHeight - rect.bottom;
+                          
+                          if (spaceBelow < tooltipHeight + 10) {
+                            tooltip.style.top = 'auto';
+                            tooltip.style.bottom = '100%';
+                            tooltip.style.marginBottom = '8px';
+                            tooltip.style.marginTop = '0';
+                            arrow.style.borderTopColor = '#1f2937';
+                            arrow.style.borderBottomColor = 'transparent';
+                            arrow.style.top = '100%';
+                            arrow.style.bottom = 'auto';
+                            arrow.style.marginTop = '-1px';
+                            arrow.style.marginBottom = '0';
+                          } else {
+                            tooltip.style.top = '100%';
+                            tooltip.style.bottom = 'auto';
+                            tooltip.style.marginTop = '8px';
+                            tooltip.style.marginBottom = '0';
+                            arrow.style.borderBottomColor = '#1f2937';
+                            arrow.style.borderTopColor = 'transparent';
+                            arrow.style.bottom = '100%';
+                            arrow.style.top = 'auto';
+                            arrow.style.marginBottom = '-1px';
+                            arrow.style.marginTop = '0';
+                          }
+                        }}
+                      >ⓘ</span>
+                      <div className="absolute right-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform scale-95 group-hover:scale-100 z-10 w-64 shadow-lg p-3 bg-gray-900 text-white text-sm rounded-lg">
+                        <div className="arrow absolute right-4 bottom-full -mb-1 transition-all duration-200">
+                          <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                        </div>
+                        Set the total price for weekday stays (Monday to Thursday).
+                      </div>
+                    </div>
+                  </label>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">€</span>
                     <input 
@@ -1112,7 +1468,53 @@ function PricingStep({ data, updateData, onNext }: any) {
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="block text-sm font-bold text-[#1D331D]">Total price week</label>
+                  <label className="block text-sm font-bold text-[#1D331D] flex items-center gap-2">
+                    Total price week 
+                    <div className="relative group">
+                      <span 
+                        className="text-gray-400 cursor-help transition-colors hover:text-gray-600"
+                        onMouseEnter={(e) => {
+                          const tooltip = e.currentTarget.nextElementSibling as HTMLElement;
+                          const arrow = tooltip?.querySelector('.arrow') as HTMLElement;
+                          if (!tooltip || !arrow) return;
+                          
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const tooltipHeight = 80;
+                          const spaceBelow = window.innerHeight - rect.bottom;
+                          
+                          if (spaceBelow < tooltipHeight + 10) {
+                            tooltip.style.top = 'auto';
+                            tooltip.style.bottom = '100%';
+                            tooltip.style.marginBottom = '8px';
+                            tooltip.style.marginTop = '0';
+                            arrow.style.borderTopColor = '#1f2937';
+                            arrow.style.borderBottomColor = 'transparent';
+                            arrow.style.top = '100%';
+                            arrow.style.bottom = 'auto';
+                            arrow.style.marginTop = '-1px';
+                            arrow.style.marginBottom = '0';
+                          } else {
+                            tooltip.style.top = '100%';
+                            tooltip.style.bottom = 'auto';
+                            tooltip.style.marginTop = '8px';
+                            tooltip.style.marginBottom = '0';
+                            arrow.style.borderBottomColor = '#1f2937';
+                            arrow.style.borderTopColor = 'transparent';
+                            arrow.style.bottom = '100%';
+                            arrow.style.top = 'auto';
+                            arrow.style.marginBottom = '-1px';
+                            arrow.style.marginTop = '0';
+                          }
+                        }}
+                      >ⓘ</span>
+                      <div className="absolute right-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform scale-95 group-hover:scale-100 z-10 w-64 shadow-lg p-3 bg-gray-900 text-white text-sm rounded-lg">
+                        <div className="arrow absolute right-4 bottom-full -mb-1 transition-all duration-200">
+                          <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                        </div>
+                        Set the total price for full week stays (7 nights).
+                      </div>
+                    </div>
+                  </label>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">€</span>
                     <input 
@@ -1264,7 +1666,13 @@ function PricingStep({ data, updateData, onNext }: any) {
         </div>
       </div>
 
-      <div className="pt-8 flex justify-end border-t border-gray-100">
+      <div className="pt-8 flex justify-between border-t border-gray-100">
+        <button 
+          onClick={onPrevious}
+          className="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+        >
+          Previous
+        </button>
         <button 
           onClick={onNext}
           className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors"
@@ -1276,23 +1684,111 @@ function PricingStep({ data, updateData, onNext }: any) {
   );
 }
 
-function AvailabilityStep({ data, updateData, onNext }: any) {
+function AvailabilityStep({ data, updateData, onNext, onPrevious }: any) {
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const [showTimePicker, setShowTimePicker] = useState<string | null>(null);
+
+  const hours = Array.from({length: 24}, (_, i) => i.toString().padStart(2, '0'));
+  const minutes = ['00', '15', '30', '45'];
+
+  const TimePicker = ({ value, onChange, label, fieldKey }: { value: string, onChange: (val: string) => void, label: string, fieldKey: string }) => {
+    const [currentHour, currentMinute] = value.split(':');
+    const pickerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
+          setShowTimePicker(null);
+        }
+      };
+
+      if (showTimePicker === fieldKey) {
+        document.addEventListener('mousedown', handleClickOutside);
+      }
+
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [showTimePicker, fieldKey]);
+    
+    return (
+      <div className="relative" ref={pickerRef}>
+        <div 
+          className="w-full px-3 py-2 rounded-xl border-2 border-gray-400 bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md cursor-pointer flex items-center justify-between"
+          onClick={() => setShowTimePicker(showTimePicker === fieldKey ? null : fieldKey)}
+        >
+          <span className="text-gray-700">{value}</span>
+          <span className="text-gray-400">🕒</span>
+        </div>
+        
+        {showTimePicker === fieldKey && (
+          <div className="absolute top-full mt-2 bg-white border-2 border-gray-400 rounded-xl shadow-lg p-4 z-20 min-w-[200px]">
+            <div className="text-sm font-medium text-gray-700 mb-3">{label}</div>
+            <div className="space-y-3">
+              <div>
+                <div className="text-xs text-gray-500 mb-1">Hour</div>
+                <div className="grid grid-cols-6 gap-1 max-h-32 overflow-y-auto">
+                  {hours.map(hour => (
+                    <button
+                      key={hour}
+                      className={`px-2 py-1 text-xs rounded transition-colors ${
+                        currentHour === hour 
+                          ? 'bg-[#59A559] text-white' 
+                          : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                      }`}
+                      onClick={() => onChange(`${hour}:${currentMinute}`)}
+                    >
+                      {hour}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-500 mb-1">Minute</div>
+                <div className="grid grid-cols-4 gap-1">
+                  {minutes.map(minute => (
+                    <button
+                      key={minute}
+                      className={`px-2 py-1 text-xs rounded transition-colors ${
+                        currentMinute === minute 
+                          ? 'bg-[#59A559] text-white' 
+                          : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                      }`}
+                      onClick={() => onChange(`${currentHour}:${minute}`)}
+                    >
+                      {minute}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-10 animate-fade-in">
+      <h2 className="text-3xl font-serif text-[#1D331D]">Availability</h2>
+      
       <div className="space-y-4">
-        <h2 className="text-3xl font-serif text-[#1D331D]">Length of stay</h2>
+        <h2 className="text-2xl font-serif text-[#1D331D]">Length of stay</h2>
         <p className="text-gray-600">What is the minimum and maximum number of nights of a stay?</p>
         
         <div className="space-y-4">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3 bg-gray-50 rounded-full p-1">
-              <button className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-600 hover:text-[#5b2d8e]">-</button>
+              <button 
+                className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-600 hover:text-[#5b2d8e]"
+                onClick={() => updateData({...data, minNights: Math.max(1, data.minNights - 1)})}
+                disabled={data.minNights <= 1}
+              >-</button>
               <span className="w-8 text-center font-medium">{data.minNights}</span>
               <button 
                 className="w-8 h-8 rounded-full bg-[#EFEFEF] flex items-center justify-center text-[#5b2d8e] hover:bg-[#e0d0f0]"
-                onClick={() => updateData({...data, minNights: data.minNights + 1})}
+                onClick={() => updateData({...data, minNights: Math.min(364, data.minNights + 1)})}
+                disabled={data.minNights >= 364}
               >+</button>
             </div>
             <span className="text-gray-700">night minimal</span>
@@ -1300,9 +1796,17 @@ function AvailabilityStep({ data, updateData, onNext }: any) {
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3 bg-gray-50 rounded-full p-1">
-              <button className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-600 hover:text-[#5b2d8e]">-</button>
-              <span className="w-8 text-center font-medium">364</span>
-              <button className="w-8 h-8 rounded-full bg-[#EFEFEF] flex items-center justify-center text-[#5b2d8e] hover:bg-[#e0d0f0]">+</button>
+              <button 
+                className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-600 hover:text-[#5b2d8e]"
+                onClick={() => updateData({...data, maxNights: Math.max(1, (data.maxNights || 364) - 1)})}
+                disabled={(data.maxNights || 364) <= 1}
+              >-</button>
+              <span className="w-8 text-center font-medium">{data.maxNights || 364}</span>
+              <button 
+                className="w-8 h-8 rounded-full bg-[#EFEFEF] flex items-center justify-center text-[#5b2d8e] hover:bg-[#e0d0f0]"
+                onClick={() => updateData({...data, maxNights: Math.min(364, (data.maxNights || 364) + 1)})}
+                disabled={(data.maxNights || 364) >= 364}
+              >+</button>
             </div>
             <span className="text-gray-700">nights maximum</span>
           </div>
@@ -1318,7 +1822,14 @@ function AvailabilityStep({ data, updateData, onNext }: any) {
           <div className="flex flex-wrap gap-3">
             {days.map(day => (
               <label key={`arr-${day}`} className="flex items-center gap-2 cursor-pointer bg-gray-50 px-3 py-2 rounded-lg hover:bg-gray-100">
-                <div className="w-5 h-5 bg-[#244224] rounded flex items-center justify-center text-white text-xs">✓</div>
+                <input 
+                  type="checkbox" 
+                  className="w-5 h-5 text-[#59A559] focus:ring-[#59A559] rounded"
+                  checked={data.arrivalDays?.includes(day) || false}
+                  onChange={() => handleCheckboxToggle(day, data.arrivalDays || [], (newDays) => 
+                    updateData({...data, arrivalDays: newDays})
+                  )}
+                />
                 <span className="text-sm font-medium text-gray-700">{day}</span>
               </label>
             ))}
@@ -1330,7 +1841,14 @@ function AvailabilityStep({ data, updateData, onNext }: any) {
           <div className="flex flex-wrap gap-3">
             {days.map(day => (
               <label key={`dep-${day}`} className="flex items-center gap-2 cursor-pointer bg-gray-50 px-3 py-2 rounded-lg hover:bg-gray-100">
-                <div className="w-5 h-5 bg-[#244224] rounded flex items-center justify-center text-white text-xs">✓</div>
+                <input 
+                  type="checkbox" 
+                  className="w-5 h-5 text-[#59A559] focus:ring-[#59A559] rounded"
+                  checked={data.departureDays?.includes(day) || false}
+                  onChange={() => handleCheckboxToggle(day, data.departureDays || [], (newDays) => 
+                    updateData({...data, departureDays: newDays})
+                  )}
+                />
                 <span className="text-sm font-medium text-gray-700">{day}</span>
               </label>
             ))}
@@ -1344,15 +1862,23 @@ function AvailabilityStep({ data, updateData, onNext }: any) {
               <div className="w-full">
                 <label className="block text-xs font-bold text-gray-500 mb-1">From</label>
                 <div className="relative">
-                  <input type="text" value="15:00" className="w-full px-3 py-2 border border-gray-200 rounded-lg" readOnly />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">🕒</span>
+                  <TimePicker 
+                    value={data.checkInFrom || '15:00'}
+                    onChange={(value) => updateData({...data, checkInFrom: value})}
+                    label="Check-in From"
+                    fieldKey="checkInFrom"
+                  />
                 </div>
               </div>
               <div className="w-full">
                 <label className="block text-xs font-bold text-gray-500 mb-1">Until</label>
                 <div className="relative">
-                  <input type="text" value="22:00" className="w-full px-3 py-2 border border-gray-200 rounded-lg" readOnly />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">🕒</span>
+                  <TimePicker 
+                    value={data.checkInUntil || '22:00'}
+                    onChange={(value) => updateData({...data, checkInUntil: value})}
+                    label="Check-in Until"
+                    fieldKey="checkInUntil"
+                  />
                 </div>
               </div>
             </div>
@@ -1364,15 +1890,23 @@ function AvailabilityStep({ data, updateData, onNext }: any) {
               <div className="w-full">
                 <label className="block text-xs font-bold text-gray-500 mb-1">From</label>
                 <div className="relative">
-                  <input type="text" value="07:00" className="w-full px-3 py-2 border border-gray-200 rounded-lg" readOnly />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">🕒</span>
+                  <TimePicker 
+                    value={data.checkOutFrom || '07:00'}
+                    onChange={(value) => updateData({...data, checkOutFrom: value})}
+                    label="Check-out From"
+                    fieldKey="checkOutFrom"
+                  />
                 </div>
               </div>
               <div className="w-full">
                 <label className="block text-xs font-bold text-gray-500 mb-1">Until</label>
                 <div className="relative">
-                  <input type="text" value="11:00" className="w-full px-3 py-2 border border-gray-200 rounded-lg" readOnly />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">🕒</span>
+                  <TimePicker 
+                    value={data.checkOutUntil || '11:00'}
+                    onChange={(value) => updateData({...data, checkOutUntil: value})}
+                    label="Check-out Until"
+                    fieldKey="checkOutUntil"
+                  />
                 </div>
               </div>
             </div>
@@ -1386,9 +1920,16 @@ function AvailabilityStep({ data, updateData, onNext }: any) {
           <h3 className="font-bold text-[#1D331D] mb-2">Minimum number of days between booking and arrival</h3>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3 bg-gray-50 rounded-full p-1">
-              <button className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-600 hover:text-[#5b2d8e]">-</button>
-              <span className="w-8 text-center font-medium">0</span>
-              <button className="w-8 h-8 rounded-full bg-[#EFEFEF] flex items-center justify-center text-[#5b2d8e] hover:bg-[#e0d0f0]">+</button>
+              <button 
+                className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-600 hover:text-[#5b2d8e]"
+                onClick={() => updateData({...data, minBookingDays: Math.max(0, (data.minBookingDays || 0) - 1)})}
+                disabled={(data.minBookingDays || 0) <= 0}
+              >-</button>
+              <span className="w-8 text-center font-medium">{data.minBookingDays || 0}</span>
+              <button 
+                className="w-8 h-8 rounded-full bg-[#EFEFEF] flex items-center justify-center text-[#5b2d8e] hover:bg-[#e0d0f0]"
+                onClick={() => updateData({...data, minBookingDays: (data.minBookingDays || 0) + 1})}
+              >+</button>
             </div>
             <span className="text-gray-700">days before arrival</span>
           </div>
@@ -1398,15 +1939,27 @@ function AvailabilityStep({ data, updateData, onNext }: any) {
         <div className="space-y-3 pt-4">
           <h3 className="font-bold text-[#1D331D]">Availability limit</h3>
           <div className="space-y-2">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <div className="w-6 h-6 rounded-full bg-[#244224] flex items-center justify-center text-white">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              </div>
-              <span className="text-[#1D331D]">2 years</span>
+            <label className="flex items-center gap-2 cursor-pointer group">
+              <input 
+                type="radio" 
+                name="availabilityLimit"
+                className="w-5 h-5 text-[#59A559] focus:ring-2 focus:ring-[#59A559]/20 transition-all duration-200 group-hover:scale-110"
+                value="2_years"
+                checked={data.availabilityLimit === '2_years'}
+                onChange={(e) => updateData({...data, availabilityLimit: e.target.value})}
+              />
+              <span className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200">2 years</span>
             </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <div className="w-6 h-6 rounded-full border border-gray-300"></div>
-              <span className="text-gray-700">1 year</span>
+            <label className="flex items-center gap-2 cursor-pointer group">
+              <input 
+                type="radio" 
+                name="availabilityLimit"
+                className="w-5 h-5 text-[#59A559] focus:ring-2 focus:ring-[#59A559]/20 transition-all duration-200 group-hover:scale-110"
+                value="1_year"
+                checked={data.availabilityLimit === '1_year'}
+                onChange={(e) => updateData({...data, availabilityLimit: e.target.value})}
+              />
+              <span className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200">1 year</span>
             </label>
           </div>
           <p className="text-sm text-gray-500">How far into the future do you want to receive bookings? Availability is based on this setting and is relative to the current date.</p>
@@ -1415,10 +1968,12 @@ function AvailabilityStep({ data, updateData, onNext }: any) {
 
       <div className="space-y-4">
         <h2 className="text-3xl font-serif text-[#1D331D]">Automatically approve bookings</h2>
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input type="checkbox" className="mt-1 w-5 h-5 rounded border-gray-300 text-[#59A559] focus:ring-[#59A559]" />
-          <span className="text-gray-700 font-medium">Automatically approve new bookings</span>
-        </label>
+        <UnifiedCheckbox
+          checked={false}
+          onChange={() => {}}
+          label={<span className="text-gray-700 font-medium">Automatically approve new bookings</span>}
+          className="items-start"
+        />
         
         <div className="bg-[#EAF6FA] border border-[#BDE0EF] rounded-lg p-4 flex gap-3">
           <div className="text-[#0099CC] mt-0.5">ⓘ</div>
@@ -1429,7 +1984,13 @@ function AvailabilityStep({ data, updateData, onNext }: any) {
         </div>
       </div>
 
-      <div className="pt-8 flex justify-end border-t border-gray-100">
+      <div className="pt-8 flex justify-between border-t border-gray-100">
+        <button 
+          onClick={onPrevious}
+          className="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+        >
+          Previous
+        </button>
         <button 
           onClick={onNext}
           className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors"
@@ -1441,29 +2002,326 @@ function AvailabilityStep({ data, updateData, onNext }: any) {
   );
 }
 
-function CalendarStep({ data, updateData, onNext }: any) {
-  // Calendar implementation would go here - using a placeholder for now as it requires complex date logic
-  // In a real app, this would use a library like react-day-picker or similar
-  const months = [
-    { name: 'February 2026', days: 28, startDay: 0 },
-    { name: 'March 2026', days: 31, startDay: 0 },
-    { name: 'April 2026', days: 30, startDay: 3 }
-  ];
+function CalendarStep({ data, updateData, onNext, onPrevious }: any) {
+  const [visibleMonths, setVisibleMonths] = useState(12);
+  const [activeMode, setActiveMode] = useState<'availability' | 'configuration'>('availability');
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+  const [showAvailabilityPopup, setShowAvailabilityPopup] = useState(false);
+  const [showConfigurationPopup, setShowConfigurationPopup] = useState(false);
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [minNights, setMinNights] = useState(1);
+  const [maxNights, setMaxNights] = useState(364);
+  const [blockReason, setBlockReason] = useState('');
+  const [selectedArrivalDays, setSelectedArrivalDays] = useState<string[]>(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+  const [selectedDepartureDays, setSelectedDepartureDays] = useState<string[]>(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+  const [showDatePicker, setShowDatePicker] = useState<'from' | 'to' | null>(null);
+  
+  // Close date picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.date-picker-container') && !target.closest('input[readonly]')) {
+        setShowDatePicker(null);
+      }
+    };
+
+    if (showDatePicker) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDatePicker]);
+
+  // Close configuration popup when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      
+      // Use timeout to avoid conflicts with other click handlers
+      setTimeout(() => {
+        const configPopup = document.querySelector('[data-config-popup="true"]');
+        if (configPopup && !configPopup.contains(target)) {
+          setShowConfigurationPopup(false);
+          setExpandedSection(null);
+        }
+      }, 0);
+    };
+
+    if (showConfigurationPopup) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showConfigurationPopup]);
+
+  // Handlers for min/max nights
+  const handleMinNightsChange = (value: number) => {
+    const newValue = Math.max(1, Math.min(value, maxNights - 1));
+    setMinNights(newValue);
+  };
+
+  const handleMaxNightsChange = (value: number) => {
+    const newValue = Math.max(minNights + 1, Math.min(value, 364));
+    setMaxNights(newValue);
+  };
+
+  // Handlers for day selection
+  const toggleArrivalDay = (day: string) => {
+    handleCheckboxToggle(day, selectedArrivalDays, setSelectedArrivalDays);
+  };
+
+  const toggleDepartureDay = (day: string) => {
+    handleCheckboxToggle(day, selectedDepartureDays, setSelectedDepartureDays);
+  };
+
+  const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const fullDayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  
+  // Generate months starting from current date
+  const generateMonths = (count: number) => {
+    const months = [];
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    
+    for (let i = 0; i < count; i++) {
+      const monthDate = new Date(currentYear, currentMonth + i, 1);
+      const year = monthDate.getFullYear();
+      const month = monthDate.getMonth();
+      const monthName = monthDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      
+      // Get days in month
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      // Get starting day of week (0 = Sunday, 1 = Monday, etc.)
+      const startDay = new Date(year, month, 1).getDay();
+      
+      months.push({
+        name: monthName,
+        days: daysInMonth,
+        startDay: startDay,
+        year: year,
+        month: month
+      });
+    }
+    
+    return months;
+  };
+  
+  const months = generateMonths(visibleMonths);
+  
+  const handleShowMore = () => {
+    console.log('Show more clicked, current months:', visibleMonths);
+    setVisibleMonths(prev => {
+      console.log('Setting months to:', prev + 3);
+      return prev + 3;
+    });
+  };
+
+  const handlePopupDateClick = (field: 'from' | 'to') => {
+    setShowDatePicker(field);
+  };
+
+  const handleDateSelect = (date: Date) => {
+    const newSelectedDates = [...selectedDates];
+    if (showDatePicker === 'from') {
+      newSelectedDates[0] = date;
+    } else if (showDatePicker === 'to') {
+      newSelectedDates[1] = date;
+    }
+    setSelectedDates(newSelectedDates.sort((a, b) => a.getTime() - b.getTime()));
+    setShowDatePicker(null);
+  };
+
+  const SimpleDatePicker = () => {
+    // Determine which month to show based on selected dates
+    const getMonthToShow = () => {
+      if (selectedDates.length === 0) {
+        // If no dates selected, show current month
+        const currentDate = new Date();
+        return {
+          month: currentDate.getMonth(),
+          year: currentDate.getFullYear()
+        };
+      }
+      
+      // If dates are selected, show the month of the first selected date
+      const firstDate = selectedDates[0];
+      return {
+        month: firstDate.getMonth(),
+        year: firstDate.getFullYear()
+      };
+    };
+    
+    const { month: displayMonth, year: displayYear } = getMonthToShow();
+    const daysInMonth = new Date(displayYear, displayMonth + 1, 0).getDate();
+    const startDay = new Date(displayYear, displayMonth, 1).getDay();
+    
+    return (
+      <div className="date-picker-container absolute top-full mt-1 bg-white border-2 border-gray-400 rounded-xl shadow-lg p-3 z-50 min-w-[280px]">
+        <div className="text-sm font-medium text-gray-700 mb-2">
+          {new Date(displayYear, displayMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+        </div>
+        <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-500 mb-2">
+          {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+            <div key={day} className="font-medium">{day}</div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-1">
+          {Array.from({ length: startDay }, (_, i) => (
+            <div key={`empty-${i}`} className="h-6"></div>
+          ))}
+          {Array.from({ length: daysInMonth }, (_, i) => {
+            const day = i + 1;
+            const date = new Date(displayYear, displayMonth, day);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const isPast = date < today;
+            const isSelected = selectedDates.some(selectedDate => 
+              selectedDate.getDate() === day && 
+              selectedDate.getMonth() === displayMonth && 
+              selectedDate.getFullYear() === displayYear
+            );
+            
+            return (
+              <button
+                key={day}
+                onClick={() => !isPast && handleDateSelect(date)}
+                disabled={isPast}
+                className={`h-6 text-xs rounded transition-colors ${
+                  isPast 
+                    ? 'text-gray-300 cursor-not-allowed' 
+                    : isSelected 
+                      ? 'bg-[#59A559] text-white' 
+                      : 'text-gray-700 hover:bg-[#59A559] hover:text-white'
+                }`}
+              >
+                {day}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+  
+  const generateCalendarDays = (month: any) => {
+    const days = [];
+    const currentDay = new Date();
+    const today = new Date(currentDay.getFullYear(), currentDay.getMonth(), currentDay.getDate());
+    
+    // Add empty cells for days before month starts
+    for (let i = 0; i < month.startDay; i++) {
+      days.push(<div key={`empty-${i}`} className="h-8"></div>);
+    }
+    
+    // Add days of the month
+    for (let day = 1; day <= month.days; day++) {
+      const cellDate = new Date(month.year, month.month, day);
+      const isToday = currentDay.getDate() === day && 
+                     currentDay.getMonth() === month.month && 
+                     currentDay.getFullYear() === month.year;
+      const isPast = cellDate < today;
+      const isSelected = selectedDates.some(date => 
+        date.getDate() === day && 
+        date.getMonth() === month.month && 
+        date.getFullYear() === month.year
+      );
+      
+      const handleDateClick = () => {
+        if (isPast) return;
+        
+        const newSelectedDates = [...selectedDates];
+        const existingIndex = newSelectedDates.findIndex(date => 
+          date.getDate() === day && 
+          date.getMonth() === month.month && 
+          date.getFullYear() === month.year
+        );
+        
+        if (existingIndex >= 0) {
+          newSelectedDates.splice(existingIndex, 1);
+        } else {
+          newSelectedDates.push(cellDate);
+        }
+        
+        setSelectedDates(newSelectedDates.sort((a, b) => a.getTime() - b.getTime()));
+        
+        if (newSelectedDates.length === 2) {
+          if (activeMode === 'availability') {
+            setShowAvailabilityPopup(true);
+          } else if (activeMode === 'configuration') {
+            setShowConfigurationPopup(true);
+          }
+        }
+      };
+
+      days.push(
+        <div 
+          key={day} 
+          className={`h-8 flex items-center justify-center text-xs rounded transition-colors ${
+            isPast 
+              ? 'text-gray-300 cursor-not-allowed' 
+              : isSelected
+                ? 'bg-red-500 text-white font-bold cursor-pointer hover:bg-red-600'
+                : isToday 
+                  ? 'bg-[#59A559] text-white font-bold cursor-pointer hover:bg-[#4a8a4a]' 
+                  : activeMode === 'availability'
+                    ? 'hover:bg-blue-100 text-gray-700 cursor-pointer'
+                    : 'hover:bg-gray-100 text-gray-700 cursor-pointer'
+          }`}
+          onClick={handleDateClick}
+        >
+          {day}
+        </div>
+      );
+    }
+    
+    return days;
+  };
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <h2 className="text-3xl font-serif text-[#1D331D]">Custom settings</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-serif text-[#1D331D]">Calendar</h2>
+        <button className="flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-purple-300 bg-purple-50 text-purple-700 hover:border-purple-400 hover:bg-purple-100 hover:shadow-md transition-all duration-300 transform hover:scale-[1.02]">
+          <span className="font-bold text-lg">:</span>
+          <span>More</span>
+        </button>
+      </div>
+      
+      <h2 className="text-2xl font-serif text-[#1D331D]">Custom settings</h2>
       
       <div className="prose text-gray-600">
         <p>In the calendar, you can block periods and enter custom settings via 'configuration'. Always keep your availability up to date to avoid double bookings. Via 'more' you can link your availability to other ICAL calendars for automatic synchronisation. Blocking or unblocking can be done via 'availability', adjusted prices can be set via 'configuration'. <a href="#" className="text-[#5b2d8e] underline">More information on using the calendar</a></p>
       </div>
 
-      <div className="flex gap-4">
-        <button className="bg-gray-100 text-gray-600 px-6 py-2 rounded-lg font-medium hover:bg-gray-200">Availability</button>
-        <button className="bg-[#5b2d8e] text-white px-6 py-2 rounded-lg font-medium">Configuration</button>
+      <div className="flex gap-4 justify-center">
+        <button 
+          className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+            activeMode === 'availability' 
+              ? 'bg-[#5b2d8e] text-white' 
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+          onClick={() => setActiveMode('availability')}
+        >
+          Availability
+        </button>
+        <button 
+          className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+            activeMode === 'configuration' 
+              ? 'bg-[#5b2d8e] text-white' 
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+          onClick={() => setActiveMode('configuration')}
+        >
+          Configuration
+        </button>
       </div>
 
-      <div className="flex gap-6 text-sm">
+      <div className="flex gap-6 text-sm justify-center flex-wrap">
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 border border-gray-300 bg-white"></div>
           <span>Available</span>
@@ -1488,31 +2346,38 @@ function CalendarStep({ data, updateData, onNext }: any) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {months.map((month, idx) => (
           <div key={idx} className="border border-gray-200 rounded-lg p-4">
             <h3 className="font-bold text-[#1D331D] mb-4">{month.name}</h3>
             <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-500 mb-2">
-              <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
-            </div>
-            <div className="grid grid-cols-7 gap-1 text-center text-sm">
-              {Array.from({ length: month.days }).map((_, i) => (
-                <div key={i} className="p-1 hover:bg-gray-100 cursor-pointer rounded">
-                  {i + 1}
-                </div>
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                <div key={day} className="font-medium">{day}</div>
               ))}
+            </div>
+            <div className="grid grid-cols-7 gap-1">
+              {generateCalendarDays(month)}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="flex justify-center">
-        <button className="bg-[#EFEFEF] text-[#1D331D] px-6 py-2 rounded-lg font-medium hover:bg-gray-200">
+      <div className="flex justify-center mt-8">
+        <button 
+          onClick={handleShowMore}
+          className="bg-[#5b2d8e] text-white px-6 py-2 rounded-lg font-medium hover:bg-[#4a2475] transition-colors"
+        >
           Show more months
         </button>
       </div>
 
-      <div className="pt-8 flex justify-end border-t border-gray-100">
+      <div className="pt-8 flex justify-between border-t border-gray-100">
+        <button 
+          onClick={onPrevious}
+          className="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+        >
+          Previous
+        </button>
         <button 
           onClick={onNext}
           className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors"
@@ -1520,11 +2385,514 @@ function CalendarStep({ data, updateData, onNext }: any) {
           Next
         </button>
       </div>
+
+      {/* Availability Popup Modal */}
+      {showAvailabilityPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-8 max-w-2xl w-full mx-4 relative max-h-[90vh] overflow-y-auto">
+            <button 
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              onClick={() => {
+                setShowAvailabilityPopup(false);
+                setSelectedDates([]);
+                setBlockReason('');
+              }}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
+            <h3 className="text-xl font-bold text-[#1D331D] mb-4 pr-8">Adjust settings</h3>
+            
+            <p className="text-gray-600 mb-4">
+              The selected dates will be <strong>blocked as arrival day</strong>.
+            </p>
+            
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Period</label>
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label className="block text-xs text-gray-500 mb-1">From</label>
+                  <div className="relative">
+                    <input 
+                      type="text" 
+                      className="w-full px-3 py-2 border-2 border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md cursor-pointer"
+                      value={selectedDates[0]?.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) || ''}
+                      readOnly
+                      onClick={() => handlePopupDateClick('from')}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">📅</span>
+                    {showDatePicker === 'from' && <SimpleDatePicker />}
+                  </div>
+                </div>
+                <div className="flex items-center justify-center">
+                  <span className="text-gray-400">→</span>
+                </div>
+                <div className="flex-1">
+                  <label className="block text-xs text-gray-500 mb-1">To</label>
+                  <div className="relative">
+                    <input 
+                      type="text" 
+                      className="w-full px-3 py-2 border-2 border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md cursor-pointer"
+                      value={selectedDates[1]?.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) || ''}
+                      readOnly
+                      onClick={() => handlePopupDateClick('to')}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">📅</span>
+                    {showDatePicker === 'to' && <SimpleDatePicker />}
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Reason</label>
+              <select
+                className="w-full px-3 py-2 border-2 border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md cursor-pointer appearance-none"
+                value={blockReason}
+                onChange={(e) => setBlockReason(e.target.value)}
+              >
+                <option value="">Select a reason...</option>
+                <option value="rented_website">Rented via own website</option>
+                <option value="rented_other_platform">Rented via other platform</option>
+                <option value="own_use">Own use</option>
+                <option value="construction">Construction</option>
+                <option value="not_rented">Not rented during this period</option>
+                <option value="pricing_not_configured">Pricing not configured</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            
+            <div className="flex gap-3 justify-end">
+              <button
+                className="px-4 py-2 text-gray-600 border-2 border-red-500 rounded-lg hover:text-red-600 hover:border-red-600 transition-colors"
+                onClick={() => {
+                  setShowAvailabilityPopup(false);
+                  setSelectedDates([]);
+                  setBlockReason('');
+                }}
+              >
+                Delete
+              </button>
+              <button
+                className="px-4 py-2 bg-[#5b2d8e] text-white rounded-lg hover:bg-[#4a2475] transition-colors"
+                onClick={() => {
+                  // Save the blocked dates
+                  const blockedDates = data.blockedDates || [];
+                  const newBlockedDates = [
+                    ...blockedDates,
+                    ...selectedDates.map(date => ({
+                      date: date.toISOString(),
+                      reason: blockReason
+                    }))
+                  ];
+                  updateData({...data, blockedDates: newBlockedDates});
+                  
+                  setShowAvailabilityPopup(false);
+                  setSelectedDates([]);
+                  setBlockReason('');
+                }}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Configuration Popup Modal */}
+      {showConfigurationPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-8 max-w-2xl w-full mx-4 relative max-h-[90vh] overflow-y-auto" data-config-popup="true">
+            <button 
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              onClick={() => {
+                setShowConfigurationPopup(false);
+                setSelectedDates([]);
+              }}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
+            <h3 className="text-xl font-bold text-[#1D331D] mb-4 pr-8">Adjust settings</h3>
+            
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Period</label>
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label className="block text-xs text-gray-500 mb-1">From</label>
+                  <div className="relative">
+                    <input 
+                      type="text" 
+                      className="w-full px-3 py-2 border-2 border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md cursor-pointer"
+                      value={selectedDates[0]?.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) || ''}
+                      readOnly
+                      onClick={() => handlePopupDateClick('from')}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">📅</span>
+                    {showDatePicker === 'from' && <SimpleDatePicker />}
+                  </div>
+                </div>
+                <div className="flex items-center justify-center">
+                  <span className="text-gray-400">→</span>
+                </div>
+                <div className="flex-1">
+                  <label className="block text-xs text-gray-500 mb-1">To</label>
+                  <div className="relative">
+                    <input 
+                      type="text" 
+                      className="w-full px-3 py-2 border-2 border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md cursor-pointer"
+                      value={selectedDates[1]?.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) || ''}
+                      readOnly
+                      onClick={() => handlePopupDateClick('to')}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">📅</span>
+                    {showDatePicker === 'to' && <SimpleDatePicker />}
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="space-y-3 mb-6">
+              <div 
+                className="border border-gray-300 rounded-lg overflow-hidden"
+                onClick={() => setExpandedSection(expandedSection === 'price' ? null : 'price')}
+              >
+                <div className="px-4 py-3 bg-white hover:bg-gray-50 cursor-pointer transition-colors flex items-center justify-between">
+                  <div className="font-medium text-gray-700">Price settings</div>
+                  <svg 
+                    className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${expandedSection === 'price' ? 'rotate-180' : ''}`}
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+                {expandedSection === 'price' && (
+                  <div className="px-4 py-3 bg-gray-50 border-t border-gray-200 space-y-3">
+                    <p className="text-sm text-gray-600 mb-3">The prices from your basic price plan will apply unless you change the price below specifically for the selected period.</p>
+                    
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium text-gray-700">Night</label>
+                        <div className="flex items-center gap-1">
+                          <span className="text-gray-500">€</span>
+                          <div className="relative group">
+                            <input 
+                              type="number" 
+                              className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#59A559]"
+                              placeholder="0"
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                            <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+                              Price per night for single day stays
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium text-gray-700">Total price weekend</label>
+                        <div className="flex items-center gap-1">
+                          <span className="text-gray-500">€</span>
+                          <div className="relative group">
+                            <input 
+                              type="number" 
+                              className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#59A559]"
+                              placeholder="0"
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                            <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+                              Price for Friday to Sunday stay
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium text-gray-700">Total price long weekend</label>
+                        <div className="flex items-center gap-1">
+                          <span className="text-gray-500">€</span>
+                          <div className="relative group">
+                            <input 
+                              type="number" 
+                              className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#59A559]"
+                              placeholder="0"
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                            <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+                              Price for extended weekend (e.g., Thursday to Monday)
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium text-gray-700">Total price during the week</label>
+                        <div className="flex items-center gap-1">
+                          <span className="text-gray-500">€</span>
+                          <div className="relative group">
+                            <input 
+                              type="number" 
+                              className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#59A559]"
+                              placeholder="0"
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                            <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+                              Price for Monday to Thursday stay
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium text-gray-700">Total price week</label>
+                        <div className="flex items-center gap-1">
+                          <span className="text-gray-500">€</span>
+                          <div className="relative group">
+                            <input 
+                              type="number" 
+                              className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#59A559]"
+                              placeholder="0"
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                            <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+                              Price for full week (7 nights) stay
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <div 
+                className="border border-gray-300 rounded-lg overflow-hidden"
+                onClick={() => setExpandedSection(expandedSection === 'duration' ? null : 'duration')}
+              >
+                <div className="px-4 py-3 bg-white hover:bg-gray-50 cursor-pointer transition-colors flex items-center justify-between">
+                  <div className="font-medium text-gray-700">Duration of stay</div>
+                  <svg 
+                    className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${expandedSection === 'duration' ? 'rotate-180' : ''}`}
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+                {expandedSection === 'duration' && (
+                  <div className="px-4 py-3 bg-gray-50 border-t border-gray-200 space-y-4">
+                    <p className="text-sm text-gray-600">The length of stay from your availability settings will apply unless you change the length of stay below specifically for the selected period.</p>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Minimum number of nights per booking</label>
+                        <div className="flex items-center gap-2">
+                          <button 
+                            type="button"
+                            className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleMinNightsChange(minNights - 1);
+                            }}
+                            disabled={minNights <= 1}
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                            </svg>
+                          </button>
+                          <input 
+                            type="number" 
+                            className="w-16 px-2 py-1 border border-gray-300 rounded text-center text-sm focus:outline-none focus:ring-1 focus:ring-[#59A559]"
+                            value={minNights}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              handleMinNightsChange(parseInt(e.target.value) || 1);
+                            }}
+                            min="1"
+                            max={maxNights - 1}
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                          <button 
+                            type="button"
+                            className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleMinNightsChange(minNights + 1);
+                            }}
+                            disabled={minNights >= maxNights - 1}
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Maximum number of nights per booking</label>
+                        <div className="flex items-center gap-2">
+                          <button 
+                            type="button"
+                            className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleMaxNightsChange(maxNights - 1);
+                            }}
+                            disabled={maxNights <= minNights + 1}
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                            </svg>
+                          </button>
+                          <input 
+                            type="number" 
+                            className="w-16 px-2 py-1 border border-gray-300 rounded text-center text-sm focus:outline-none focus:ring-1 focus:ring-[#59A559]"
+                            value={maxNights}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              handleMaxNightsChange(parseInt(e.target.value) || 364);
+                            }}
+                            min={minNights + 1}
+                            max="364"
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                          <button 
+                            type="button"
+                            className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleMaxNightsChange(maxNights + 1);
+                            }}
+                            disabled={maxNights >= 364}
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <div 
+                className="border border-gray-300 rounded-lg overflow-hidden"
+                onClick={() => setExpandedSection(expandedSection === 'arrival' ? null : 'arrival')}
+              >
+                <div className="px-4 py-3 bg-white hover:bg-gray-50 cursor-pointer transition-colors flex items-center justify-between">
+                  <div className="font-medium text-gray-700">Arrival and departure</div>
+                  <svg 
+                    className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${expandedSection === 'arrival' ? 'rotate-180' : ''}`}
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+                {expandedSection === 'arrival' && (
+                  <div className="px-4 py-3 bg-gray-50 border-t border-gray-200 space-y-6">
+                    <p className="text-sm text-gray-600">Change the possible arrival and departure days for the selected period below.</p>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <label className="text-sm font-medium text-gray-700">Arrival days</label>
+                          <span className="text-xs text-gray-500">
+                            Normally on {selectedArrivalDays.join(', ')}.
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-7 gap-2">
+                          {fullDayNames.map((dayName, index) => (
+                            <button
+                              key={dayName}
+                              type="button"
+                              className={`px-3 py-2 text-xs border rounded transition-colors ${
+                                selectedArrivalDays.includes(dayNames[index])
+                                  ? 'bg-[#59A559] text-white border-[#59A559]'
+                                  : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'
+                              }`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleArrivalDay(dayNames[index]);
+                              }}
+                            >
+                              {dayName.slice(0, 3)}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <label className="text-sm font-medium text-gray-700">Departure days</label>
+                          <span className="text-xs text-gray-500">
+                            Normally on {selectedDepartureDays.join(', ')}.
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-7 gap-2">
+                          {fullDayNames.map((dayName, index) => (
+                            <button
+                              key={dayName}
+                              type="button"
+                              className={`px-3 py-2 text-xs border rounded transition-colors ${
+                                selectedDepartureDays.includes(dayNames[index])
+                                  ? 'bg-[#59A559] text-white border-[#59A559]'
+                                  : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'
+                              }`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleDepartureDay(dayNames[index]);
+                              }}
+                            >
+                              {dayName.slice(0, 3)}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="flex gap-3 justify-end">
+              <button
+                className="px-4 py-2 text-gray-600 border-2 border-red-500 rounded-lg hover:text-red-600 hover:border-red-600 transition-colors"
+                onClick={() => {
+                  setShowConfigurationPopup(false);
+                  setSelectedDates([]);
+                }}
+              >
+                Delete
+              </button>
+              <button
+                className="px-4 py-2 bg-[#5b2d8e] text-white rounded-lg hover:bg-[#4a2475] transition-colors"
+                onClick={() => {
+                  // Save configuration settings
+                  setShowConfigurationPopup(false);
+                  setSelectedDates([]);
+                }}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function BedroomsStep({ data, updateData, onNext }: any) {
+function BedroomsStep({ data, updateData, onNext, onPrevious }: any) {
   return (
     <div className="space-y-8 animate-fade-in">
       <h2 className="text-3xl font-serif text-[#1D331D]">Bedrooms</h2>
@@ -1537,7 +2905,13 @@ function BedroomsStep({ data, updateData, onNext }: any) {
         </button>
       </div>
 
-      <div className="pt-8 flex justify-end border-t border-gray-100">
+      <div className="pt-8 flex justify-between border-t border-gray-100">
+        <button 
+          onClick={onPrevious}
+          className="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+        >
+          Previous
+        </button>
         <button 
           onClick={onNext}
           className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors"
@@ -1549,7 +2923,7 @@ function BedroomsStep({ data, updateData, onNext }: any) {
   );
 }
 
-function DescriptionStep({ data, updateData, onNext }: any) {
+function DescriptionStep({ data, updateData, onNext, onPrevious }: any) {
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="space-y-2">
@@ -1563,7 +2937,7 @@ function DescriptionStep({ data, updateData, onNext }: any) {
         <label className="block text-sm font-bold text-[#1D331D]">About your nature house</label>
         <div className="relative">
           <textarea 
-            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] min-h-[150px]"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] min-h-[150px] transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400 resize-none"
             placeholder="Add your text of up to 1000 characters here."
             maxLength={1000}
             value={data.description}
@@ -1579,7 +2953,7 @@ function DescriptionStep({ data, updateData, onNext }: any) {
         <label className="block text-sm font-bold text-[#1D331D]">Nature and surroundings</label>
         <div className="relative">
           <textarea 
-            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] min-h-[150px]"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] min-h-[150px] transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400 resize-none"
             placeholder="Add your text of up to 1000 characters here."
             maxLength={1000}
             value={data.surroundings}
@@ -1595,7 +2969,13 @@ function DescriptionStep({ data, updateData, onNext }: any) {
         In order to give you the best chance to get booked in other countries, your description will be automatically translated into German, Dutch, French and Italian by our translation machine.
       </p>
 
-      <div className="pt-8 flex justify-end border-t border-gray-100">
+      <div className="pt-8 flex justify-between border-t border-gray-100">
+        <button 
+          onClick={onPrevious}
+          className="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+        >
+          Previous
+        </button>
         <button 
           onClick={onNext}
           className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors"
@@ -1607,11 +2987,20 @@ function DescriptionStep({ data, updateData, onNext }: any) {
   );
 }
 
-function StayDetailsStep({ data, updateData, onNext }: any) {
+function StayDetailsStep({ data, updateData, onNext, onPrevious }: any) {
   const categories = [
     {
       title: "Peace and Quiet",
-      items: ["Contactless stay", "Firework-free area"]
+      items: [
+        { 
+          name: "Contactless stay", 
+          tooltip: "Guests can stay without personal contact with the host, for example via a key box or digital access. Contactless stays are not mandatory. You can arrange this with the guest after the booking has been made." 
+        },
+        { 
+          name: "Firework-free area", 
+          tooltip: "Firework-free means that no fireworks can be heard in and around the accommodation. You may hear some noise or see some light from fireworks being set off outside the immediate vicinity, but this is generally limited and most guests experience little disturbance from it. Please note that you can indicate in the house rules whether fireworks are permitted." 
+        }
+      ]
     },
     {
       title: "Accessibility",
@@ -1669,10 +3058,9 @@ function StayDetailsStep({ data, updateData, onNext }: any) {
   ];
 
   const handleToggle = (item: string) => {
-    const newAmenities = data.amenities.includes(item)
-      ? data.amenities.filter((i: string) => i !== item)
-      : [...data.amenities, item];
-    updateData({...data, amenities: newAmenities});
+    handleCheckboxToggle(item, data.amenities, (newAmenities) => 
+      updateData({...data, amenities: newAmenities})
+    );
   };
 
   return (
@@ -1687,32 +3075,87 @@ function StayDetailsStep({ data, updateData, onNext }: any) {
           <div key={idx} className="space-y-3">
             <h3 className="font-bold text-[#1D331D] text-lg">{cat.title}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {cat.items.map((item, i) => (
-                <label key={i} className="flex items-center gap-3 cursor-pointer group">
-                  <div className={`
-                    w-5 h-5 rounded border flex items-center justify-center transition-colors
-                    ${data.amenities.includes(item) 
-                      ? 'bg-[#244224] border-[#244224] text-white' 
-                      : 'border-gray-300 bg-white group-hover:border-[#59A559]'
-                    }
-                  `}>
-                    {data.amenities.includes(item) && <span className="text-xs">✓</span>}
+              {cat.items.map((item, i) => {
+                const itemName = typeof item === 'string' ? item : item.name;
+                const itemTooltip = typeof item === 'string' ? null : item.tooltip;
+                
+                return (
+                  <div key={i} className="flex items-center gap-2">
+                    <UnifiedCheckbox
+                      checked={data.amenities.includes(itemName)}
+                      onChange={() => handleToggle(itemName)}
+                      label={
+                        <div className="flex items-center gap-2">
+                          <span className="text-gray-700 group-hover:text-[#1D331D] transition-colors">{itemName}</span>
+                          {itemTooltip && (
+                            <div className="relative group">
+                              <button
+                                type="button"
+                                className="w-4 h-4 text-blue-500 hover:text-blue-600 transition-colors flex-shrink-0"
+                                onClick={(e) => e.stopPropagation()}
+                                onMouseEnter={(e) => {
+                                  const button = e.currentTarget;
+                                  const tooltip = button.nextElementSibling as HTMLElement;
+                                  if (tooltip) {
+                                    const buttonRect = button.getBoundingClientRect();
+                                    const tooltipWidth = 288; // w-72 = 288px
+                                    const spaceOnRight = window.innerWidth - buttonRect.right - 8;
+                                    const spaceOnLeft = buttonRect.left - 8;
+                                    
+                                    if (spaceOnRight < tooltipWidth && spaceOnLeft > tooltipWidth) {
+                                      // Show on left side
+                                      tooltip.style.left = 'auto';
+                                      tooltip.style.right = '100%';
+                                      tooltip.style.marginLeft = '0';
+                                      tooltip.style.marginRight = '8px';
+                                    } else {
+                                      // Show on right side
+                                      tooltip.style.left = '100%';
+                                      tooltip.style.right = 'auto';
+                                      tooltip.style.marginLeft = '8px';
+                                      tooltip.style.marginRight = '0';
+                                    }
+                                  }
+                                }}
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                              </button>
+                              <div className="absolute top-1/2 transform -translate-y-1/2 p-3 bg-gradient-to-br from-gray-900 to-gray-800 text-white text-sm rounded-xl shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-10 w-72 max-w-xs border border-gray-700" style={{left: '100%', marginLeft: '8px'}}>
+                                <div className="relative">
+                                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl"></div>
+                                  <div className="relative text-left leading-relaxed space-y-2">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                                      <span className="font-semibold text-blue-300 text-xs uppercase tracking-wide">Information</span>
+                                    </div>
+                                    <div className="text-gray-100 text-xs leading-relaxed font-light">
+                                      {itemTooltip}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      }
+                    />
                   </div>
-                  <input 
-                    type="checkbox" 
-                    className="hidden" 
-                    checked={data.amenities.includes(item)}
-                    onChange={() => handleToggle(item)}
-                  />
-                  <span className="text-gray-700 group-hover:text-[#1D331D] transition-colors">{item}</span>
-                </label>
-              ))}
+                );
+              })}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="pt-8 flex justify-end border-t border-gray-100">
+      <div className="pt-8 flex justify-between border-t border-gray-100">
+        <button 
+          onClick={onPrevious}
+          className="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+        >
+          Previous
+        </button>
         <button 
           onClick={onNext}
           className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors"
@@ -1724,62 +3167,186 @@ function StayDetailsStep({ data, updateData, onNext }: any) {
   );
 }
 
-function SustainabilityStep({ data, updateData, onNext }: any) {
+function SustainabilityStep({ data, updateData, onNext, onPrevious }: any) {
   const sections = [
     {
       title: "Energy",
       questions: [
-        { id: "off_grid", text: "Is your nature house off grid or supplied with 100% renewable energy?" },
-        { id: "natural_insulation", text: "Is your nature house insulated with natural isolation materials?" },
-        { id: "natural_materials", text: "Is your nature house build with natural/sustainable materials?" }
+        { 
+          id: "off_grid", 
+          text: "Is your nature house off grid or supplied with 100% renewable energy?", 
+          tooltip: "Can be fully self-sufficient (e.g. with solar panels, geothermal energy) and/or on the basis of an energy contract with a supplier providing 100% renewable energy (solar, wind, geothermal and/or hydropower)"
+        },
+        { 
+          id: "natural_insulation", 
+          text: "Is your nature house insulated with natural isolation materials?", 
+          tooltip: "For example: Wood fibre, Cotton, Sheep's wool, Hemp, Flax, Grass fibre, Cellulose, Mineral, Cork"
+        },
+        { 
+          id: "natural_materials", 
+          text: "Is your nature house build with natural/sustainable materials?", 
+          tooltip: "For example: Wood, Loam, Straw, Wicker, Bamboo, Natural stone, Recycled materials (as e.g. recycled steel)"
+        }
       ]
     },
     {
       title: "Waste",
       questions: [
-        { id: "waste_food", text: "Do you minimize food waste (pre-ordered or fixed portion size)?" },
-        { id: "waste_inventory", text: "The use of sustainable materials has been conciously considered when compiling the inventory?" },
-        { id: "waste_separation", text: "Are guest informed about the way they can reduce and/or separate waste following the local guidelines?" },
-        { id: "waste_plastic", text: "Have single-use plastic amenities/supplies been replaced into reusable amenities/supplies?" },
-        { id: "waste_water", text: "Do you encourage guests to use tap water or water from an installed water refill station instead of single-use plastic water bottles?" },
-        { id: "waste_organic", text: "Do you reuse organic waste in your operations?" }
+        { 
+          id: "waste_food", 
+          text: "Do you minimize food waste (pre-ordered or fixed portion size)?", 
+          tooltip: "For example re-usable tupperware availble and pre-ordered or fixed portion size"
+        },
+        { 
+          id: "waste_inventory", 
+          text: "The use of sustainable materials has been conciously considered when compiling the inventory?", 
+          tooltip: "For example pre-owned tableware, furniture or renewable, recyclable, and biodegradable materials in your inventory"
+        },
+        { 
+          id: "waste_separation", 
+          text: "Are guest informed about the way they can reduce and/or separate waste following the local guidelines?", 
+          tooltip: "Glass, paper, plastic, food waste/organic"
+        },
+        { 
+          id: "waste_plastic", 
+          text: "Have single-use plastic amenities/supplies been replaced into reusable amenities/supplies?", 
+          tooltip: "You function in the nature house completely packaging-free and without single-use plastic?"
+        },
+        { 
+          id: "waste_water", 
+          text: "Do you encourage guests to use tap water or water from an installed water refill station instead of single-use plastic water bottles?", 
+          tooltip: "You offer guests the option of refilling a water bottle so they don't have to use single-use plastic bottles. For example; tap water or a water refill station"
+        },
+        { 
+          id: "waste_organic", 
+          text: "Do you reuse organic waste in your operations?", 
+          tooltip: "Reuse organic waste on the terrain or in the community e.g. compost heap, manure as fertiliser etc."
+        }
       ]
     },
     {
       title: "Water",
       questions: [
-        { id: "water_toilet", text: "Does your nature house have (a) water-efficient toilet(s)?" },
-        { id: "water_shower", text: "Does your nature house have (a) water-efficient shower(s)?" },
-        { id: "water_cleaning", text: "Do you clean your nature house with 100% natural cleaning products?" },
-        { id: "water_rain", text: "Do you collect rainwater for your garden, toilet, cleaning or more?" },
-        { id: "water_min", text: "Do you stimulate guests to minimize water use?" },
-        { id: "water_filter", text: "Does your nature house have a eco-friendly waste water filtering system (if not connected to sewage system)?" },
-        { id: "water_pond", text: "Does your garden / grounds have a pond or other natural water facility?" }
+        { 
+          id: "water_toilet", 
+          text: "Does your nature house have (a) water-efficient toilet(s)?", 
+          tooltip: "For example: a Water-efficient toilet with Dual flush option (large flush or small flush)"
+        },
+        { 
+          id: "water_shower", 
+          text: "Does your nature house have (a) water-efficient shower(s)?", 
+          tooltip: "For example: a Water-saving shower head or a flow limiter"
+        },
+        { 
+          id: "water_cleaning", 
+          text: "Do you clean your nature house with 100% natural cleaning products?", 
+          tooltip: "Also no bleach"
+        },
+        { 
+          id: "water_rain", 
+          text: "Do you collect rainwater for your garden, toilet, cleaning or more?", 
+          tooltip: "For example: a rainwater well and / or a rainwater barrel"
+        },
+        { 
+          id: "water_min", 
+          text: "Do you stimulate guests to minimize water use?", 
+          tooltip: "For example instructions how minimize the water use during the stay"
+        },
+        { 
+          id: "water_filter", 
+          text: "Does your nature house have a eco-friendly waste water filtering system (if not connected to sewage system)?", 
+          tooltip: "Avoid use of wet septic tanks, e.g. by dry well septic tanks, helofytenfiltering, dry eco toilets etc."
+        },
+        { 
+          id: "water_pond", 
+          text: "Does your garden / grounds have a pond or other natural water facility?", 
+          tooltip: "For example a pond or swimming pond"
+        }
       ]
     },
     {
       title: "Biodiversity",
       questions: [
-        { id: "bio_grow", text: "Do you grow (ecological / organic) food products that are available to guests?" },
-        { id: "bio_garden", text: "Do you have a biodiversity-friendly garden (flowers, trees, hedges,..)?" },
-        { id: "bio_manage", text: "Do you manage your garden in a sustainable way?" },
-        { id: "bio_local", text: "Do you contribute to local biodiversity beyond your property? (for instance by planting, sowing indigenous plants, herbs)" },
-        { id: "bio_invest", text: "Do you reinvest a % of your revenue in local biodiversity (e.g. donation to regional parc)?" },
-        { id: "bio_rules", text: "Do you have a have specific house rules on darkness and silence after certain hours to stimulate guests to respect the biorhythm of local species?" },
-        { id: "bio_home", text: "Does your nature house also provide a home for birds, insects or bats?" }
+        { 
+          id: "bio_grow", 
+          text: "Do you grow (ecological / organic) food products that are available to guests?", 
+          tooltip: "For example: Jam, herbs or vegetables"
+        },
+        { 
+          id: "bio_garden", 
+          text: "Do you have a biodiversity-friendly garden (flowers, trees, hedges,..)?", 
+          tooltip: "No non-native species, variety of unsprayed trees, plants, flowers and hedges."
+        },
+        { 
+          id: "bio_manage", 
+          text: "Do you manage your garden in a sustainable way?", 
+          tooltip: "Not using pesticides and/or other chemicals and no use of fertilisers"
+        },
+        { 
+          id: "bio_local", 
+          text: "Do you contribute to local biodiversity beyond your property? (for instance by planting, sowing indigenous plants, herbs)", 
+          tooltip: "In some cases this is natural because your naturehouse is in the middle of nature, but for others using indigenous plants that are also present local nature increase the size and amount' of nature and the viability of the local ecosystem for specific species (e.g. birds)"
+        },
+        { 
+          id: "bio_invest", 
+          text: "Do you reinvest a % of your revenue in local biodiversity (e.g. donation to regional parc)?", 
+          tooltip: "Including  donations, memberships and/or leasing / renting of terrain or grounds"
+        },
+        { 
+          id: "bio_rules", 
+          text: "Do you have a have specific house rules on darkness and silence after certain hours to stimulate guests to respect the biorhythm of local species?", 
+          tooltip: "Many animals and some plants can be disturbed by light after dark or noise. This can affect their (nesting) behaviour). Guests can be stimulated to respect this natural rhythm"
+        },
+        { 
+          id: "bio_home", 
+          text: "Does your nature house also provide a home for birds, insects or bats?", 
+          tooltip: "For example: green roof, nest tiles, nest stones, bat boxes"
+        }
       ]
     },
     {
       title: "Destination",
       questions: [
-        { id: "dest_bike", text: "Do you stimulate guests to use a bike by offering bicycle rental or bicycle rental nearby?" },
-        { id: "dest_sust", text: "Do you stimulate guests to come to your nature house in a sustainable way?" },
-        { id: "dest_tours", text: "Do you offer guests tours and activities organised by local guides and businesses?" },
-        { id: "dest_info", text: "Do you provide guests with information on local biodiversity and ecosystems and (seasonal) visitor etiquette?" },
-        { id: "dest_food", text: "Do you offer locally produced (organic) food & goods in your nature house?" },
-        { id: "dest_culture", text: "Do you provide guests with information regarding local heritage and culture as well as visitor etiquette?" },
-        { id: "dest_heritage", text: "Is your nature house (protected) cultural heritage?" },
-        { id: "dest_charge", text: "Do you offer electric charging for cars and bikes or other types of mobility?" }
+        { 
+          id: "dest_bike", 
+          text: "Do you stimulate guests to use a bike by offering bicycle rental or bicycle rental nearby?", 
+          tooltip: "Bicycle rental is possible"
+        },
+        { 
+          id: "dest_sust", 
+          text: "Do you stimulate guests to come to your nature house in a sustainable way?", 
+          tooltip: "Stimulate guests to come with public transport or pick-up service at for example public transport stations"
+        },
+        { 
+          id: "dest_tours", 
+          text: "Do you offer guests tours and activities organised by local guides and businesses?", 
+          tooltip: "Tours and activities organised by local guides and businesses are available"
+        },
+        { 
+          id: "dest_info", 
+          text: "Do you provide guests with information on local biodiversity and ecosystems and (seasonal) visitor etiquette?", 
+          tooltip: "Offering information such as: what does the local environment look like and how do you deal with the sustainably as a visitor? "
+        },
+        { 
+          id: "dest_food", 
+          text: "Do you offer locally produced (organic) food & goods in your nature house?", 
+          tooltip: "For example: Fruit or vegetables"
+        },
+        { 
+          id: "dest_culture", 
+          text: "Do you provide guests with information regarding local heritage and culture as well as visitor etiquette?", 
+          tooltip: "Offering information such as: what does the local environment look like and how do you deal with the sustainably as a visitor?"
+        },
+        { 
+          id: "dest_heritage", 
+          text: "Is your nature house (protected) cultural heritage?", 
+          tooltip: "The nature house is (protected) cultural heritage"
+        },
+        { 
+          id: "dest_charge", 
+          text: "Do you offer electric charging for cars and bikes or other types of mobility?", 
+          tooltip: "Is it possible to charge an electric car and bike at the nature house?"
+        }
       ]
     }
   ];
@@ -1803,9 +3370,60 @@ function SustainabilityStep({ data, updateData, onNext }: any) {
         <div className="space-y-4">
           <h3 className="font-bold text-[#1D331D] text-lg">Energy</h3>
           <div className="space-y-2">
-            <label className="block text-sm font-bold text-[#1D331D]">What is your energy label?</label>
+            <div className="flex items-center gap-2">
+              <label className="block text-sm font-bold text-[#1D331D]">What is your energy label?</label>
+              <div className="relative group">
+                <button
+                  type="button"
+                  className="w-4 h-4 text-blue-500 hover:text-blue-600 transition-colors flex-shrink-0"
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseEnter={(e) => {
+                    const button = e.currentTarget;
+                    const tooltip = button.nextElementSibling as HTMLElement;
+                    if (tooltip) {
+                      const buttonRect = button.getBoundingClientRect();
+                      const tooltipWidth = 288; // w-72 = 288px
+                      const spaceOnRight = window.innerWidth - buttonRect.right - 8;
+                      const spaceOnLeft = buttonRect.left - 8;
+                      
+                      if (spaceOnRight < tooltipWidth && spaceOnLeft > tooltipWidth) {
+                        // Show on left side
+                        tooltip.style.left = 'auto';
+                        tooltip.style.right = '100%';
+                        tooltip.style.marginLeft = '0';
+                        tooltip.style.marginRight = '8px';
+                      } else {
+                        // Show on right side
+                        tooltip.style.left = '100%';
+                        tooltip.style.right = 'auto';
+                        tooltip.style.marginLeft = '8px';
+                        tooltip.style.marginRight = '0';
+                      }
+                    }
+                  }}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+                <div className="absolute top-1/2 transform -translate-y-1/2 p-3 bg-gradient-to-br from-gray-900 to-gray-800 text-white text-sm rounded-xl shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-10 w-72 max-w-xs border border-gray-700" style={{left: '100%', marginLeft: '8px'}}>
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl"></div>
+                    <div className="relative text-left leading-relaxed space-y-2">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                        <span className="font-semibold text-blue-300 text-xs uppercase tracking-wide">Information</span>
+                      </div>
+                      <div className="text-gray-100 text-xs leading-relaxed font-light">
+                        Since 2024 energy labels are mandatory for holiday homes, with certain exceptions. If you have an exception for this fill in the option 'excluded'
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <select 
-              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white"
+              className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] cursor-pointer appearance-none"
               value={data.energyLabel}
               onChange={(e) => updateData({...data, energyLabel: e.target.value})}
             >
@@ -1827,7 +3445,62 @@ function SustainabilityStep({ data, updateData, onNext }: any) {
             <div className="space-y-6">
               {section.questions.map((q) => (
                 <div key={q.id} className="space-y-3 border-b border-gray-100 pb-4 last:border-0">
-                  <p className="text-gray-800">{q.text}</p>
+                  <div className="flex items-start gap-2">
+                    <p className="text-gray-800 flex-1">
+                      {q.text}
+                      {q.tooltip && (
+                        <span className="relative group inline-flex ml-2">
+                          <button
+                            type="button"
+                            className="w-4 h-4 text-blue-500 hover:text-blue-600 transition-colors flex-shrink-0"
+                            onClick={(e) => e.stopPropagation()}
+                            onMouseEnter={(e) => {
+                              const button = e.currentTarget;
+                              const tooltip = button.nextElementSibling as HTMLElement;
+                              if (tooltip) {
+                                const buttonRect = button.getBoundingClientRect();
+                                const tooltipWidth = 288; // w-72 = 288px
+                                const spaceOnRight = window.innerWidth - buttonRect.right - 8;
+                                const spaceOnLeft = buttonRect.left - 8;
+                                
+                                if (spaceOnRight < tooltipWidth && spaceOnLeft > tooltipWidth) {
+                                  // Show on left side
+                                  tooltip.style.left = 'auto';
+                                  tooltip.style.right = '100%';
+                                  tooltip.style.marginLeft = '0';
+                                  tooltip.style.marginRight = '8px';
+                                } else {
+                                  // Show on right side
+                                  tooltip.style.left = '100%';
+                                  tooltip.style.right = 'auto';
+                                  tooltip.style.marginLeft = '8px';
+                                  tooltip.style.marginRight = '0';
+                                }
+                              }
+                            }}
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </button>
+                          <div className="absolute top-1/2 transform -translate-y-1/2 p-3 bg-gradient-to-br from-gray-900 to-gray-800 text-white text-sm rounded-xl shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-10 w-72 max-w-xs border border-gray-700" style={{left: '100%', marginLeft: '8px'}}>
+                            <div className="relative">
+                              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl"></div>
+                              <div className="relative text-left leading-relaxed space-y-2">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                                  <span className="font-semibold text-blue-300 text-xs uppercase tracking-wide">Information</span>
+                                </div>
+                                <div className="text-gray-100 text-xs leading-relaxed font-light">
+                                  {q.tooltip}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </span>
+                      )}
+                    </p>
+                  </div>
                   <div className="flex gap-6">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input 
@@ -1857,7 +3530,13 @@ function SustainabilityStep({ data, updateData, onNext }: any) {
         ))}
       </div>
 
-      <div className="pt-8 flex justify-end border-t border-gray-100">
+      <div className="pt-8 flex justify-between border-t border-gray-100">
+        <button 
+          onClick={onPrevious}
+          className="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+        >
+          Previous
+        </button>
         <button 
           onClick={onNext}
           className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors"
@@ -1869,7 +3548,7 @@ function SustainabilityStep({ data, updateData, onNext }: any) {
   );
 }
 
-function HouseRulesStep({ data, updateData, onNext }: any) {
+function HouseRulesStep({ data, updateData, onNext, onPrevious }: any) {
   const [showMore, setShowMore] = useState(false);
 
   const updateRule = (field: string, value: any) => {
@@ -1990,7 +3669,7 @@ function HouseRulesStep({ data, updateData, onNext }: any) {
             <div className="relative">
               <input 
                 type="time" 
-                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559]"
+                className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400"
                 value={data.houseRules.silenceStart}
                 onChange={(e) => updateRule('silenceStart', e.target.value)}
               />
@@ -2001,7 +3680,7 @@ function HouseRulesStep({ data, updateData, onNext }: any) {
             <div className="relative">
               <input 
                 type="time" 
-                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559]"
+                className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400"
                 value={data.houseRules.silenceEnd}
                 onChange={(e) => updateRule('silenceEnd', e.target.value)}
               />
@@ -2025,7 +3704,7 @@ function HouseRulesStep({ data, updateData, onNext }: any) {
           <div key={idx} className="flex gap-2 mt-2">
             <input 
               type="text"
-              className="flex-1 px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559]"
+              className="flex-1 px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400"
               placeholder="Add a rule..."
               value={rule}
               onChange={(e) => {
@@ -2052,7 +3731,13 @@ function HouseRulesStep({ data, updateData, onNext }: any) {
         </button>
       </div>
 
-      <div className="pt-8 flex justify-end border-t border-gray-100">
+      <div className="pt-8 flex justify-between border-t border-gray-100">
+        <button 
+          onClick={onPrevious}
+          className="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+        >
+          Previous
+        </button>
         <button 
           onClick={() => {
             // Here you would typically submit the form to the backend

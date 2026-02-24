@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { Grid, Building, MessageSquare, Heart, Calendar, Settings, LogOut, User } from 'lucide-react';
 import React from 'react';
@@ -13,6 +14,8 @@ interface UserProfile {
 }
 
 function LandlordPage() {
+  const params = useParams();
+  const lang = params.lang as string;
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -186,7 +189,7 @@ function LandlordPage() {
             <h2 className="text-xl font-semibold text-gray-900 mb-4">
               Add a new nature house?
             </h2>
-            <Link href="/host/new">
+            <Link href={`/${lang}/host/new`}>
               <button className="bg-teal-500 hover:bg-teal-600 text-white font-medium px-6 py-3 rounded-lg transition-colors">
                 Add advertisement
               </button>

@@ -110,10 +110,10 @@ export async function createListing(formData: FormData) {
     }
     
     // Revalidate paths
-    revalidatePath("/host/listings");
+    revalidatePath("/[lang]/host/listings");
     
     // Redirect to the listings page
-    redirect("/host/listings");
+    redirect("/en/host/listings");
     
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -187,11 +187,11 @@ export async function updateListing(listingId: string, formData: FormData) {
     }
     
     // Revalidate paths
-    revalidatePath("/host/listings");
-    revalidatePath(`/host/listings/${listingId}/edit`);
+    revalidatePath("/[lang]/host/listings");
+    revalidatePath("/[lang]/host/listings/[listingId]/edit");
     
     // Redirect back to the listings page
-    redirect("/host/listings");
+    redirect("/en/host/listings");
     
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -247,7 +247,7 @@ export async function deleteListing(listingId: string) {
   }
   
   // Revalidate paths
-  revalidatePath("/host/listings");
+  revalidatePath("/[lang]/host/listings");
   
   return { success: true };
 }
@@ -288,7 +288,7 @@ export async function toggleListingPublishStatus(listingId: string) {
   }
   
   // Revalidate paths
-  revalidatePath("/host/listings");
+  revalidatePath("/[lang]/host/listings");
   
   return { 
     success: true,

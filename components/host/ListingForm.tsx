@@ -254,7 +254,7 @@ export function ListingForm({ listing, isNew }: ListingFormProps) {
       }
       
       // Redirect to host dashboard on success
-      router.push('/host/listings');
+      router.push('/en/host/listings');
       router.refresh();
       
     } catch (error) {
@@ -633,7 +633,7 @@ export function ListingForm({ listing, isNew }: ListingFormProps) {
         <div className="flex justify-end gap-4 pt-6 border-t border-border">
           <button
             type="button"
-            onClick={() => router.push('/host/listings')}
+            onClick={() => router.push('/en/host/listings')}
             className="px-6 py-3 rounded-2xl border border-forest-300 text-forest-700 hover:bg-forest-50"
           >
             Cancel
