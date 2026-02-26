@@ -14,29 +14,689 @@ export type Database = {
   }
   public: {
     Tables: {
-      documents: {
+      arrival_departure_days: {
         Row: {
-          content: string
           created_at: string | null
-          embedding: string | null
+          day_name: string
+          day_type: string
+          house_id: number | null
           id: number
-          title: string
         }
         Insert: {
-          content: string
           created_at?: string | null
-          embedding?: string | null
+          day_name: string
+          day_type: string
+          house_id?: number | null
           id?: number
-          title: string
         }
         Update: {
-          content?: string
           created_at?: string | null
-          embedding?: string | null
+          day_name?: string
+          day_type?: string
+          house_id?: number | null
           id?: number
-          title?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "arrival_departure_days_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "houses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blocked_dates: {
+        Row: {
+          blocked_date: string
+          created_at: string | null
+          house_id: number | null
+          id: number
+          reason: string | null
+        }
+        Insert: {
+          blocked_date: string
+          created_at?: string | null
+          house_id?: number | null
+          id?: number
+          reason?: string | null
+        }
+        Update: {
+          blocked_date?: string
+          created_at?: string | null
+          house_id?: number | null
+          id?: number
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blocked_dates_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "houses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      custom_rules: {
+        Row: {
+          created_at: string | null
+          embedding_model: string | null
+          house_id: number | null
+          id: number
+          rule_embedding: string | null
+          rule_text: string
+        }
+        Insert: {
+          created_at?: string | null
+          embedding_model?: string | null
+          house_id?: number | null
+          id?: number
+          rule_embedding?: string | null
+          rule_text: string
+        }
+        Update: {
+          created_at?: string | null
+          embedding_model?: string | null
+          house_id?: number | null
+          id?: number
+          rule_embedding?: string | null
+          rule_text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_rules_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "houses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      extra_costs: {
+        Row: {
+          amount: number | null
+          cost_name: string
+          created_at: string | null
+          house_id: number | null
+          id: number
+          required: boolean | null
+        }
+        Insert: {
+          amount?: number | null
+          cost_name: string
+          created_at?: string | null
+          house_id?: number | null
+          id?: number
+          required?: boolean | null
+        }
+        Update: {
+          amount?: number | null
+          cost_name?: string
+          created_at?: string | null
+          house_id?: number | null
+          id?: number
+          required?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "extra_costs_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "houses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      house_amenities: {
+        Row: {
+          amenity_embedding: string | null
+          amenity_name: string
+          created_at: string | null
+          embedding_model: string | null
+          house_id: number | null
+          id: number
+        }
+        Insert: {
+          amenity_embedding?: string | null
+          amenity_name: string
+          created_at?: string | null
+          embedding_model?: string | null
+          house_id?: number | null
+          id?: number
+        }
+        Update: {
+          amenity_embedding?: string | null
+          amenity_name?: string
+          created_at?: string | null
+          embedding_model?: string | null
+          house_id?: number | null
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "house_amenities_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "houses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      house_facilities: {
+        Row: {
+          created_at: string | null
+          facility_name: string
+          house_id: number | null
+          id: number
+          included: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          facility_name: string
+          house_id?: number | null
+          id?: number
+          included?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          facility_name?: string
+          house_id?: number | null
+          id?: number
+          included?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "house_facilities_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "houses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      house_images: {
+        Row: {
+          created_at: string | null
+          house_id: number | null
+          id: number
+          image_url: string
+          sort_order: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          house_id?: number | null
+          id?: number
+          image_url: string
+          sort_order?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          house_id?: number | null
+          id?: number
+          image_url?: string
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "house_images_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "houses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      house_rules: {
+        Row: {
+          created_at: string | null
+          embedding_model: string | null
+          house_id: number | null
+          id: number
+          rule_embedding: string | null
+          rule_type: string
+          rule_value: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          embedding_model?: string | null
+          house_id?: number | null
+          id?: number
+          rule_embedding?: string | null
+          rule_type: string
+          rule_value?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          embedding_model?: string | null
+          house_id?: number | null
+          id?: number
+          rule_embedding?: string | null
+          rule_type?: string
+          rule_value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "house_rules_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "houses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      houses: {
+        Row: {
+          accommodation_name: string
+          amenities_embedding: string | null
+          country: string
+          created_at: string | null
+          description: string | null
+          description_embedding: string | null
+          embedding_model: string | null
+          embedding_updated_at: string | null
+          energy_label: string | null
+          has_public_transport: boolean | null
+          host_id: string | null
+          house_number: string | null
+          id: number
+          is_near_neighbors: boolean | null
+          land_registration_option: string | null
+          living_situation: string
+          location: string | null
+          location_embedding: string | null
+          max_nights: number
+          max_person: number
+          min_nights: number
+          place: string | null
+          plot_size: string | null
+          postal_code: string | null
+          price_per_night: number | null
+          region: string
+          registration_number: string | null
+          registration_number_option: string | null
+          safety_deposit: string | null
+          safety_deposit_amount: number | null
+          search_embedding: string | null
+          status: string | null
+          street: string | null
+          surroundings: string | null
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          accommodation_name: string
+          amenities_embedding?: string | null
+          country?: string
+          created_at?: string | null
+          description?: string | null
+          description_embedding?: string | null
+          embedding_model?: string | null
+          embedding_updated_at?: string | null
+          energy_label?: string | null
+          has_public_transport?: boolean | null
+          host_id?: string | null
+          house_number?: string | null
+          id?: number
+          is_near_neighbors?: boolean | null
+          land_registration_option?: string | null
+          living_situation: string
+          location?: string | null
+          location_embedding?: string | null
+          max_nights?: number
+          max_person?: number
+          min_nights?: number
+          place?: string | null
+          plot_size?: string | null
+          postal_code?: string | null
+          price_per_night?: number | null
+          region?: string
+          registration_number?: string | null
+          registration_number_option?: string | null
+          safety_deposit?: string | null
+          safety_deposit_amount?: number | null
+          search_embedding?: string | null
+          status?: string | null
+          street?: string | null
+          surroundings?: string | null
+          type?: string
+          updated_at?: string | null
+        }
+        Update: {
+          accommodation_name?: string
+          amenities_embedding?: string | null
+          country?: string
+          created_at?: string | null
+          description?: string | null
+          description_embedding?: string | null
+          embedding_model?: string | null
+          embedding_updated_at?: string | null
+          energy_label?: string | null
+          has_public_transport?: boolean | null
+          host_id?: string | null
+          house_number?: string | null
+          id?: number
+          is_near_neighbors?: boolean | null
+          land_registration_option?: string | null
+          living_situation?: string
+          location?: string | null
+          location_embedding?: string | null
+          max_nights?: number
+          max_person?: number
+          min_nights?: number
+          place?: string | null
+          plot_size?: string | null
+          postal_code?: string | null
+          price_per_night?: number | null
+          region?: string
+          registration_number?: string | null
+          registration_number_option?: string | null
+          safety_deposit?: string | null
+          safety_deposit_amount?: number | null
+          search_embedding?: string | null
+          status?: string | null
+          street?: string | null
+          surroundings?: string | null
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "house_images_house_id_fkey"
+            columns: ["id"]
+            isOneToOne: false
+            referencedRelation: "house_images"
+            referencedColumns: ["house_id"]
+          },
+          {
+            foreignKeyName: "house_amenities_house_id_fkey"
+            columns: ["id"]
+            isOneToOne: false
+            referencedRelation: "house_amenities"
+            referencedColumns: ["house_id"]
+          },
+          {
+            foreignKeyName: "house_facilities_house_id_fkey"
+            columns: ["id"]
+            isOneToOne: false
+            referencedRelation: "house_facilities"
+            referencedColumns: ["house_id"]
+          },
+          {
+            foreignKeyName: "house_rules_house_id_fkey"
+            columns: ["id"]
+            isOneToOne: false
+            referencedRelation: "house_rules"
+            referencedColumns: ["house_id"]
+          },
+          {
+            foreignKeyName: "person_pricing_house_id_fkey"
+            columns: ["id"]
+            isOneToOne: false
+            referencedRelation: "person_pricing"
+            referencedColumns: ["house_id"]
+          },
+          {
+            foreignKeyName: "extra_costs_house_id_fkey"
+            columns: ["id"]
+            isOneToOne: false
+            referencedRelation: "extra_costs"
+            referencedColumns: ["house_id"]
+          },
+          {
+            foreignKeyName: "sustainability_features_house_id_fkey"
+            columns: ["id"]
+            isOneToOne: false
+            referencedRelation: "sustainability_features"
+            referencedColumns: ["house_id"]
+          },
+          {
+            foreignKeyName: "blocked_dates_house_id_fkey"
+            columns: ["id"]
+            isOneToOne: false
+            referencedRelation: "blocked_dates"
+            referencedColumns: ["house_id"]
+          },
+          {
+            foreignKeyName: "arrival_departure_days_house_id_fkey"
+            columns: ["id"]
+            isOneToOne: false
+            referencedRelation: "arrival_departure_days"
+            referencedColumns: ["house_id"]
+          },
+          {
+            foreignKeyName: "custom_rules_house_id_fkey"
+            columns: ["id"]
+            isOneToOne: false
+            referencedRelation: "custom_rules"
+            referencedColumns: ["house_id"]
+          },
+        ]
+      }
+      person_pricing: {
+        Row: {
+          additional_person_price: number | null
+          base_persons: number
+          created_at: string | null
+          house_id: number | null
+          id: number
+        }
+        Insert: {
+          additional_person_price?: number | null
+          base_persons?: number
+          created_at?: string | null
+          house_id?: number | null
+          id?: number
+        }
+        Update: {
+          additional_person_price?: number | null
+          base_persons?: number
+          created_at?: string | null
+          house_id?: number | null
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "person_pricing_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "houses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pricing_tiers: {
+        Row: {
+          created_at: string | null
+          house_id: number | null
+          id: number
+          price: number | null
+          tier_type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          house_id?: number | null
+          id?: number
+          price?: number | null
+          tier_type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          house_id?: number | null
+          id?: number
+          price?: number | null
+          tier_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pricing_tiers_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "houses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rooms: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          house_id: number | null
+          id: number
+          max_person: number
+          name: string
+          price_per_night: number | null
+          room_type: string | null
+          size_m2: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          house_id?: number | null
+          id?: number
+          max_person?: number
+          name: string
+          price_per_night?: number | null
+          room_type?: string | null
+          size_m2?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          house_id?: number | null
+          id?: number
+          max_person?: number
+          name?: string
+          price_per_night?: number | null
+          room_type?: string | null
+          size_m2?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rooms_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "houses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      room_amenities: {
+        Row: {
+          amenity_embedding: string | null
+          amenity_name: string
+          amenity_type: string | null
+          created_at: string | null
+          embedding_model: string | null
+          id: number
+          quantity: number | null
+          room_id: number | null
+        }
+        Insert: {
+          amenity_embedding?: string | null
+          amenity_name: string
+          amenity_type?: string | null
+          created_at?: string | null
+          embedding_model?: string | null
+          id?: number
+          quantity?: number | null
+          room_id?: number | null
+        }
+        Update: {
+          amenity_embedding?: string | null
+          amenity_name?: string
+          amenity_type?: string | null
+          created_at?: string | null
+          embedding_model?: string | null
+          id?: number
+          quantity?: number | null
+          room_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_amenities_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      room_images: {
+        Row: {
+          created_at: string | null
+          id: number
+          image_type: string | null
+          image_url: string
+          room_id: number | null
+          sort_order: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          image_type?: string | null
+          image_url: string
+          room_id?: number | null
+          sort_order?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          image_type?: string | null
+          image_url?: string
+          room_id?: number | null
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_images_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sustainability_features: {
+        Row: {
+          created_at: string | null
+          embedding_model: string | null
+          feature_embedding: string | null
+          feature_key: string
+          feature_value: string | null
+          house_id: number | null
+          id: number
+        }
+        Insert: {
+          created_at?: string | null
+          embedding_model?: string | null
+          feature_embedding?: string | null
+          feature_key: string
+          feature_value?: string | null
+          house_id?: number | null
+          id?: number
+        }
+        Update: {
+          created_at?: string | null
+          embedding_model?: string | null
+          feature_embedding?: string | null
+          feature_key?: string
+          feature_value?: string | null
+          house_id?: number | null
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sustainability_features_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "houses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       users: {
         Row: {
@@ -48,7 +708,7 @@ export type Database = {
           business_license: string | null
           city: string | null
           company_name: string | null
-          coordinates: unknown
+          coordinates: unknown | null
           country: string
           created_at: string
           currency_preference: string
@@ -94,7 +754,7 @@ export type Database = {
           business_license?: string | null
           city?: string | null
           company_name?: string | null
-          coordinates?: unknown
+          coordinates?: unknown | null
           country?: string
           created_at?: string
           currency_preference?: string
@@ -140,7 +800,7 @@ export type Database = {
           business_license?: string | null
           city?: string | null
           company_name?: string | null
-          coordinates?: unknown
+          coordinates?: unknown | null
           country?: string
           created_at?: string
           currency_preference?: string
@@ -286,8 +946,8 @@ export type TablesUpdate<
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
     ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-      Update: infer U
-    }
+        Update: infer U
+      }
       ? U
       : never
     : never

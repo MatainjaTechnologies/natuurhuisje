@@ -35,7 +35,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     title: 'natuurhuisje - Find your perfect getaway in nature',
     description: 'Discover and book unique nature accommodations: cabins, treehouses, glamping, and more in the most beautiful natural settings.',
     icons: {
-      icon: '/images/fav.ico',
+      icon: '/favicon.ico',
+      shortcut: '/favicon.ico',
+      apple: '/favicon.ico',
     },
   };
 }

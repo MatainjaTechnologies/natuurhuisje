@@ -40,10 +40,16 @@ function getLocale(request: NextRequest): string {
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
+  // Explicitly handle favicon.ico
+  if (pathname === '/favicon.ico') {
+    return NextResponse.rewrite(new URL('/images/fav.ico', request.url));
+  }
+
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
     pathname.startsWith('/static') ||
+    pathname.startsWith('/images') ||
     pathname.includes('.') 
   ) {
     return NextResponse.next();

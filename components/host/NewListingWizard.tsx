@@ -19,6 +19,9 @@ import {
   X,
   Plus
 } from 'lucide-react';
+import { uploadHouseImages, validateImageFile } from '@/lib/supabase-storage';
+import { saveListingToDatabase } from '@/lib/supabase-listings';
+import { createClient } from '@/utils/supabase/client';
 
 // Unified checkbox handler
 const handleCheckboxToggle = (item: string, selectedItems: string[], setSelectedItems: (items: string[]) => void) => {
@@ -501,6 +504,7 @@ function GeneralStep({ data, updateData, onNext, onPrevious }: any) {
             </div>
           </label>
           <select 
+            suppressHydrationWarning
             className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] cursor-pointer appearance-none bg-white"
             value={data.registrationNumberOption}
             onChange={(e) => updateData({...data, registrationNumberOption: e.target.value})}
@@ -514,6 +518,7 @@ function GeneralStep({ data, updateData, onNext, onPrevious }: any) {
         <div className="space-y-2">
           <label className="block text-sm font-bold text-[#1D331D]">Registration number</label>
           <input 
+            suppressHydrationWarning
             type="text" 
             className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:border-gray-400 disabled:hover:shadow-none disabled:focus:scale-100"
             placeholder="Enter registration number"
@@ -537,12 +542,14 @@ function GeneralStep({ data, updateData, onNext, onPrevious }: any) {
         <button 
           onClick={onPrevious}
           disabled
+          suppressHydrationWarning
           className="bg-gray-100 text-gray-400 px-8 py-3 rounded-lg font-medium cursor-not-allowed flex items-center gap-2"
         >
           Previous
         </button>
         <button 
           onClick={onNext}
+          suppressHydrationWarning
           className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors flex items-center gap-2"
         >
           Next
@@ -886,20 +893,34 @@ function ExtraCostsModal({ isOpen, onClose, selected, onUpdate }: any) {
 function PhotosStep({ data, updateData, onNext, onPrevious }: any) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadErrors, setUploadErrors] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const filesArray = Array.from(event.target.files);
-      setSelectedFiles((prevFiles) => [...prevFiles, ...filesArray]);
+      const validFiles: File[] = [];
+      const errors: string[] = [];
 
       filesArray.forEach((file) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImagePreviews((prevPreviews) => [...prevPreviews, reader.result as string]);
-        };
-        reader.readAsDataURL(file);
+        const validation = validateImageFile(file);
+        if (validation.valid) {
+          validFiles.push(file);
+          
+          // Create preview
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setImagePreviews((prevPreviews) => [...prevPreviews, reader.result as string]);
+          };
+          reader.readAsDataURL(file);
+        } else {
+          errors.push(`${file.name}: ${validation.error}`);
+        }
       });
+
+      setSelectedFiles((prevFiles) => [...prevFiles, ...validFiles]);
+      setUploadErrors((prevErrors) => [...prevErrors, ...errors]);
     }
   }, []);
 
@@ -918,17 +939,84 @@ function PhotosStep({ data, updateData, onNext, onPrevious }: any) {
     event.stopPropagation();
     if (event.dataTransfer.files) {
       const filesArray = Array.from(event.dataTransfer.files);
-      setSelectedFiles((prevFiles) => [...prevFiles, ...filesArray]);
+      const validFiles: File[] = [];
+      const errors: string[] = [];
 
       filesArray.forEach((file) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImagePreviews((prevPreviews) => [...prevPreviews, reader.result as string]);
-        };
-        reader.readAsDataURL(file);
+        const validation = validateImageFile(file);
+        if (validation.valid) {
+          validFiles.push(file);
+          
+          // Create preview
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setImagePreviews((prevPreviews) => [...prevPreviews, reader.result as string]);
+          };
+          reader.readAsDataURL(file);
+        } else {
+          errors.push(`${file.name}: ${validation.error}`);
+        }
       });
+
+      setSelectedFiles((prevFiles) => [...prevFiles, ...validFiles]);
+      setUploadErrors((prevErrors) => [...prevErrors, ...errors]);
     }
   }, []);
+
+  const handleUploadImages = async () => {
+    if (selectedFiles.length === 0) {
+      setUploadErrors(['Please select at least one image']);
+      return;
+    }
+
+    setUploading(true);
+    setUploadErrors([]);
+
+    try {
+      // Get current authenticated user
+      const supabase = createClient();
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !user) {
+        setUploadErrors(['You must be logged in to upload images']);
+        return;
+      }
+      
+      console.log('Uploading images for user:', user.id);
+
+      // For now, we'll use a temporary house ID
+      // In a real implementation, you'd get this from the form or create the house first
+      const tempHouseId = 'temp-' + Date.now();
+      const userId = user.id;
+
+      const results = await uploadHouseImages(selectedFiles, tempHouseId, userId);
+      
+      const successfulUploads = results.filter(result => !result.error);
+      const failedUploads = results.filter(result => result.error);
+
+      if (successfulUploads.length > 0) {
+        // Update form data with uploaded image URLs
+        const imageUrls = successfulUploads.map(result => result.url);
+        updateData({ ...data, images: [...data.images, ...imageUrls] });
+        
+        // Clear selected files after successful upload
+        setSelectedFiles([]);
+        setImagePreviews([]);
+        
+        // Show success message
+        alert(`Successfully uploaded ${successfulUploads.length} image(s)!`);
+      }
+
+      if (failedUploads.length > 0) {
+        const errorMessages = failedUploads.map(result => result.error!);
+        setUploadErrors(errorMessages);
+      }
+    } catch (error) {
+      setUploadErrors(['Upload failed. Please try again.']);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleClickUpload = useCallback(() => {
     fileInputRef.current?.click();
@@ -1017,7 +1105,62 @@ function PhotosStep({ data, updateData, onNext, onPrevious }: any) {
             </div>
           </div>
         )}
+
+        {/* Uploaded Images */}
+        {data.images.length > 0 && imagePreviews.length === 0 && (
+          <div className="mt-6">
+            <h3 className="text-sm font-medium text-gray-700 mb-4">Uploaded Photos ({data.images.length})</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {data.images.map((imageUrl: string, index: number) => (
+                <div key={index} className="relative group">
+                  <div className="aspect-square rounded-lg overflow-hidden border border-gray-200">
+                    <img
+                      src={imageUrl}
+                      alt={`Uploaded ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <button
+                    onClick={() => {
+                      const newImages = data.images.filter((_: any, i: number) => i !== index);
+                      updateData({ ...data, images: newImages });
+                    }}
+                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                  <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                    {index + 1}
+                  </div>
+                </div>
+              ))}
+              
+              {/* Add More Photos Button */}
+              <div 
+                className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-gray-400 transition-colors"
+                onClick={handleClickUpload}
+              >
+                <div className="text-center">
+                  <Plus className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-500">Add more</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
+      
+      {/* Upload Errors */}
+      {uploadErrors.length > 0 && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <h4 className="text-red-800 font-medium mb-2">Upload Errors:</h4>
+          <ul className="text-red-600 text-sm space-y-1">
+            {uploadErrors.map((error, index) => (
+              <li key={index}>• {error}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       
       <div className="pt-8 flex justify-between border-t border-gray-100">
         <button 
@@ -1026,12 +1169,33 @@ function PhotosStep({ data, updateData, onNext, onPrevious }: any) {
         >
           Previous
         </button>
-        <button 
-          onClick={onNext}
-          className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors flex items-center gap-2"
-        >
-          Next
-        </button>
+        <div className="flex gap-3">
+          {selectedFiles.length > 0 && (
+            <button 
+              onClick={handleUploadImages}
+              disabled={uploading}
+              className="bg-green-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {uploading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Plus className="h-4 w-4" />
+                  Upload {selectedFiles.length} {selectedFiles.length === 1 ? 'Photo' : 'Photos'}
+                </>
+              )}
+            </button>
+          )}
+          <button 
+            onClick={onNext}
+            className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors flex items-center gap-2"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -3739,10 +3903,34 @@ function HouseRulesStep({ data, updateData, onNext, onPrevious }: any) {
           Previous
         </button>
         <button 
-          onClick={() => {
-            // Here you would typically submit the form to the backend
-            alert('Listing created successfully!');
-            onNext();
+          onClick={async () => {
+            try {
+              // Get current authenticated user
+              const supabase = createClient();
+              const { data: { user }, error: userError } = await supabase.auth.getUser();
+              
+              if (userError || !user) {
+                alert('You must be logged in to create a listing');
+                return;
+              }
+              
+              const userId = user.id;
+              console.log('Authenticated user ID:', userId);
+              console.log('User email:', user.email);
+              
+              // Save all form data to database
+              const result = await saveListingToDatabase(data, userId);
+              
+              if (result.success) {
+                alert('Listing created successfully!');
+                onNext();
+              } else {
+                alert(`Error: ${result.error}`);
+              }
+            } catch (error) {
+              console.error('Submit error:', error);
+              alert('Failed to create listing. Please try again.');
+            }
           }}
           className="bg-[#5b2d8e] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#4a2475] transition-colors"
         >
