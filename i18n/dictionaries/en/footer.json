@@ -1,0 +1,33 @@
+{
+  "description": "Find your perfect escape in the arms of nature. Book unique cabins, treehouses and more.",
+  "sections": {
+    "discover": "Discover",
+    "host": "Host",
+    "support": "Support"
+  },
+  "discover": {
+    "allStays": "All stays",
+    "cabins": "Cabins",
+    "treehouses": "Treehouses",
+    "glamping": "Glamping",
+    "tinyHouses": "Tiny Houses"
+  },
+  "host": {
+    "becomeHost": "Become a host",
+    "manageListings": "Manage listings",
+    "viewBookings": "View bookings",
+    "hostInsights": "Host insights"
+  },
+  "support": {
+    "helpCenter": "Help center",
+    "privacyPolicy": "Privacy policy",
+    "termsOfService": "Terms of service",
+    "contactUs": "Contact us"
+  },
+  "footer": {
+    "copyright": "All rights reserved.",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "cookies": "Cookies"
+  }
+}

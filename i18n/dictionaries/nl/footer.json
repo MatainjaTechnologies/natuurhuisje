@@ -1,0 +1,33 @@
+{
+  "description": "Vind je perfecte ontsnapping in de armen van de natuur. Boek unieke hutten, boomhutten en meer.",
+  "sections": {
+    "discover": "Ontdekken",
+    "host": "Verhuurder",
+    "support": "Ondersteuning"
+  },
+  "discover": {
+    "allStays": "Alle verblijven",
+    "cabins": "Hutten",
+    "treehouses": "Boomhutten",
+    "glamping": "Glamping",
+    "tinyHouses": "Tiny Houses"
+  },
+  "host": {
+    "becomeHost": "Word verhuurder",
+    "manageListings": "Beheer accommodaties",
+    "viewBookings": "Bekijk boekingen",
+    "hostInsights": "Verhuurder inzichten"
+  },
+  "support": {
+    "helpCenter": "Helpcentrum",
+    "privacyPolicy": "Privacybeleid",
+    "termsOfService": "Servicevoorwaarden",
+    "contactUs": "Neem contact op"
+  },
+  "footer": {
+    "copyright": "Alle rechten voorbehouden.",
+    "privacy": "Privacy",
+    "terms": "Voorwaarden",
+    "cookies": "Cookies"
+  }
+}

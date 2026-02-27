@@ -3,8 +3,7 @@
 import Link from 'next/link';
 import { SearchDock } from '@/components/SearchDock';
 import { ListingCard } from '@/components/ListingCard';
-import { useRef, useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useRef, useState, useEffect, use } from 'react';
 import type { Locale } from '@/i18n/config';
 import { getHomepageDictionary } from '@/i18n/get-homepage-dictionary';
 
@@ -46,9 +45,9 @@ type DataType = {
   destinations: Destination[];
 };
 
-export default function Home() {
-  const params = useParams();
-  const lang = params.lang as Locale;
+export default function Home({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang: langParam } = use(params);
+  const lang = langParam as Locale;
   const natureHousesRef = useRef<HTMLDivElement>(null);
   const countriesRef = useRef<HTMLDivElement>(null);
   const regionsRef = useRef<HTMLDivElement>(null);

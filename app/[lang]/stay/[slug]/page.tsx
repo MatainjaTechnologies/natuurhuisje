@@ -15,6 +15,9 @@ export default function StayDetailPage() {
   const [t, setT] = useState<any>(null);
   const [listing, setListing] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [checkIn, setCheckIn] = useState('');
+  const [checkOut, setCheckOut] = useState('');
+  const [guests, setGuests] = useState('2');
 
   useEffect(() => {
     const loadTranslations = async () => {
@@ -168,6 +171,7 @@ export default function StayDetailPage() {
               <div className="grid grid-cols-2 gap-4">
                 {listing.amenities.map((amenity: string) => {
                   const Icon = amenityIcons[amenity];
+                  if (!Icon) return null;
                   return (
                     <div key={amenity} className="flex items-center gap-3">
                       {typeof Icon === 'string' ? (
@@ -215,6 +219,8 @@ export default function StayDetailPage() {
                     </label>
                     <input
                       type="date"
+                      value={checkIn}
+                      onChange={(e) => setCheckIn(e.target.value)}
                       className="w-full mt-1 text-sm border-none focus:outline-none"
                     />
                   </div>
@@ -224,6 +230,8 @@ export default function StayDetailPage() {
                     </label>
                     <input
                       type="date"
+                      value={checkOut}
+                      onChange={(e) => setCheckOut(e.target.value)}
                       className="w-full mt-1 text-sm border-none focus:outline-none"
                     />
                   </div>
@@ -235,17 +243,23 @@ export default function StayDetailPage() {
                   <label className="text-xs font-semibold text-gray-700 uppercase">
                     {t.booking.guests}
                   </label>
-                  <select className="w-full mt-1 text-sm border-none focus:outline-none">
-                    <option>1 {t.details.guests}</option>
-                    <option>2 {t.details.guests}</option>
-                    <option>3 {t.details.guests}</option>
-                    <option>4 {t.details.guests}</option>
+                  <select 
+                    value={guests}
+                    onChange={(e) => setGuests(e.target.value)}
+                    className="w-full mt-1 text-sm border-none focus:outline-none"
+                  >
+                    <option value="1">1 {t.details.guests}</option>
+                    <option value="2">2 {t.details.guests}</option>
+                    <option value="3">3 {t.details.guests}</option>
+                    <option value="4">4 {t.details.guests}</option>
+                    <option value="5">5 {t.details.guests}</option>
+                    <option value="6">6 {t.details.guests}</option>
                   </select>
                 </div>
               </div>
 
               <Link
-                href={`/${lang}/booking/${listing.id}`}
+                href={`/${lang}/booking/${listing.id}?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`}
                 className="block w-full py-3 px-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg text-center transition-colors mb-4"
               >
                 {t.details.reserve}

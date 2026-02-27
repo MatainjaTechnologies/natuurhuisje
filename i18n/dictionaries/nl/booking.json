@@ -1,0 +1,36 @@
+{
+  "title": "Voltooi je boeking",
+  "steps": {
+    "step1": "1. Boekingsgegevens",
+    "step2": "2. Bevestiging"
+  },
+  "bookingDetails": {
+    "title": "Boekingsgegevens",
+    "checkIn": "Inchecken",
+    "checkOut": "Uitchecken",
+    "guests": "Gasten",
+    "guest": "Gast"
+  },
+  "guestInfo": {
+    "title": "Gastinformatie",
+    "firstName": "Voornaam",
+    "lastName": "Achternaam",
+    "email": "E-mailadres",
+    "phone": "Telefoonnummer",
+    "specialRequests": "Speciale verzoeken",
+    "specialRequestsPlaceholder": "Heeft u speciale verzoeken of vereisten?"
+  },
+  "pricing": {
+    "nights": "nachten",
+    "cleaningFee": "Schoonmaakkosten",
+    "serviceFee": "Servicekosten",
+    "total": "Totaal"
+  },
+  "pricePerNight": "per nacht",
+  "confirmBooking": "Boeking bevestigen",
+  "success": {
+    "title": "Boeking bevestigd!",
+    "message": "Bedankt voor uw boeking. U ontvangt binnenkort een bevestigingsmail.",
+    "backHome": "Terug naar home"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "description": "Finden Sie Ihr perfektes Refugium in der Natur. Buchen Sie einzigartige Hütten, Baumhäuser und mehr.",
+  "sections": {
+    "discover": "Entdecken",
+    "host": "Gastgeber",
+    "support": "Unterstützung"
+  },
+  "discover": {
+    "allStays": "Alle Unterkünfte",
+    "cabins": "Hütten",
+    "treehouses": "Baumhäuser",
+    "glamping": "Glamping",
+    "tinyHouses": "Tiny Houses"
+  },
+  "host": {
+    "becomeHost": "Gastgeber werden",
+    "manageListings": "Unterkünfte verwalten",
+    "viewBookings": "Buchungen ansehen",
+    "hostInsights": "Gastgeber-Einblicke"
+  },
+  "support": {
+    "helpCenter": "Hilfezentrum",
+    "privacyPolicy": "Datenschutzrichtlinie",
+    "termsOfService": "Nutzungsbedingungen",
+    "contactUs": "Kontaktieren Sie uns"
+  },
+  "footer": {
+    "copyright": "Alle Rechte vorbehalten.",
+    "privacy": "Datenschutz",
+    "terms": "Bedingungen",
+    "cookies": "Cookies"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "title": "Complete your booking",
+  "steps": {
+    "step1": "1. Booking details",
+    "step2": "2. Confirmation"
+  },
+  "bookingDetails": {
+    "title": "Booking details",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "guests": "Guests",
+    "guest": "Guest"
+  },
+  "guestInfo": {
+    "title": "Guest information",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email address",
+    "phone": "Phone number",
+    "specialRequests": "Special requests",
+    "specialRequestsPlaceholder": "Any special requests or requirements?"
+  },
+  "pricing": {
+    "nights": "nights",
+    "cleaningFee": "Cleaning fee",
+    "serviceFee": "Service fee",
+    "total": "Total"
+  },
+  "pricePerNight": "per night",
+  "confirmBooking": "Confirm booking",
+  "success": {
+    "title": "Booking confirmed!",
+    "message": "Thank you for your booking. You will receive a confirmation email shortly.",
+    "backHome": "Back to home"
+  }
+}

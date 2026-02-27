@@ -1,0 +1,108 @@
+{
+  "title": "Louez votre propriété",
+  "subtitle": "Partagez votre hébergement nature unique avec les voyageurs",
+  "steps": {
+    "step1": "1. Détails de la propriété",
+    "step2": "2. Confirmation"
+  },
+  "propertyDetails": {
+    "title": "Détails de la propriété",
+    "subtitle": "Parlez-nous de votre propriété"
+  },
+  "form": {
+    "propertyName": {
+      "label": "Nom de la propriété",
+      "placeholder": "Entrez le nom de votre propriété"
+    },
+    "propertyType": {
+      "label": "Type de propriété",
+      "placeholder": "Sélectionnez le type de propriété",
+      "options": {
+        "cabin": "Cabane",
+        "treehouse": "Cabane dans les arbres",
+        "tinyHouse": "Tiny House",
+        "glamping": "Glamping",
+        "cottage": "Cottage",
+        "lodge": "Lodge",
+        "villa": "Villa",
+        "other": "Autre"
+      }
+    },
+    "location": {
+      "label": "Emplacement",
+      "country": "Pays",
+      "countryPlaceholder": "Sélectionnez le pays",
+      "city": "Ville",
+      "cityPlaceholder": "Entrez la ville",
+      "address": "Adresse",
+      "addressPlaceholder": "Entrez l'adresse complète",
+      "postcode": "Code postal",
+      "postcodePlaceholder": "Entrez le code postal"
+    },
+    "capacity": {
+      "label": "Capacité",
+      "guests": "Nombre d'invités",
+      "guestsPlaceholder": "Nombre maximum d'invités",
+      "bedrooms": "Chambres",
+      "bedroomsPlaceholder": "Nombre de chambres",
+      "bathrooms": "Salles de bain",
+      "bathroomsPlaceholder": "Nombre de salles de bain"
+    },
+    "description": {
+      "label": "Description",
+      "placeholder": "Décrivez votre propriété, ses caractéristiques uniques et ce qui la rend spéciale..."
+    },
+    "amenities": {
+      "label": "Équipements",
+      "subtitle": "Sélectionnez tout ce qui s'applique"
+    },
+    "pricing": {
+      "label": "Tarifs",
+      "pricePerNight": "Prix par nuit",
+      "currency": "€",
+      "cleaningFee": "Frais de ménage (facultatif)",
+      "minimumStay": "Séjour minimum (nuits)"
+    },
+    "contact": {
+      "label": "Vos coordonnées",
+      "firstName": "Prénom",
+      "firstNamePlaceholder": "Entrez votre prénom",
+      "lastName": "Nom",
+      "lastNamePlaceholder": "Entrez votre nom",
+      "email": "Adresse e-mail",
+      "emailPlaceholder": "votre.email@exemple.fr",
+      "phone": "Numéro de téléphone",
+      "phonePlaceholder": "Entrez votre numéro de téléphone"
+    }
+  },
+  "amenitiesList": {
+    "wifi": "WiFi",
+    "parking": "Parking",
+    "kitchen": "Cuisine",
+    "fireplace": "Cheminée",
+    "bbq": "Barbecue",
+    "heating": "Chauffage",
+    "airConditioning": "Climatisation",
+    "hotTub": "Jacuzzi",
+    "pool": "Piscine",
+    "petFriendly": "Animaux acceptés",
+    "workspace": "Espace de travail",
+    "tv": "Télévision"
+  },
+  "buttons": {
+    "submit": "Soumettre la propriété",
+    "cancel": "Annuler",
+    "back": "Retour"
+  },
+  "terms": {
+    "text": "En soumettant ce formulaire, vous acceptez nos",
+    "termsLink": "conditions générales",
+    "and": "et",
+    "privacyLink": "politique de confidentialité"
+  },
+  "success": {
+    "title": "Merci !",
+    "message": "Votre propriété a été soumise avec succès. Nous l'examinerons et vous contacterons dans les 2-3 jours ouvrables.",
+    "backHome": "Retour à l'accueil"
+  }
+}

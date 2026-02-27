@@ -1,0 +1,108 @@
+{
+  "title": "Vermieten Sie Ihre Unterkunft",
+  "subtitle": "Teilen Sie Ihre einzigartige Naturunterkunft mit Reisenden",
+  "steps": {
+    "step1": "1. Unterkunftsdetails",
+    "step2": "2. Bestätigung"
+  },
+  "propertyDetails": {
+    "title": "Unterkunftsdetails",
+    "subtitle": "Erzählen Sie uns von Ihrer Unterkunft"
+  },
+  "form": {
+    "propertyName": {
+      "label": "Name der Unterkunft",
+      "placeholder": "Geben Sie den Namen Ihrer Unterkunft ein"
+    },
+    "propertyType": {
+      "label": "Unterkunftstyp",
+      "placeholder": "Wählen Sie den Unterkunftstyp",
+      "options": {
+        "cabin": "Hütte",
+        "treehouse": "Baumhaus",
+        "tinyHouse": "Tiny House",
+        "glamping": "Glamping",
+        "cottage": "Cottage",
+        "lodge": "Lodge",
+        "villa": "Villa",
+        "other": "Andere"
+      }
+    },
+    "location": {
+      "label": "Standort",
+      "country": "Land",
+      "countryPlaceholder": "Land auswählen",
+      "city": "Stadt",
+      "cityPlaceholder": "Stadt eingeben",
+      "address": "Adresse",
+      "addressPlaceholder": "Vollständige Adresse eingeben",
+      "postcode": "Postleitzahl",
+      "postcodePlaceholder": "Postleitzahl eingeben"
+    },
+    "capacity": {
+      "label": "Kapazität",
+      "guests": "Anzahl der Gäste",
+      "guestsPlaceholder": "Maximale Gästeanzahl",
+      "bedrooms": "Schlafzimmer",
+      "bedroomsPlaceholder": "Anzahl der Schlafzimmer",
+      "bathrooms": "Badezimmer",
+      "bathroomsPlaceholder": "Anzahl der Badezimmer"
+    },
+    "description": {
+      "label": "Beschreibung",
+      "placeholder": "Beschreiben Sie Ihre Unterkunft, ihre einzigartigen Merkmale und was sie besonders macht..."
+    },
+    "amenities": {
+      "label": "Ausstattung",
+      "subtitle": "Wählen Sie alle zutreffenden aus"
+    },
+    "pricing": {
+      "label": "Preise",
+      "pricePerNight": "Preis pro Nacht",
+      "currency": "€",
+      "cleaningFee": "Reinigungsgebühr (optional)",
+      "minimumStay": "Mindestaufenthalt (Nächte)"
+    },
+    "contact": {
+      "label": "Ihre Kontaktdaten",
+      "firstName": "Vorname",
+      "firstNamePlaceholder": "Geben Sie Ihren Vornamen ein",
+      "lastName": "Nachname",
+      "lastNamePlaceholder": "Geben Sie Ihren Nachnamen ein",
+      "email": "E-Mail-Adresse",
+      "emailPlaceholder": "ihre.email@beispiel.de",
+      "phone": "Telefonnummer",
+      "phonePlaceholder": "Geben Sie Ihre Telefonnummer ein"
+    }
+  },
+  "amenitiesList": {
+    "wifi": "WLAN",
+    "parking": "Parkplatz",
+    "kitchen": "Küche",
+    "fireplace": "Kamin",
+    "bbq": "Grill",
+    "heating": "Heizung",
+    "airConditioning": "Klimaanlage",
+    "hotTub": "Whirlpool",
+    "pool": "Pool",
+    "petFriendly": "Haustierfreundlich",
+    "workspace": "Arbeitsplatz",
+    "tv": "Fernseher"
+  },
+  "buttons": {
+    "submit": "Unterkunft einreichen",
+    "cancel": "Abbrechen",
+    "back": "Zurück"
+  },
+  "terms": {
+    "text": "Durch das Absenden dieses Formulars stimmen Sie unseren",
+    "termsLink": "Allgemeinen Geschäftsbedingungen",
+    "and": "und",
+    "privacyLink": "Datenschutzrichtlinien"
+  },
+  "success": {
+    "title": "Vielen Dank!",
+    "message": "Ihre Unterkunft wurde erfolgreich eingereicht. Wir werden sie prüfen und uns innerhalb von 2-3 Werktagen bei Ihnen melden.",
+    "backHome": "Zurück zur Startseite"
+  }
+}

@@ -15,6 +15,7 @@ import {
 import { format } from "date-fns";
 import type { Locale } from '@/i18n/config';
 import { getSearchDictionary } from '@/i18n/get-search-dictionary';
+import { useSearch } from '@/contexts/SearchContext';
 
 interface SearchDockProps {
   variant?: "hero" | "compact";
@@ -56,18 +57,31 @@ export function SearchDock({
   const lightpickRef = useRef<any>(null);
   const [t, setT] = useState<any>(null);
 
-  const [location, setLocation] = useState(defaultLocation);
-  const [guests, setGuests] = useState(defaultGuests);
-  const [pets, setPets] = useState(defaultPets);
+  // Use shared search context
+  const searchContext = useSearch();
+  const location = searchContext.location;
+  const setLocation = searchContext.setLocation;
+  const guests = searchContext.guests;
+  const setGuests = searchContext.setGuests;
+  const pets = searchContext.pets;
+  const setPets = searchContext.setPets;
+  const selectedStartDate = searchContext.selectedStartDate;
+  const setSelectedStartDate = searchContext.setSelectedStartDate;
+  const selectedEndDate = searchContext.selectedEndDate;
+  const setSelectedEndDate = searchContext.setSelectedEndDate;
+
   const [activeTab, setActiveTab] = useState<
     "where" | "dates" | "people" | null
   >(initialTab);
-  const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(
-    defaultDateRange?.from || null,
-  );
-  const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(
-    defaultDateRange?.to || null,
-  );
+
+  // Initialize with defaults if provided
+  useEffect(() => {
+    if (defaultLocation && !location) setLocation(defaultLocation);
+    if (defaultGuests && guests === 2) setGuests(defaultGuests);
+    if (defaultPets && !pets) setPets(defaultPets);
+    if (defaultDateRange?.from && !selectedStartDate) setSelectedStartDate(defaultDateRange.from);
+    if (defaultDateRange?.to && !selectedEndDate) setSelectedEndDate(defaultDateRange.to);
+  }, []);
 
   useEffect(() => {
     const loadTranslations = async () => {
@@ -309,12 +323,15 @@ export function SearchDock({
               {location || t.searchDock.whereOrWhat}
             </span>
             {location.length > 0 && (
-              <button
-                onClick={() => setLocation("")}
-                className={`absolute right-0 top-1/2 -translate-y-1/2 p-1 rounded-lg transition-colors ${activeTab === "where" ? "text-white" : "text-gray-500 hover:bg-gray-100"}`}
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLocation("");
+                }}
+                className={`absolute right-0 top-1/2 -translate-y-1/2 p-1 rounded-lg transition-colors cursor-pointer ${activeTab === "where" ? "text-white" : "text-gray-500 hover:bg-gray-100"}`}
               >
-                <X className="h-5 w-5 cursor-pointer" />
-              </button>
+                <X className="h-5 w-5" />
+              </div>
             )}
           </button>
 

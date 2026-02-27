@@ -20,10 +20,13 @@ import { Logo } from "@/components/Logo";
 import { SearchDock } from "@/components/SearchDock";
 import { useState, useEffect, useRef } from "react";
 import { format } from "date-fns";
-import { createClient } from '@/utils/supabase/client';
-import type { Locale } from '@/i18n/config';
-import { switchLanguage } from '@/lib/navigation';
-import { getSearchDictionary } from '@/i18n/get-search-dictionary';
+import { createClient } from "@/utils/supabase/client";
+import type { Locale } from "@/i18n/config";
+import { switchLanguage } from "@/lib/navigation";
+import { getSearchDictionary } from "@/i18n/get-search-dictionary";
+import { getRentOutDictionary } from "@/i18n/get-rent-out-dictionary";
+import { getHeaderDictionary } from "@/i18n/get-header-dictionary";
+import { useSearch } from "@/contexts/SearchContext";
 
 interface HeaderProps {
   user?: User | null;
@@ -43,11 +46,16 @@ export function Header({ user: propUser, lang }: HeaderProps) {
   const dateInputRef = useRef<HTMLInputElement>(null);
   const lightpickRef = useRef<any>(null);
   const supabase = createClient();
-  
+
   const [locale, setLocale] = useState<Locale>(lang);
   const [user, setUser] = useState<User | null>(propUser || null);
-  const [userProfile, setUserProfile] = useState<{ display_name: string; avatar_url?: string } | null>(null);
+  const [userProfile, setUserProfile] = useState<{
+    display_name: string;
+    avatar_url?: string;
+  } | null>(null);
   const [searchT, setSearchT] = useState<any>(null);
+  const [rentOutT, setRentOutT] = useState<any>(null);
+  const [headerT, setHeaderT] = useState<any>(null);
 
   useEffect(() => {
     setLocale(lang);
@@ -61,71 +69,93 @@ export function Header({ user: propUser, lang }: HeaderProps) {
     loadSearchTranslations();
   }, [locale]);
 
+  useEffect(() => {
+    const loadRentOutTranslations = async () => {
+      const translations = await getRentOutDictionary(locale);
+      setRentOutT(translations);
+    };
+    loadRentOutTranslations();
+  }, [locale]);
+
+  useEffect(() => {
+    const loadHeaderTranslations = async () => {
+      const translations = await getHeaderDictionary(locale);
+      setHeaderT(translations);
+    };
+    loadHeaderTranslations();
+  }, [locale]);
+
   // Fetch user session on mount and when it changes
   useEffect(() => {
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       setUser(user);
-      console.log('Header - User:', user);
-      
+      console.log("Header - User:", user);
+
       // Fetch user profile when user is available
       if (user) {
         // First try to get from database
         const { data: profile, error } = await supabase
-          .from('users')
-          .select('display_name, avatar_url')
-          .eq('auth_user_id', user.id)
+          .from("users")
+          .select("display_name, avatar_url")
+          .eq("auth_user_id", user.id)
           .single();
-        
-        console.log('Header - Profile query result:', { profile, error });
-        
+
+        console.log("Header - Profile query result:", { profile, error });
+
         if (profile) {
           setUserProfile(profile);
         } else {
-          console.log('Header - Using user metadata fallback');
+          console.log("Header - Using user metadata fallback");
           // Fallback to user metadata
           const firstName = user.user_metadata?.first_name;
           const lastName = user.user_metadata?.last_name;
-          const displayName = firstName && lastName ? `${firstName} ${lastName}` : 'Account';
-          
+          const displayName =
+            firstName && lastName ? `${firstName} ${lastName}` : "Account";
+
           setUserProfile({ display_name: displayName });
         }
       } else {
         setUserProfile(null);
       }
     };
-    
+
     getUser();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
-      console.log('Header - Auth state change:', session?.user);
-      
+      console.log("Header - Auth state change:", session?.user);
+
       // Fetch profile when auth state changes
       if (session?.user) {
         const fetchProfile = async () => {
           const { data: profile, error } = await supabase
-            .from('users')
-            .select('display_name, avatar_url')
-            .eq('auth_user_id', session.user.id)
+            .from("users")
+            .select("display_name, avatar_url")
+            .eq("auth_user_id", session.user.id)
             .single();
-          
-          console.log('Header - Profile fetched:', { profile, error });
-          
+
+          console.log("Header - Profile fetched:", { profile, error });
+
           if (profile) {
             setUserProfile(profile);
           } else {
-            console.log('Header - Using user metadata fallback');
+            console.log("Header - Using user metadata fallback");
             // Fallback to user metadata
             const firstName = session.user.user_metadata?.first_name;
             const lastName = session.user.user_metadata?.last_name;
-            const displayName = firstName && lastName ? `${firstName} ${lastName}` : 'Account';
-            
+            const displayName =
+              firstName && lastName ? `${firstName} ${lastName}` : "Account";
+
             setUserProfile({ display_name: displayName });
           }
         };
-        
+
         fetchProfile();
       } else {
         setUserProfile(null);
@@ -142,6 +172,17 @@ export function Header({ user: propUser, lang }: HeaderProps) {
   >(null);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   // Search suggestions data
+  // Use shared search context
+  const searchContext = useSearch();
+  const location = searchContext.location;
+  const setLocation = searchContext.setLocation;
+  const guests = searchContext.guests;
+  const setGuests = searchContext.setGuests;
+  const selectedStartDate = searchContext.selectedStartDate;
+  const setSelectedStartDate = searchContext.setSelectedStartDate;
+  const selectedEndDate = searchContext.selectedEndDate;
+  const setSelectedEndDate = searchContext.setSelectedEndDate;
+
   const [suggestions, setSuggestions] = useState<{
     locations: Suggestion[];
     categories: Suggestion[];
@@ -149,31 +190,26 @@ export function Header({ user: propUser, lang }: HeaderProps) {
     locations: [],
     categories: [],
   });
-  const [location, setLocation] = useState("");
-  const [guests, setGuests] = useState<number | null>(null);
-  const [pets, setPets] = useState("");
-  const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
-  const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const languageDropdownRef = useRef<HTMLDivElement>(null);
 
   const languages = [
-    { code: 'nl', name: 'Nederlands', flag: '/flags/nl.svg' },
-    { code: 'en', name: 'English', flag: '/flags/gb.svg' },
-    { code: 'de', name: 'Deutsch', flag: '/flags/de.svg' },
-    { code: 'fr', name: 'Français', flag: '/flags/fr.svg' },
+    { code: "nl", name: "Nederlands", flag: "/flags/nl.svg" },
+    { code: "en", name: "English", flag: "/flags/gb.svg" },
+    { code: "de", name: "Deutsch", flag: "/flags/de.svg" },
+    { code: "fr", name: "Français", flag: "/flags/fr.svg" },
   ] as const;
 
   const handleLanguageChange = (newLocale: Locale) => {
     const newPath = switchLanguage(pathname, newLocale);
-    
+
     // Set cookie for language persistence
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
-    
+
     // Update local state
     setLocale(newLocale);
     setShowLanguageDropdown(false);
-    
+
     // Use full page reload to ensure all content updates
     window.location.href = newPath;
   };
@@ -214,37 +250,56 @@ export function Header({ user: propUser, lang }: HeaderProps) {
     };
   }, [activeSearchTab]);
 
-  // Listen for custom events from SearchDock to open mobile modals
+  // Listen for custom event to open header search from SearchDock
   useEffect(() => {
-    const handleOpenHeaderSearch = (event: CustomEvent) => {
-      const { tab } = event.detail;
-      setActiveSearchTab(tab);
+    const handleOpenHeaderSearch = (event: any) => {
+      const { tab } = event.detail || {};
+      setActiveSearchTab(tab || "where");
+      setShowSearchDock(true);
+      setShowMobileSearch(true);
+
+      // Scroll to top if needed on desktop
+      if (window.innerWidth >= 768 && window.scrollY <= 100) {
+        window.scrollTo({ top: 101, behavior: "smooth" });
+      }
     };
 
-    window.addEventListener('openHeaderSearch', handleOpenHeaderSearch as EventListener);
-
+    window.addEventListener(
+      "openHeaderSearch",
+      handleOpenHeaderSearch as EventListener,
+    );
     return () => {
-      window.removeEventListener('openHeaderSearch', handleOpenHeaderSearch as EventListener);
+      window.removeEventListener(
+        "openHeaderSearch",
+        handleOpenHeaderSearch as EventListener,
+      );
     };
   }, []);
 
   // Close language dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (languageDropdownRef.current && !languageDropdownRef.current.contains(event.target as Node)) {
+      if (
+        languageDropdownRef.current &&
+        !languageDropdownRef.current.contains(event.target as Node)
+      ) {
         setShowLanguageDropdown(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Generate calendar months
   const generateCalendarMonths = (startMonth: Date, count: number) => {
     const months = [];
     for (let i = 0; i < count; i++) {
-      const date = new Date(startMonth.getFullYear(), startMonth.getMonth() + i, 1);
+      const date = new Date(
+        startMonth.getFullYear(),
+        startMonth.getMonth() + i,
+        1,
+      );
       months.push(date);
     }
     return months;
@@ -257,7 +312,7 @@ export function Header({ user: propUser, lang }: HeaderProps) {
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
     const startingDayOfWeek = firstDay.getDay();
-    
+
     return { daysInMonth, startingDayOfWeek };
   };
 
@@ -300,6 +355,99 @@ export function Header({ user: propUser, lang }: HeaderProps) {
     }
   };
 
+  // Check if we're on the rent-out or booking page
+  const isRentOutPage = pathname?.includes("/rent-out");
+  const isBookingPage = pathname?.includes("/booking");
+  const isConfirmPage = pathname?.includes("/confirm");
+
+  // If on rent-out or booking page, show minimal header
+  if (isRentOutPage || isBookingPage) {
+    return (
+      <header className="w-full fixed top-0 z-50 bg-white border-b border-gray-200">
+        {/* Top Banner - Hidden on mobile when scrolled */}
+        <div
+          className={`w-full bg-white border-b border-gray-200 py-2 transition-all duration-300 ${showMobileSearch ? "hidden md:block" : "block"}`}
+        >
+          <div className="container-custom">
+            <div className="flex items-center justify-center gap-8 text-xs">
+              <div className="flex items-center gap-1.5">
+                <svg
+                  className="w-3.5 h-3.5 text-green-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span className="text-gray-700">
+                  {headerT?.topBanner?.nature || "In the middle of nature"}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <svg
+                  className="w-3.5 h-3.5 text-green-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span className="text-gray-700">
+                  {headerT?.topBanner?.awayFromCrowds || "Away from the crowds"}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <svg
+                  className="w-3.5 h-3.5 text-green-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span className="text-gray-700">
+                  {headerT?.topBanner?.contributeToNature || "Contribute to nature projects"}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="container-custom max-w-7xl py-4">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <Logo className="h-8" />
+            
+            {/* Progress Indicator - Centered - Hidden on mobile */}
+            <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-1">
+              <span className={`text-sm ${isConfirmPage ? 'text-gray-400 font-normal' : 'text-purple-900 font-medium'}`}>
+                {isBookingPage 
+                  ? (rentOutT?.steps?.step1 || "1. Booking details")
+                  : (rentOutT?.steps?.step1 || "1. Property details")}
+              </span>
+              <span className="text-gray-400 text-sm mx-1">›</span>
+              <span className={`text-sm ${isConfirmPage ? 'text-purple-900 font-medium' : 'text-gray-400 font-normal'}`}>
+                {rentOutT?.steps?.step2 || "2. Confirmation"}
+              </span>
+            </div>
+
+            {/* Empty space for balance */}
+            <div className="w-8"></div>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
   return (
     <header className="w-full fixed top-0 z-50">
       {/* Top Banner - Hidden on mobile when scrolled */}
@@ -320,21 +468,9 @@ export function Header({ user: propUser, lang }: HeaderProps) {
                   clipRule="evenodd"
                 />
               </svg>
-              <span className="text-gray-700">Midden in de natuur</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <svg
-                className="w-3.5 h-3.5 text-green-600"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span className="text-gray-700">Weg van de massa</span>
+              <span className="text-gray-700">
+                {headerT?.topBanner?.nature || "In the middle of nature"}
+              </span>
             </div>
             <div className="flex items-center gap-1.5">
               <svg
@@ -349,7 +485,23 @@ export function Header({ user: propUser, lang }: HeaderProps) {
                 />
               </svg>
               <span className="text-gray-700">
-                Draag bij aan natuuprojecten
+                {headerT?.topBanner?.awayFromCrowds || "Away from the crowds"}
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <svg
+                className="w-3.5 h-3.5 text-green-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span className="text-gray-700">
+                {headerT?.topBanner?.contributeToNature || "Contribute to nature projects"}
               </span>
             </div>
           </div>
@@ -369,7 +521,9 @@ export function Header({ user: propUser, lang }: HeaderProps) {
                     className="flex items-center gap-1.5 text-sm"
                   >
                     <Search className="h-4 w-4 text-purple-600" />
-                    <span className="text-gray-700 font-medium">Where?</span>
+                    <span className="text-gray-700 font-medium text-xs truncate">
+                      {location || searchT?.searchDock?.whereOrWhat || "Where?"}
+                    </span>
                   </button>
                   <div className="h-4 w-px bg-gray-300"></div>
                   <button
@@ -379,10 +533,10 @@ export function Header({ user: propUser, lang }: HeaderProps) {
                     <Calendar className="h-4 w-4 text-purple-600" />
                     <span className="text-gray-700 text-xs truncate">
                       {selectedStartDate && selectedEndDate
-                        ? `${format(selectedStartDate, "MMMM d")} → ${format(selectedEndDate, "MMMM d")}`
+                        ? `${format(selectedStartDate, "MMM d")} → ${format(selectedEndDate, "MMM d")}`
                         : selectedStartDate
-                          ? `${format(selectedStartDate, "MMMM d")} → ?`
-                          : "Kies datums"}
+                          ? `${format(selectedStartDate, "MMM d")} → ?`
+                          : searchT?.searchDock?.chooseDates || "Dates"}
                     </span>
                   </button>
                   <div className="h-4 w-px bg-gray-300"></div>
@@ -391,7 +545,9 @@ export function Header({ user: propUser, lang }: HeaderProps) {
                     className="flex items-center gap-1.5 text-sm"
                   >
                     <Users className="h-4 w-4 text-purple-600" />
-                    <span className="text-gray-700">...</span>
+                    <span className="text-gray-700 text-xs">
+                      {guests > 0 ? guests : "..."}
+                    </span>
                   </button>
                 </div>
                 <button className="bg-teal-500 text-white p-3 rounded-lg hover:bg-teal-600 transition-colors flex-shrink-0">
@@ -548,58 +704,91 @@ export function Header({ user: propUser, lang }: HeaderProps) {
 
                   {/* Calendar Content - Scrollable */}
                   <div className="flex-1 overflow-y-auto px-6 pb-6">
-                    {generateCalendarMonths(new Date(), 6).map((monthDate, idx) => {
-                      const { daysInMonth, startingDayOfWeek } = getDaysInMonth(monthDate);
-                      const monthName = format(monthDate, "MMMM yyyy");
-                      const prevMonthDays = startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1;
-                      const prevMonthDate = new Date(monthDate.getFullYear(), monthDate.getMonth() - 1, 0);
-                      const prevMonthLastDay = prevMonthDate.getDate();
+                    {generateCalendarMonths(new Date(), 6).map(
+                      (monthDate, idx) => {
+                        const { daysInMonth, startingDayOfWeek } =
+                          getDaysInMonth(monthDate);
+                        const monthName = format(monthDate, "MMMM yyyy");
+                        const prevMonthDays =
+                          startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1;
+                        const prevMonthDate = new Date(
+                          monthDate.getFullYear(),
+                          monthDate.getMonth() - 1,
+                          0,
+                        );
+                        const prevMonthLastDay = prevMonthDate.getDate();
 
-                      return (
-                        <div key={idx} className="mb-8 first:mt-6">
-                          {/* Month Title */}
-                          <h4 className="text-center font-semibold text-gray-900 mb-4 text-lg">
-                            {monthName}
-                          </h4>
+                        return (
+                          <div key={idx} className="mb-8 first:mt-6">
+                            {/* Month Title */}
+                            <h4 className="text-center font-semibold text-gray-900 mb-4 text-lg">
+                              {monthName}
+                            </h4>
 
-                          {/* Day Headers */}
-                          <div className="grid grid-cols-7 gap-1 mb-2">
-                            {["mom", "di", "Wed", "do", "Fri", "Sat", "Like this"].map((day) => (
-                              <div key={day} className="text-center text-xs font-medium text-gray-600 py-2">
-                                {day}
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Calendar Grid */}
-                          <div className="grid grid-cols-7 gap-1">
-                            {/* Previous month days */}
-                            {Array.from({ length: prevMonthDays }).map((_, i) => (
-                              <div
-                                key={`prev-${i}`}
-                                className="aspect-square flex items-center justify-center text-sm text-gray-400"
-                              >
-                                {prevMonthLastDay - prevMonthDays + i + 1}
-                              </div>
-                            ))}
-
-                            {/* Current month days */}
-                            {Array.from({ length: daysInMonth }).map((_, i) => {
-                              const day = i + 1;
-                              const currentDate = new Date(monthDate.getFullYear(), monthDate.getMonth(), day);
-                              const today = new Date();
-                              today.setHours(0, 0, 0, 0);
-                              const isPast = currentDate < today;
-                              const inRange = isDateInRange(currentDate);
-                              const isStart = selectedStartDate && currentDate.getTime() === selectedStartDate.getTime();
-                              const isEnd = selectedEndDate && currentDate.getTime() === selectedEndDate.getTime();
-
-                              return (
-                                <button
+                            {/* Day Headers */}
+                            <div className="grid grid-cols-7 gap-1 mb-2">
+                              {[
+                                "mom",
+                                "di",
+                                "Wed",
+                                "do",
+                                "Fri",
+                                "Sat",
+                                "Like this",
+                              ].map((day) => (
+                                <div
                                   key={day}
-                                  onClick={() => handleDateClick(currentDate)}
-                                  disabled={isPast}
-                                  className={`aspect-square flex items-center justify-center text-sm font-medium transition-colors
+                                  className="text-center text-xs font-medium text-gray-600 py-2"
+                                >
+                                  {day}
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Calendar Grid */}
+                            <div className="grid grid-cols-7 gap-1">
+                              {/* Previous month days */}
+                              {Array.from({ length: prevMonthDays }).map(
+                                (_, i) => (
+                                  <div
+                                    key={`prev-${i}`}
+                                    className="aspect-square flex items-center justify-center text-sm text-gray-400"
+                                  >
+                                    {prevMonthLastDay - prevMonthDays + i + 1}
+                                  </div>
+                                ),
+                              )}
+
+                              {/* Current month days */}
+                              {Array.from({ length: daysInMonth }).map(
+                                (_, i) => {
+                                  const day = i + 1;
+                                  const currentDate = new Date(
+                                    monthDate.getFullYear(),
+                                    monthDate.getMonth(),
+                                    day,
+                                  );
+                                  const today = new Date();
+                                  today.setHours(0, 0, 0, 0);
+                                  const isPast = currentDate < today;
+                                  const inRange = isDateInRange(currentDate);
+                                  const isStart =
+                                    selectedStartDate &&
+                                    currentDate.getTime() ===
+                                      selectedStartDate.getTime();
+                                  const isEnd =
+                                    selectedEndDate &&
+                                    currentDate.getTime() ===
+                                      selectedEndDate.getTime();
+
+                                  return (
+                                    <button
+                                      key={day}
+                                      onClick={() =>
+                                        handleDateClick(currentDate)
+                                      }
+                                      disabled={isPast}
+                                      className={`aspect-square flex items-center justify-center text-sm font-medium transition-colors
                                     ${isPast ? "text-gray-300 cursor-not-allowed" : ""}
                                     ${!isPast && inRange ? "bg-purple-600 text-white" : ""}
                                     ${!isPast && !inRange ? "text-gray-900 hover:bg-purple-50" : ""}
@@ -607,15 +796,17 @@ export function Header({ user: propUser, lang }: HeaderProps) {
                                     ${isEnd ? "rounded-r-full" : ""}
                                     ${isStart && !selectedEndDate ? "bg-purple-600 text-white rounded-full" : ""}
                                   `}
-                                >
-                                  {day}
-                                </button>
-                              );
-                            })}
+                                    >
+                                      {day}
+                                    </button>
+                                  );
+                                },
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      },
+                    )}
 
                     {/* Show next months button */}
                     <button className="w-full py-4 border-2 border-gray-300 rounded-lg text-gray-900 font-medium hover:border-gray-400 transition-colors">
@@ -676,7 +867,7 @@ export function Header({ user: propUser, lang }: HeaderProps) {
                               : "hover:bg-gray-50 border-b-2 border-transparent"
                           }`}
                         >
-                          <Users className="h-5 w-5 text-gray-600 shrink-0" />
+                          <Users className="h-5 w-5 text-gray-600" />
                           <span className="text-gray-900 font-medium">
                             {num} {num === 1 ? "persoon" : "personen"}
                           </span>
@@ -719,9 +910,11 @@ export function Header({ user: propUser, lang }: HeaderProps) {
                     }}
                     className="flex items-center gap-2 px-5 py-3 bg-white rounded-l-xl hover:bg-gray-50 transition-colors"
                   >
-                    <Search className="h-4 w-4 text-purple-600" />
-                    <span className="text-sm text-gray-700 font-medium">
-                      {searchT?.headerSearch?.whereOrWhat || 'Waar of wat?'}
+                    <MapPin className="h-5 w-5 text-gray-500" />
+                    <span className="text-sm text-gray-700">
+                      {location ||
+                        searchT?.searchDock?.whereOrWhat ||
+                        "Waar of wat?"}
                     </span>
                   </button>
 
@@ -733,9 +926,11 @@ export function Header({ user: propUser, lang }: HeaderProps) {
                     }}
                     className="flex items-center gap-2 px-5 py-3 bg-white ml-px hover:bg-gray-50 transition-colors"
                   >
-                    <Calendar className="h-4 w-4 text-purple-600" />
-                    <span className="text-sm text-gray-700 font-medium">
-                      {searchT?.headerSearch?.chooseDates || 'Kies datums'}
+                    <Calendar className="h-5 w-5 text-gray-500" />
+                    <span className="text-sm text-gray-700">
+                      {selectedStartDate && selectedEndDate
+                        ? `${format(selectedStartDate, "dd MMM")} - ${format(selectedEndDate, "dd MMM")}`
+                        : searchT?.searchDock?.chooseDates || "Kies datums"}
                     </span>
                   </button>
 
@@ -747,9 +942,11 @@ export function Header({ user: propUser, lang }: HeaderProps) {
                     }}
                     className="flex items-center gap-2 px-5 py-3 bg-white ml-px hover:bg-gray-50 transition-colors"
                   >
-                    <Users className="h-4 w-4 text-purple-600" />
-                    <span className="text-sm text-gray-700 font-medium">
-                      {searchT?.headerSearch?.persons || 'personen'}
+                    <Users className="h-5 w-5 text-gray-500" />
+                    <span className="text-sm text-gray-700">
+                      {guests > 0
+                        ? `${guests} ${guests === 1 ? searchT?.searchDock?.guest || "persoon" : searchT?.searchDock?.guests || "personen"}`
+                        : searchT?.searchDock?.guests || "personen"}
                     </span>
                   </button>
 
@@ -785,12 +982,17 @@ export function Header({ user: propUser, lang }: HeaderProps) {
                   onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
                   className="flex items-center gap-1.5 hover:bg-gray-100 px-2 py-1.5 rounded-lg transition-colors"
                 >
-                  <img 
-                    src={languages.find(l => l.code === locale)?.flag || '/flags/gb.svg'} 
-                    alt={locale?.toUpperCase() || 'EN'} 
-                    className="w-5 h-5 object-cover rounded-full" 
+                  <img
+                    src={
+                      languages.find((l) => l.code === locale)?.flag ||
+                      "/flags/gb.svg"
+                    }
+                    alt={locale?.toUpperCase() || "EN"}
+                    className="w-5 h-5 object-cover rounded-full"
                   />
-                  <span className="text-sm font-medium text-gray-900">{locale?.toUpperCase() || 'EN'}</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {locale?.toUpperCase() || "EN"}
+                  </span>
                   <ChevronDown className="h-3.5 w-3.5 text-gray-600" />
                 </button>
 
@@ -802,11 +1004,17 @@ export function Header({ user: propUser, lang }: HeaderProps) {
                         key={language.code}
                         onClick={() => handleLanguageChange(language.code)}
                         className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors ${
-                          locale === language.code ? 'bg-purple-50' : ''
+                          locale === language.code ? "bg-purple-50" : ""
                         }`}
                       >
-                        <img src={language.flag} alt={language.code} className="w-6 h-6 object-cover rounded-full" />
-                        <span className="text-sm font-medium text-gray-900">{language.name} ({language.code.toUpperCase()})</span>
+                        <img
+                          src={language.flag}
+                          alt={language.code}
+                          className="w-6 h-6 object-cover rounded-full"
+                        />
+                        <span className="text-sm font-medium text-gray-900">
+                          {language.name} ({language.code.toUpperCase()})
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -817,7 +1025,7 @@ export function Header({ user: propUser, lang }: HeaderProps) {
               {!user ? (
                 <>
                   <Link
-                    href={`/${locale}/login`}
+                    href={`/${locale}/rent-out`}
                     className="text-sm font-medium px-4 py-2 rounded-lg text-gray-900 hover:bg-gray-100 transition-colors"
                   >
                     Rent out
@@ -838,27 +1046,30 @@ export function Header({ user: propUser, lang }: HeaderProps) {
                   }}
                 >
                   {userProfile?.avatar_url ? (
-                    <img 
-                      src={userProfile.avatar_url} 
-                      alt={userProfile?.display_name || 'Account'}
+                    <img
+                      src={userProfile.avatar_url}
+                      alt={userProfile?.display_name || "Account"}
                       className="h-4 w-4 rounded-full object-cover"
                       onError={(e) => {
-                        console.error('Avatar failed to load:', userProfile.avatar_url);
-                        e.currentTarget.style.display = 'none';
+                        console.error(
+                          "Avatar failed to load:",
+                          userProfile.avatar_url,
+                        );
+                        e.currentTarget.style.display = "none";
                       }}
                     />
                   ) : (
-                    <img 
-                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.display_name || 'User')}&background=7B3FA0&color=fff&size=16`}
-                      alt={userProfile?.display_name || 'Account'}
+                    <img
+                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.display_name || "User")}&background=7B3FA0&color=fff&size=16`}
+                      alt={userProfile?.display_name || "Account"}
                       className="h-4 w-4 rounded-full object-cover"
                     />
                   )}
                   <span className="hidden md:inline">
-                    {userProfile?.display_name || 'Account'}
+                    {userProfile?.display_name || "Account"}
                   </span>
                   <span className="md:hidden">
-                    {userProfile?.display_name?.split(' ')[0] || 'Account'}
+                    {userProfile?.display_name?.split(" ")[0] || "Account"}
                   </span>
                 </Link>
               )}

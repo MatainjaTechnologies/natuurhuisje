@@ -1,0 +1,108 @@
+{
+  "title": "Verhuur je accommodatie",
+  "subtitle": "Deel je unieke natuuraccommodatie met reizigers",
+  "steps": {
+    "step1": "1. Accommodatiegegevens",
+    "step2": "2. Bevestiging"
+  },
+  "propertyDetails": {
+    "title": "Accommodatiegegevens",
+    "subtitle": "Vertel ons over je accommodatie"
+  },
+  "form": {
+    "propertyName": {
+      "label": "Naam accommodatie",
+      "placeholder": "Voer de naam van je accommodatie in"
+    },
+    "propertyType": {
+      "label": "Type accommodatie",
+      "placeholder": "Selecteer type accommodatie",
+      "options": {
+        "cabin": "Huisje",
+        "treehouse": "Boomhut",
+        "tinyHouse": "Tiny House",
+        "glamping": "Glamping",
+        "cottage": "Cottage",
+        "lodge": "Lodge",
+        "villa": "Villa",
+        "other": "Anders"
+      }
+    },
+    "location": {
+      "label": "Locatie",
+      "country": "Land",
+      "countryPlaceholder": "Selecteer land",
+      "city": "Stad",
+      "cityPlaceholder": "Voer stad in",
+      "address": "Adres",
+      "addressPlaceholder": "Voer volledig adres in",
+      "postcode": "Postcode",
+      "postcodePlaceholder": "Voer postcode in"
+    },
+    "capacity": {
+      "label": "Capaciteit",
+      "guests": "Aantal gasten",
+      "guestsPlaceholder": "Maximum aantal gasten",
+      "bedrooms": "Slaapkamers",
+      "bedroomsPlaceholder": "Aantal slaapkamers",
+      "bathrooms": "Badkamers",
+      "bathroomsPlaceholder": "Aantal badkamers"
+    },
+    "description": {
+      "label": "Beschrijving",
+      "placeholder": "Beschrijf je accommodatie, de unieke kenmerken en wat het bijzonder maakt..."
+    },
+    "amenities": {
+      "label": "Voorzieningen",
+      "subtitle": "Selecteer alles wat van toepassing is"
+    },
+    "pricing": {
+      "label": "Prijzen",
+      "pricePerNight": "Prijs per nacht",
+      "currency": "€",
+      "cleaningFee": "Schoonmaakkosten (optioneel)",
+      "minimumStay": "Minimum verblijf (nachten)"
+    },
+    "contact": {
+      "label": "Jouw contactgegevens",
+      "firstName": "Voornaam",
+      "firstNamePlaceholder": "Voer je voornaam in",
+      "lastName": "Achternaam",
+      "lastNamePlaceholder": "Voer je achternaam in",
+      "email": "E-mailadres",
+      "emailPlaceholder": "jouw.email@voorbeeld.nl",
+      "phone": "Telefoonnummer",
+      "phonePlaceholder": "Voer je telefoonnummer in"
+    }
+  },
+  "amenitiesList": {
+    "wifi": "WiFi",
+    "parking": "Parkeren",
+    "kitchen": "Keuken",
+    "fireplace": "Openhaard",
+    "bbq": "BBQ",
+    "heating": "Verwarming",
+    "airConditioning": "Airconditioning",
+    "hotTub": "Hot tub",
+    "pool": "Zwembad",
+    "petFriendly": "Huisdieren toegestaan",
+    "workspace": "Werkplek",
+    "tv": "TV"
+  },
+  "buttons": {
+    "submit": "Accommodatie indienen",
+    "cancel": "Annuleren",
+    "back": "Terug"
+  },
+  "terms": {
+    "text": "Door dit formulier in te dienen, ga je akkoord met onze",
+    "termsLink": "algemene voorwaarden",
+    "and": "en",
+    "privacyLink": "privacybeleid"
+  },
+  "success": {
+    "title": "Bedankt!",
+    "message": "Je accommodatie is succesvol ingediend. We beoordelen deze en nemen binnen 2-3 werkdagen contact met je op.",
+    "backHome": "Terug naar home"
+  }
+}

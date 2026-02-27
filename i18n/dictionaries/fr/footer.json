@@ -1,0 +1,33 @@
+{
+  "description": "Trouvez votre évasion parfaite dans les bras de la nature. Réservez des cabanes, des cabanes dans les arbres et plus encore.",
+  "sections": {
+    "discover": "Découvrir",
+    "host": "Hôte",
+    "support": "Assistance"
+  },
+  "discover": {
+    "allStays": "Tous les séjours",
+    "cabins": "Cabanes",
+    "treehouses": "Cabanes dans les arbres",
+    "glamping": "Glamping",
+    "tinyHouses": "Tiny Houses"
+  },
+  "host": {
+    "becomeHost": "Devenir hôte",
+    "manageListings": "Gérer les annonces",
+    "viewBookings": "Voir les réservations",
+    "hostInsights": "Informations sur l'hôte"
+  },
+  "support": {
+    "helpCenter": "Centre d'aide",
+    "privacyPolicy": "Politique de confidentialité",
+    "termsOfService": "Conditions d'utilisation",
+    "contactUs": "Nous contacter"
+  },
+  "footer": {
+    "copyright": "Tous droits réservés.",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "cookies": "Cookies"
+  }
+}

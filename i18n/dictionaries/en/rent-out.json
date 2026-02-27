@@ -1,0 +1,108 @@
+{
+  "title": "List your property",
+  "subtitle": "Share your unique nature accommodation with travelers",
+  "steps": {
+    "step1": "1. Property details",
+    "step2": "2. Confirmation"
+  },
+  "propertyDetails": {
+    "title": "Property details",
+    "subtitle": "Tell us about your property"
+  },
+  "form": {
+    "propertyName": {
+      "label": "Property name",
+      "placeholder": "Enter your property name"
+    },
+    "propertyType": {
+      "label": "Property type",
+      "placeholder": "Select property type",
+      "options": {
+        "cabin": "Cabin",
+        "treehouse": "Treehouse",
+        "tinyHouse": "Tiny House",
+        "glamping": "Glamping",
+        "cottage": "Cottage",
+        "lodge": "Lodge",
+        "villa": "Villa",
+        "other": "Other"
+      }
+    },
+    "location": {
+      "label": "Location",
+      "country": "Country",
+      "countryPlaceholder": "Select country",
+      "city": "City",
+      "cityPlaceholder": "Enter city",
+      "address": "Address",
+      "addressPlaceholder": "Enter full address",
+      "postcode": "Postcode",
+      "postcodePlaceholder": "Enter postcode"
+    },
+    "capacity": {
+      "label": "Capacity",
+      "guests": "Number of guests",
+      "guestsPlaceholder": "Maximum guests",
+      "bedrooms": "Bedrooms",
+      "bedroomsPlaceholder": "Number of bedrooms",
+      "bathrooms": "Bathrooms",
+      "bathroomsPlaceholder": "Number of bathrooms"
+    },
+    "description": {
+      "label": "Description",
+      "placeholder": "Describe your property, its unique features, and what makes it special..."
+    },
+    "amenities": {
+      "label": "Amenities",
+      "subtitle": "Select all that apply"
+    },
+    "pricing": {
+      "label": "Pricing",
+      "pricePerNight": "Price per night",
+      "currency": "€",
+      "cleaningFee": "Cleaning fee (optional)",
+      "minimumStay": "Minimum stay (nights)"
+    },
+    "contact": {
+      "label": "Your contact details",
+      "firstName": "First name",
+      "firstNamePlaceholder": "Enter your first name",
+      "lastName": "Last name",
+      "lastNamePlaceholder": "Enter your last name",
+      "email": "Email address",
+      "emailPlaceholder": "your.email@example.com",
+      "phone": "Phone number",
+      "phonePlaceholder": "Enter your phone number"
+    }
+  },
+  "amenitiesList": {
+    "wifi": "WiFi",
+    "parking": "Parking",
+    "kitchen": "Kitchen",
+    "fireplace": "Fireplace",
+    "bbq": "BBQ",
+    "heating": "Heating",
+    "airConditioning": "Air conditioning",
+    "hotTub": "Hot tub",
+    "pool": "Pool",
+    "petFriendly": "Pet friendly",
+    "workspace": "Workspace",
+    "tv": "TV"
+  },
+  "buttons": {
+    "submit": "Submit property",
+    "cancel": "Cancel",
+    "back": "Back"
+  },
+  "terms": {
+    "text": "By submitting this form, you agree to our",
+    "termsLink": "terms and conditions",
+    "and": "and",
+    "privacyLink": "privacy policy"
+  },
+  "success": {
+    "title": "Thank you!",
+    "message": "Your property has been submitted successfully. We'll review it and get back to you within 2-3 business days.",
+    "backHome": "Back to home"
+  }
+}

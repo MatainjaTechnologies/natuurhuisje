@@ -4,6 +4,7 @@ import '../globals.css'
 
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
+import { SearchProvider } from '@/contexts/SearchContext'
 import { i18n, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/get-dictionary'
 
@@ -35,9 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     title: 'natuurhuisje - Find your perfect getaway in nature',
     description: 'Discover and book unique nature accommodations: cabins, treehouses, glamping, and more in the most beautiful natural settings.',
     icons: {
-      icon: '/favicon.ico',
-      shortcut: '/favicon.ico',
-      apple: '/favicon.ico',
+      icon: '/images/fav.ico',
     },
   };
 }
@@ -65,11 +64,13 @@ export default async function RootLayout({
   return (
     <html lang={validatedLang} className={[inter.variable, poppins.variable].join(' ')}>
       <body className="font-sans antialiased">
-        <Header lang={validatedLang} />
-        <main className="min-h-screen pt-20">
-          {children}
-        </main>
-        <Footer lang={validatedLang} />
+        <SearchProvider>
+          <Header lang={validatedLang} />
+          <main className="min-h-screen pt-20">
+            {children}
+          </main>
+          <Footer lang={validatedLang} />
+        </SearchProvider>
       </body>
     </html>
   )

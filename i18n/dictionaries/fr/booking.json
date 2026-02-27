@@ -1,0 +1,36 @@
+{
+  "title": "Complétez votre réservation",
+  "steps": {
+    "step1": "1. Détails de la réservation",
+    "step2": "2. Confirmation"
+  },
+  "bookingDetails": {
+    "title": "Détails de la réservation",
+    "checkIn": "Arrivée",
+    "checkOut": "Départ",
+    "guests": "Invités",
+    "guest": "Invité"
+  },
+  "guestInfo": {
+    "title": "Informations sur les invités",
+    "firstName": "Prénom",
+    "lastName": "Nom de famille",
+    "email": "Adresse e-mail",
+    "phone": "Numéro de téléphone",
+    "specialRequests": "Demandes spéciales",
+    "specialRequestsPlaceholder": "Avez-vous des demandes ou des exigences spéciales?"
+  },
+  "pricing": {
+    "nights": "nuits",
+    "cleaningFee": "Frais de nettoyage",
+    "serviceFee": "Frais de service",
+    "total": "Total"
+  },
+  "pricePerNight": "par nuit",
+  "confirmBooking": "Confirmer la réservation",
+  "success": {
+    "title": "Réservation confirmée!",
+    "message": "Merci pour votre réservation. Vous recevrez bientôt un e-mail de confirmation.",
+    "backHome": "Retour à l'accueil"
+  }
+}

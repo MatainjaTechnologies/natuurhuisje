@@ -1,0 +1,36 @@
+{
+  "title": "Schließen Sie Ihre Buchung ab",
+  "steps": {
+    "step1": "1. Buchungsdetails",
+    "step2": "2. Bestätigung"
+  },
+  "bookingDetails": {
+    "title": "Buchungsdetails",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "guests": "Gäste",
+    "guest": "Gast"
+  },
+  "guestInfo": {
+    "title": "Gästeinformationen",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "email": "E-Mail-Adresse",
+    "phone": "Telefonnummer",
+    "specialRequests": "Besondere Wünsche",
+    "specialRequestsPlaceholder": "Haben Sie besondere Wünsche oder Anforderungen?"
+  },
+  "pricing": {
+    "nights": "Nächte",
+    "cleaningFee": "Reinigungsgebühr",
+    "serviceFee": "Servicegebühr",
+    "total": "Gesamt"
+  },
+  "pricePerNight": "pro Nacht",
+  "confirmBooking": "Buchung bestätigen",
+  "success": {
+    "title": "Buchung bestätigt!",
+    "message": "Vielen Dank für Ihre Buchung. Sie erhalten in Kürze eine Bestätigungs-E-Mail.",
+    "backHome": "Zurück zur Startseite"
+  }
+}
