@@ -216,6 +216,10 @@ export function LightpickDatePicker({
                 onCheckOutChange(format(endDate, 'yyyy-MM-dd'));
               }
             },
+            onClose: function() {
+              setShowCalendar(false);
+              if (onClose) onClose();
+            }
           });
 
           if (selectedStartDate && lightpickRef.current) {

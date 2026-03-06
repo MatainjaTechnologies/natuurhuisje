@@ -45,7 +45,7 @@ export function SearchDock({
   defaultPets = false,
   defaultDateRange,
   maxWidth = "max-w-full",
-  height = "py-3",
+  height = "h-[60px]",
   initialTab = null,
   lang,
 }: SearchDockProps) {
@@ -304,7 +304,7 @@ export function SearchDock({
     >
       {/* Tabbed Search Bar */}
       <div className="relative bg-white rounded-xl shadow-md overflow-visible z-50">
-        <div className="grid md:flex items-center overflow-hidden rounded-xl">
+        <div className="grid md:flex items-center justify-center overflow-hidden rounded-xl">
           {/* Where or what Tab */}
           <button
             onClick={() => {
@@ -443,7 +443,7 @@ export function SearchDock({
           </button>
 
           {/* Search Button */}
-          <div className={`px-4 ${height}`}>
+          <div className={`px-4`}>
             <button
               onClick={handleSearch}
               className="px-8 py-3 rounded-lg text-white font-semibold text-[15px] transition-all hover:shadow-lg whitespace-nowrap"
