@@ -271,6 +271,8 @@ export function SearchDock({
     const searchParams = new URLSearchParams();
 
     if (location) {
+      // Use 'q' parameter for semantic search
+      searchParams.set("q", location);
       searchParams.set("location", location);
     }
 

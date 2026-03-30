@@ -318,7 +318,7 @@ export function ListingWizard({ mode = 'create', existingListing = null }: { mod
         const result = await saveListingToDatabase(formData, userId);
         if (result.success) {
           alert('Listing created successfully!');
-          router.push('/account/landlord');
+          router.push('/account/listings');
         } else {
           alert(`Error creating listing: ${result.error}`);
         }
@@ -705,12 +705,23 @@ function LocationStep({ data, updateData, onNext, onPrevious }: any) {
         <select 
           className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] cursor-pointer appearance-none"
           value={data.country}
-          onChange={(e) => updateData({...data, country: e.target.value})}
+          onChange={(e) => {
+            const newCountry = e.target.value;
+            const defaultRegions: { [key: string]: string } = {
+              'Netherlands': 'Drenthe',
+              'Belgium': 'Flanders',
+              'Germany': 'Bavaria',
+              'France': 'Île-de-France',
+              'India': 'Maharashtra'
+            };
+            updateData({...data, country: newCountry, region: defaultRegions[newCountry] || 'Drenthe'});
+          }}
         >
           <option>Netherlands</option>
           <option>Belgium</option>
           <option>Germany</option>
           <option>France</option>
+          <option>India</option>
         </select>
       </div>
 
@@ -721,9 +732,93 @@ function LocationStep({ data, updateData, onNext, onPrevious }: any) {
           value={data.region}
           onChange={(e) => updateData({...data, region: e.target.value})}
         >
-          <option>Drenthe</option>
-          <option>Friesland</option>
-          <option>Groningen</option>
+          {/* Netherlands Regions */}
+          {data.country === 'Netherlands' && (
+            <>
+              <option>Drenthe</option>
+              <option>Friesland</option>
+              <option>Groningen</option>
+              <option>Flevoland</option>
+              <option>Gelderland</option>
+              <option>Limburg</option>
+              <option>Noord-Brabant</option>
+              <option>Noord-Holland</option>
+              <option>Overijssel</option>
+              <option>Utrecht</option>
+              <option>Zeeland</option>
+              <option>Zuid-Holland</option>
+            </>
+          )}
+          
+          {/* Indian States */}
+          {data.country === 'India' && (
+            <>
+              <option>Andhra Pradesh</option>
+              <option>Arunachal Pradesh</option>
+              <option>Assam</option>
+              <option>Bihar</option>
+              <option>Chhattisgarh</option>
+              <option>Goa</option>
+              <option>Gujarat</option>
+              <option>Haryana</option>
+              <option>Himachal Pradesh</option>
+              <option>Jharkhand</option>
+              <option>Karnataka</option>
+              <option>Kerala</option>
+              <option>Madhya Pradesh</option>
+              <option>Maharashtra</option>
+              <option>Manipur</option>
+              <option>Meghalaya</option>
+              <option>Mizoram</option>
+              <option>Nagaland</option>
+              <option>Odisha</option>
+              <option>Punjab</option>
+              <option>Rajasthan</option>
+              <option>Sikkim</option>
+              <option>Tamil Nadu</option>
+              <option>Telangana</option>
+              <option>Tripura</option>
+              <option>Uttar Pradesh</option>
+              <option>Uttarakhand</option>
+              <option>West Bengal</option>
+              <option>Delhi</option>
+              <option>Jammu and Kashmir</option>
+              <option>Ladakh</option>
+            </>
+          )}
+          
+          {/* Belgium Regions */}
+          {data.country === 'Belgium' && (
+            <>
+              <option>Flanders</option>
+              <option>Wallonia</option>
+              <option>Brussels</option>
+            </>
+          )}
+          
+          {/* Germany Regions */}
+          {data.country === 'Germany' && (
+            <>
+              <option>Bavaria</option>
+              <option>Baden-Württemberg</option>
+              <option>North Rhine-Westphalia</option>
+              <option>Hesse</option>
+              <option>Saxony</option>
+              <option>Lower Saxony</option>
+            </>
+          )}
+          
+          {/* France Regions */}
+          {data.country === 'France' && (
+            <>
+              <option>Île-de-France</option>
+              <option>Provence-Alpes-Côte d'Azur</option>
+              <option>Auvergne-Rhône-Alpes</option>
+              <option>Nouvelle-Aquitaine</option>
+              <option>Occitanie</option>
+              <option>Brittany</option>
+            </>
+          )}
         </select>
       </div>
 

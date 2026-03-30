@@ -14,6 +14,20 @@ export interface Booking {
   special_requests?: string;
   created_at: string;
   updated_at: string;
+  nights?: number;
+  subtotal?: number;
+  regular_nights?: number;
+  regular_nights_total?: number;
+  special_nights?: number;
+  special_nights_total?: number;
+  cleaning_fee?: number;
+  service_fee?: number;
+  price_breakdown?: {
+    date: string;
+    price: number;
+    isSpecialPricing: boolean;
+    occasionName?: string;
+  }[];
 }
 
 export interface BookingFormData {
@@ -39,6 +53,20 @@ export interface BookingWithHouse extends Booking {
 export interface CreateBookingData extends BookingFormData {
   houseId: number;
   totalPrice: number;
+  nights?: number;
+  subtotal?: number;
+  regularNights?: number;
+  regularNightsTotal?: number;
+  specialNights?: number;
+  specialNightsTotal?: number;
+  cleaningFee?: number;
+  serviceFee?: number;
+  priceBreakdown?: {
+    date: string;
+    price: number;
+    isSpecialPricing: boolean;
+    occasionName?: string;
+  }[];
 }
 
 export interface PaginatedBookingsResponse {

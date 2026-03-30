@@ -28,6 +28,15 @@ interface BookingWithHouse {
   special_requests?: string;
   created_at: string;
   updated_at: string;
+  nights?: number;
+  subtotal?: number;
+  regular_nights?: number;
+  special_nights?: number;
+  regular_price?: number;
+  special_price?: number;
+  cleaning_fee?: number;
+  service_fee?: number;
+  price_breakdown?: any[];
   house: {
     id: string;
     title: string;
@@ -301,14 +310,57 @@ function HostBookingsContent({ lang }: { lang: Locale }) {
                           <Euro className="w-4 h-4 text-gray-400" />
                           <div>
                             <div className="font-medium text-gray-900">
-                              {t?.bookings?.pricePerNight || 'Price per night'}
+                              {t?.bookings?.nights || 'Nights'}
                             </div>
                             <div className="text-gray-600">
-                              €{(booking.total_price / Math.ceil((new Date(booking.check_out).getTime() - new Date(booking.check_in).getTime()) / (1000 * 60 * 60 * 24))).toFixed(2)}
+                              {booking.nights || Math.ceil((new Date(booking.check_out).getTime() - new Date(booking.check_in).getTime()) / (1000 * 60 * 60 * 24))}
                             </div>
                           </div>
                         </div>
                       </div>
+
+                      {/* Pricing Breakdown */}
+                      {(booking.regular_nights || booking.special_nights) && (
+                        <div className="mt-4 pt-4 border-t border-gray-200">
+                          <div className="text-sm">
+                            <div className="font-medium text-gray-900 mb-2">
+                              {t?.bookings?.pricingDetails || 'Pricing Details'}
+                            </div>
+                            <div className="space-y-1">
+                              {(booking.regular_nights || 0) > 0 && (
+                                <div className="flex justify-between text-gray-600">
+                                  <span>{booking.regular_nights || 0} {(booking.regular_nights || 0) === 1 ? 'night' : 'nights'} (regular)</span>
+                                  <span>€{(booking.regular_price || 0).toFixed(2)}</span>
+                                </div>
+                              )}
+                              {(booking.special_nights || 0) > 0 && (
+                                <div className="flex justify-between text-gray-600">
+                                  <span>{booking.special_nights || 0} {(booking.special_nights || 0) === 1 ? 'night' : 'nights'} (special pricing)</span>
+                                  <span>€{(booking.special_price || 0).toFixed(2)}</span>
+                                </div>
+                              )}
+                              {booking.subtotal && (
+                                <div className="flex justify-between text-gray-700 font-medium pt-1 border-t">
+                                  <span>Subtotal</span>
+                                  <span>€{booking.subtotal.toFixed(2)}</span>
+                                </div>
+                              )}
+                              {booking.cleaning_fee && (
+                                <div className="flex justify-between text-gray-600">
+                                  <span>Cleaning fee</span>
+                                  <span>€{booking.cleaning_fee.toFixed(2)}</span>
+                                </div>
+                              )}
+                              {booking.service_fee && (
+                                <div className="flex justify-between text-gray-600">
+                                  <span>Service fee</span>
+                                  <span>€{booking.service_fee.toFixed(2)}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Guest Information */}
                       <div className="mt-4 pt-4 border-t border-gray-200">

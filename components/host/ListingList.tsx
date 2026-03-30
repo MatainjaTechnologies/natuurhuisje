@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import { Edit, Trash2, Eye, Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 
 interface Listing {
   id: string;
@@ -31,6 +32,10 @@ interface Listing {
 }
 
 export function ListingList() {
+  const params = useParams();
+  const router = useRouter();
+  const lang = params?.lang as string;
+
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,6 +44,14 @@ export function ListingList() {
   // Fetch listings from Supabase
   const fetchListings = async () => {
     try {
+      // Check session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        router.push(`/${lang || 'en'}/login`);
+        return;
+      }
+
       const { data, error } = await supabase
         .from("houses")
         .select(
@@ -49,7 +62,7 @@ export function ListingList() {
               sort_order
             )
           `,
-        )
+        ).eq('host_id', session.user.id)
         .order("created_at", { ascending: false });
 
       if (error) {

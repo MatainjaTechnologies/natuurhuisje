@@ -11,7 +11,7 @@ export async function createBooking(bookingData: CreateBookingData) {
       throw new Error('User not authenticated');
     }
 
-    console.log('Creating booking with data:', {
+    const bookingRecord: any = {
       house_id: bookingData.houseId,
       user_id: user.id,
       check_in: bookingData.checkIn,
@@ -24,7 +24,20 @@ export async function createBooking(bookingData: CreateBookingData) {
       phone: bookingData.phone || null,
       special_requests: bookingData.specialRequests || null,
       status: 'pending'
-    });
+    };
+
+    // Add pricing details if provided
+    if (bookingData.nights) bookingRecord.nights = bookingData.nights;
+    if (bookingData.subtotal) bookingRecord.subtotal = bookingData.subtotal;
+    if (bookingData.regularNights !== undefined) bookingRecord.regular_nights = bookingData.regularNights;
+    if (bookingData.regularNightsTotal) bookingRecord.regular_nights_total = bookingData.regularNightsTotal;
+    if (bookingData.specialNights !== undefined) bookingRecord.special_nights = bookingData.specialNights;
+    if (bookingData.specialNightsTotal) bookingRecord.special_nights_total = bookingData.specialNightsTotal;
+    if (bookingData.cleaningFee) bookingRecord.cleaning_fee = bookingData.cleaningFee;
+    if (bookingData.serviceFee) bookingRecord.service_fee = bookingData.serviceFee;
+    if (bookingData.priceBreakdown) bookingRecord.price_breakdown = bookingData.priceBreakdown;
+
+    console.log('Creating booking with data:', bookingRecord);
     
     // Check for potential duplicate booking (same user, house, dates within last 5 minutes)
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
@@ -44,20 +57,7 @@ export async function createBooking(bookingData: CreateBookingData) {
 
     const { data, error } = await (supabase as any)
       .from('bookings')
-      .insert({
-        house_id: parseInt(bookingData.houseId.toString()),
-        user_id: user.id,
-        check_in: bookingData.checkIn,
-        check_out: bookingData.checkOut,
-        guests: parseInt(bookingData.guests),
-        total_price: bookingData.totalPrice,
-        first_name: bookingData.firstName,
-        last_name: bookingData.lastName,
-        email: bookingData.email,
-        phone: bookingData.phone || null,
-        special_requests: bookingData.specialRequests || null,
-        status: 'pending'
-      })
+      .insert(bookingRecord)
       .select()
       .single();
 

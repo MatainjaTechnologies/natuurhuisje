@@ -36,13 +36,44 @@ function SearchContent() {
       setLoading(true);
       try {
         const location = searchParams.get('location');
+        const query = searchParams.get('q');
         const checkin = searchParams.get('checkin');
         const checkout = searchParams.get('checkout');
         const guests = searchParams.get('guests');
         
-        const response = await fetch('/api/listings');
+        // Use semantic search if query exists, otherwise fetch all listings
+        let response;
+        if (query && query.trim().length > 0) {
+          response = await fetch(`/api/search?q=${encodeURIComponent(query)}&limit=50`);
+        } else if (location && location.trim().length > 0) {
+          response = await fetch(`/api/search?q=${encodeURIComponent(location)}&limit=50`);
+        } else {
+          response = await fetch('/api/listings');
+        }
+        
         const data = await response.json();
-        setListings(data.data || []);
+        
+        // Handle different response formats
+        if (data.results) {
+          // Semantic search response
+          const transformedListings = data.results.map((house: any) => ({
+            id: house.id,
+            slug: house.id,
+            title: house.accommodation_name,
+            location: house.location || house.place,
+            images: house.images || [],
+            price_per_night: house.price_per_night,
+            avg_rating: 4.5,
+            type: house.type,
+            max_person: house.max_person,
+            bedrooms: house.bedrooms,
+            bathrooms: house.bathrooms
+          }));
+          setListings(transformedListings);
+        } else {
+          // Regular listings response
+          setListings(data.data || []);
+        }
       } catch (error) {
         console.error('Error fetching listings:', error);
         setListings([]);

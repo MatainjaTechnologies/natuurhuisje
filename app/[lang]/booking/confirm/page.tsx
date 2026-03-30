@@ -32,7 +32,16 @@ function BookingConfirmContent({ lang }: { lang: Locale }) {
     email: searchParams.get('email') || '',
     phone: searchParams.get('phone') || '',
     specialRequests: searchParams.get('specialRequests') || '',
-    totalPrice: parseFloat(searchParams.get('totalPrice') || '0')
+    totalPrice: parseFloat(searchParams.get('totalPrice') || '0'),
+    nights: searchParams.get('nights') ? parseInt(searchParams.get('nights')!) : undefined,
+    subtotal: searchParams.get('subtotal') ? parseFloat(searchParams.get('subtotal')!) : undefined,
+    regularNights: searchParams.get('regularNights') ? parseInt(searchParams.get('regularNights')!) : undefined,
+    regularNightsTotal: searchParams.get('regularNightsTotal') ? parseFloat(searchParams.get('regularNightsTotal')!) : undefined,
+    specialNights: searchParams.get('specialNights') ? parseInt(searchParams.get('specialNights')!) : undefined,
+    specialNightsTotal: searchParams.get('specialNightsTotal') ? parseFloat(searchParams.get('specialNightsTotal')!) : undefined,
+    cleaningFee: searchParams.get('cleaningFee') ? parseFloat(searchParams.get('cleaningFee')!) : undefined,
+    serviceFee: searchParams.get('serviceFee') ? parseFloat(searchParams.get('serviceFee')!) : undefined,
+    priceBreakdown: searchParams.get('priceBreakdown') ? JSON.parse(searchParams.get('priceBreakdown')!) : undefined
   };
 
   useEffect(() => {

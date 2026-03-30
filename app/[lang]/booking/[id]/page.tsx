@@ -7,6 +7,7 @@ import { getBookingDictionary } from '@/i18n/get-booking-dictionary';
 import { Wifi, Car, Utensils, Home, Waves, Wind, Tv, Briefcase, Calendar, Users, ChevronDown, Star, MapPin } from 'lucide-react';
 import { LightpickDatePicker } from '@/components/LightpickDatePicker';
 import { createClient } from '@/utils/supabase/client';
+import { calculateBookingPrice } from '@/lib/pricing-calculator';
 
 function BookingContent({ lang, id }: { lang: Locale; id: string }) {
   const router = useRouter();
@@ -14,6 +15,7 @@ function BookingContent({ lang, id }: { lang: Locale; id: string }) {
   const [t, setT] = useState<any>(null);
   const [listing, setListing] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [specialPricings, setSpecialPricings] = useState<any[]>([]);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -32,6 +34,13 @@ function BookingContent({ lang, id }: { lang: Locale; id: string }) {
   const [subtotal, setSubtotal] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [specialPricingApplied, setSpecialPricingApplied] = useState(false);
+  const [priceBreakdown, setPriceBreakdown] = useState<{
+    date: string;
+    price: number;
+    isSpecialPricing: boolean;
+    occasionName?: string;
+  }[]>([]);
 
   // Check if booking details are complete
   useEffect(() => {
@@ -65,6 +74,14 @@ function BookingContent({ lang, id }: { lang: Locale; id: string }) {
             house_images (
               image_url,
               sort_order
+            ),
+            special_pricing (
+              id,
+              start_date,
+              end_date,
+              price_per_night,
+              occasion_name,
+              status
             )
           `)
           .eq('id', id)
@@ -84,6 +101,15 @@ function BookingContent({ lang, id }: { lang: Locale; id: string }) {
                 .sort((a: any, b: any) => a.sort_order - b.sort_order)
                 .map((img: any) => img.image_url)
             : [];
+          
+          // Extract and filter special pricing - only active and not expired
+          if (rawData.special_pricing && rawData.special_pricing.length > 0) {
+            const today = new Date().toISOString().split('T')[0];
+            const activeSpecialPricing = rawData.special_pricing.filter((sp: any) => 
+              sp.status === 'active' && sp.end_date >= today
+            );
+            setSpecialPricings(activeSpecialPricing);
+          }
           
           const transformedListing = {
             id: rawData.id,
@@ -138,7 +164,13 @@ function BookingContent({ lang, id }: { lang: Locale; id: string }) {
     try {
       console.log('Booking submitted:', formData);
       
-      // Build URL with query parameters
+      // Calculate pricing details
+      const specialNights = priceBreakdown.filter(d => d.isSpecialPricing).length;
+      const normalNights = priceBreakdown.filter(d => !d.isSpecialPricing).length;
+      const regularNightsTotal = priceBreakdown.filter(d => !d.isSpecialPricing).reduce((sum, d) => sum + d.price, 0);
+      const specialNightsTotal = priceBreakdown.filter(d => d.isSpecialPricing).reduce((sum, d) => sum + d.price, 0);
+      
+      // Build URL with query parameters including pricing details
       const queryParams = new URLSearchParams({
         houseId: listing.id.toString(),
         checkIn: formData.checkIn,
@@ -149,7 +181,16 @@ function BookingContent({ lang, id }: { lang: Locale; id: string }) {
         email: formData.email,
         phone: formData.phone,
         specialRequests: formData.specialRequests,
-        totalPrice: totalPrice.toString()
+        totalPrice: totalPrice.toString(),
+        nights: nights.toString(),
+        subtotal: subtotal.toString(),
+        regularNights: normalNights.toString(),
+        regularNightsTotal: regularNightsTotal.toString(),
+        specialNights: specialNights.toString(),
+        specialNightsTotal: specialNightsTotal.toString(),
+        cleaningFee: cleaningFee.toString(),
+        serviceFee: serviceFee.toString(),
+        priceBreakdown: JSON.stringify(priceBreakdown)
       });
       
       // Navigate to confirmation page
@@ -159,23 +200,6 @@ function BookingContent({ lang, id }: { lang: Locale; id: string }) {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  // Calculate number of nights
-  const calculateNights = (checkIn: string, checkOut: string) => {
-    if (!checkIn || !checkOut) return 0;
-    
-    const startDate = new Date(checkIn);
-    const endDate = new Date(checkOut);
-    
-    // Validate dates
-    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return 0;
-    
-    // Calculate difference in milliseconds and convert to days
-    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    return diffDays > 0 ? diffDays : 0;
   };
 
   const cleaningFee = 25;
@@ -215,15 +239,23 @@ function BookingContent({ lang, id }: { lang: Locale; id: string }) {
   }, [searchParams]);
 
   useEffect(() => {
-    const calculatedNights = calculateNights(formData.checkIn, formData.checkOut);
-    setNights(calculatedNights);
-    
-    const calculatedSubtotal = listing?.price_per_night * calculatedNights || 0;
-    setSubtotal(calculatedSubtotal);
-    
-    const calculatedTotal = calculatedSubtotal + cleaningFee + serviceFee;
-    setTotalPrice(calculatedTotal);
-  }, [formData.checkIn, formData.checkOut, listing?.price_per_night]);
+    if (listing && (listing.price_per_night > 0 || (specialPricings.length ?? 0) > 0)) {
+      const calculation = calculateBookingPrice(
+        formData.checkIn,
+        formData.checkOut,
+        listing.price_per_night,
+        specialPricings
+      );
+      
+      setNights(calculation.nights);
+      setSubtotal(calculation.subtotal);
+      setSpecialPricingApplied(calculation.specialPricingApplied);
+      setPriceBreakdown(calculation.priceBreakdown);
+      
+      const calculatedTotal = calculation.subtotal + cleaningFee + serviceFee;
+      setTotalPrice(calculatedTotal);
+    }
+  }, [formData.checkIn, formData.checkOut, listing?.price_per_night, specialPricings]);
 
   // Handle loading state
   if (isLoading) {
@@ -487,10 +519,58 @@ function BookingContent({ lang, id }: { lang: Locale; id: string }) {
                 )}
 
                 <div className="border-t border-gray-200 pt-4 space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">€{listing?.price_per_night || 0} x {nights} {t.pricing.nights}</span>
-                    <span className="text-gray-900">€{subtotal}</span>
-                  </div>
+                  {(() => {
+                    const specialNights = priceBreakdown.filter(d => d.isSpecialPricing).length;
+                    const normalNights = priceBreakdown.filter(d => !d.isSpecialPricing).length;
+                    const hasSpecialPricing = specialNights > 0;
+                    
+                    return (
+                      <>
+                        {hasSpecialPricing && (
+                          <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 mb-2">
+                            <p className="text-sm text-purple-800 font-medium">✨ Special pricing applied</p>
+                            <p className="text-xs text-purple-600 mt-1">
+                              {specialNights} {specialNights === 1 ? 'night' : 'nights'} with special pricing, {normalNights} {normalNights === 1 ? 'night' : 'nights'} at regular price
+                            </p>
+                          </div>
+                        )}
+                        
+                        {hasSpecialPricing ? (
+                          <>
+                            {normalNights > 0 && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-gray-600">
+                                  €{listing.price_per_night} x {normalNights} {normalNights === 1 ? 'night' : 'nights'} (regular)
+                                </span>
+                                <span className="text-gray-900">
+                                  €{priceBreakdown.filter(d => !d.isSpecialPricing).reduce((sum, d) => sum + d.price, 0)}
+                                </span>
+                              </div>
+                            )}
+                            {specialNights > 0 && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-gray-600">
+                                  €{Math.round(priceBreakdown.filter(d => d.isSpecialPricing).reduce((sum, d) => sum + d.price, 0) / specialNights)} x {specialNights} {specialNights === 1 ? 'night' : 'nights'} (special)
+                                </span>
+                                <span className="text-gray-900">
+                                  €{priceBreakdown.filter(d => d.isSpecialPricing).reduce((sum, d) => sum + d.price, 0)}
+                                </span>
+                              </div>
+                            )}
+                            <div className="flex justify-between text-sm font-medium pt-2 border-t border-gray-200">
+                              <span className="text-gray-700">Subtotal ({nights} {nights === 1 ? 'night' : 'nights'})</span>
+                              <span className="text-gray-900">€{subtotal}</span>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">€{listing?.price_per_night || 0} x {nights} {t.pricing.nights}</span>
+                            <span className="text-gray-900">€{subtotal}</span>
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">{t.pricing.cleaningFee}</span>
                     <span className="text-gray-900">€{cleaningFee}</span>

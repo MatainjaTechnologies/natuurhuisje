@@ -205,15 +205,20 @@ export function LightpickDatePicker({
               }
             },
             onSelect: function (start: any, end: any) {
+              console.log('Lightpick onSelect triggered:', { start, end });
               if (start) {
                 const startDate = start.toDate();
+                const formattedStart = format(startDate, 'yyyy-MM-dd');
+                console.log('Setting check-in date:', formattedStart);
                 setSelectedStartDate(startDate);
-                onCheckInChange(format(startDate, 'yyyy-MM-dd'));
+                onCheckInChange(formattedStart);
               }
               if (end) {
                 const endDate = end.toDate();
+                const formattedEnd = format(endDate, 'yyyy-MM-dd');
+                console.log('Setting check-out date:', formattedEnd);
                 setSelectedEndDate(endDate);
-                onCheckOutChange(format(endDate, 'yyyy-MM-dd'));
+                onCheckOutChange(formattedEnd);
               }
             },
             onClose: function() {
