@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Edit, Trash2, Eye, Plus } from "lucide-react";
+import { Edit, Trash2, Eye, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -11,6 +11,7 @@ interface Listing {
   id: string;
   host_id: string;
   title: string;
+  accommodation_name:string;
   description: string;
   property_type: string;
   location: string;
@@ -39,11 +40,16 @@ export function ListingList() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [itemsPerPage] = useState(9); // 3x3 grid
   const supabase = createClient();
 
   // Fetch listings from Supabase
-  const fetchListings = async () => {
+  const fetchListings = async (page: number = 1) => {
     try {
+      setLoading(true);
+      
       // Check session
       const { data: { session } } = await supabase.auth.getSession();
       
@@ -51,6 +57,24 @@ export function ListingList() {
         router.push(`/${lang || 'en'}/login`);
         return;
       }
+
+      // Get total count first
+      const { count, error: countError } = await supabase
+        .from("houses")
+        .select("id", { count: 'exact', head: true })
+        .eq('host_id', session.user.id);
+
+      if (countError) {
+        console.error("Error counting listings:", countError);
+        setError(countError.message);
+        return;
+      }
+
+      setTotalCount(count || 0);
+
+      // Get paginated data
+      const from = (page - 1) * itemsPerPage;
+      const to = from + itemsPerPage - 1;
 
       const { data, error } = await supabase
         .from("houses")
@@ -63,7 +87,8 @@ export function ListingList() {
             )
           `,
         ).eq('host_id', session.user.id)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .range(from, to);
 
       if (error) {
         console.error("Error fetching listings:", error);
@@ -72,6 +97,7 @@ export function ListingList() {
       }
 
       setListings(data || []);
+      setCurrentPage(page);
     } catch (error) {
       console.error("Error:", error);
       setError("Failed to fetch listings");
@@ -94,7 +120,7 @@ export function ListingList() {
       }
 
       // Refresh listings
-      fetchListings();
+      fetchListings(currentPage);
     } catch (error) {
       console.error("Error:", error);
       setError("Failed to delete listing");
@@ -116,7 +142,7 @@ export function ListingList() {
       }
 
       // Refresh listings
-      fetchListings();
+      fetchListings(currentPage);
     } catch (error) {
       console.error("Error:", error);
       setError("Failed to update listing");
@@ -124,7 +150,7 @@ export function ListingList() {
   };
 
   useEffect(() => {
-    fetchListings();
+    fetchListings(1);
   }, []);
 
   if (loading) {
@@ -221,7 +247,7 @@ export function ListingList() {
             {/* Content */}
             <div className="p-4">
               <h3 className="font-semibold text-gray-900 mb-1 line-clamp-1">
-                {listing.title}
+                {listing.accommodation_name}
               </h3>
               <p className="text-sm text-gray-600 mb-2 line-clamp-2">
                 {listing.description}
@@ -263,6 +289,50 @@ export function ListingList() {
           </div>
         ))}
       </div>
+
+      {/* Pagination */}
+      {totalCount > itemsPerPage && (
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-gray-700">
+            Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, totalCount)} of {totalCount} listings
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => fetchListings(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
+            </button>
+            
+            <div className="flex items-center gap-1">
+              {Array.from({ length: Math.ceil(totalCount / itemsPerPage) }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => fetchListings(page)}
+                  className={`px-3 py-2 text-sm font-medium rounded-lg ${
+                    page === currentPage
+                      ? "bg-forest-600 text-white"
+                      : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+            
+            <button
+              onClick={() => fetchListings(currentPage + 1)}
+              disabled={currentPage === Math.ceil(totalCount / itemsPerPage)}
+              className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -34,11 +34,45 @@ interface Listing {
     image_url: string;
     sort_order: number;
   }[];
+  house_amenities?: {
+    amenity_name: string;
+  }[];
+  house_rules?: {
+    rule_type: string;
+    rule_value: string | null;
+  }[];
+  extra_costs?: {
+    cost_name: string;
+    amount: number | null;
+    required: boolean | null;
+  }[];
+  person_pricing?: {
+    base_persons: number;
+    additional_person_price: number | null;
+  }[];
+  sustainability_features?: {
+    feature_key: string;
+    feature_value: string | null;
+  }[];
+  rooms?: {
+    id: number;
+    name: string;
+    description: string | null;
+    room_type: string | null;
+    size_m2: number | null;
+    max_person: number;
+    price_per_night: number | null;
+  }[];
+  arrival_departure_days?: {
+    day_name: string;
+    day_type: string;
+  }[];
   plot_size?: string;
   is_near_neighbors?: boolean;
   registration_number_option?: string;
   registration_number?: string;
   has_public_transport?: boolean;
+  energy_label?: string | null;
   is_published: boolean;
   created_at: string;
 }
@@ -56,6 +90,9 @@ export default function EditListingPage() {
   useEffect(() => {
     const fetchListing = async () => {
       try {
+        console.log("Fetching listing with id:", id);
+        console.log("ID type:", typeof id, "ID value:", id);
+        
         const { data, error } = await supabase
           .from("houses")
           .select(`
@@ -63,14 +100,26 @@ export default function EditListingPage() {
             house_images (
               image_url,
               sort_order
+            ),
+            house_amenities (
+              amenity_name
+            ),
+            house_rules (
+              rule_type,
+              rule_value
             )
           `)
           .eq("id", id)
           .single();
 
+        console.log("Supabase response:", { data, error });
+
         if (error) {
-          console.error("Error fetching listing:", error);
-          setError(error.message);
+          console.error("Error details:", error);
+          console.error("Error message:", error.message);
+          console.error("Error details:", error.details);
+          console.error("Error hint:", error.hint);
+          setError(error.message || 'Unknown error occurred');
           return;
         }
 
@@ -98,10 +147,10 @@ export default function EditListingPage() {
       livingSituation: "Detached", // Default value since not in DB
       location: listing.location || "",
       plotSize: listing.plot_size || "", // Not in DB
-      isNearNeighbors: listing.is_near_neighbors || null, // Not in DB
+      isNearNeighbors: listing.is_near_neighbors !== null ? listing.is_near_neighbors : null, // Use actual DB value
       registrationNumberOption: listing.registration_number_option || "I don't have a registration number", // Default
       registrationNumber: listing.registration_number || "", // Not in DB
-      hasPublicTransport: listing.has_public_transport || false, // Not in DB
+      hasPublicTransport: listing.has_public_transport || false, // Use actual DB value
 
       // Location
       country: listing.country || "Netherlands", // Default
@@ -121,14 +170,7 @@ export default function EditListingPage() {
 
       // Pricing
       pricePerNight: listing.price_per_night?.toString() || "",
-      includedFacilities: [
-        "Final cleaning",
-        "Bed linen",
-        "Bath towels",
-        "Kitchen linen",
-        "Water",
-        "Electricity",
-      ], // Default
+      includedFacilities: ['Final cleaning', 'Bed linen', 'Bath towels', 'Kitchen linen', 'Water', 'Electricity'], // Default values since column doesn't exist
       safetyDeposit: "no_deposit", // Default
       safetyDepositAmount: "", // Not in DB
       longerStayPricing: {
@@ -139,11 +181,18 @@ export default function EditListingPage() {
         weekdayPrice: "",
         weekPrice: "",
       }, // Not in DB
-      personPricing: {
-        basePersons: 0,
-        additionalPersonPrice: "",
-      }, // Not in DB
-      extraCosts: [], // Not in DB
+      personPricing: listing.person_pricing && listing.person_pricing.length > 0
+        ? {
+            basePersons: listing.person_pricing[0].base_persons || 0,
+            additionalPersonPrice: listing.person_pricing[0].additional_person_price?.toString() || ""
+          }
+        : {
+            basePersons: 0,
+            additionalPersonPrice: "",
+          }, // Use actual person pricing from database
+      extraCosts: listing.extra_costs 
+        ? listing.extra_costs.map((cost: any) => cost.cost_name)
+        : [], // Use actual extra costs from database - only names as strings
 
       // Availability
       minNights: listing.min_nights || 1,
@@ -153,27 +202,107 @@ export default function EditListingPage() {
       surroundings: "", // Not in DB
 
       // Stay Details
-      amenities: listing.amenities || [],
+      amenities: listing.house_amenities 
+        ? listing.house_amenities.map((amenity: any) => amenity.amenity_name)
+        : (listing.amenities || []),
 
       // Sustainability
-      energyLabel: "", // Not in DB
-      sustainability: {}, // Not in DB
+      energyLabel: listing.energy_label || "",
+      sustainability: listing.sustainability_features && listing.sustainability_features.length > 0
+        ? listing.sustainability_features.reduce((acc: any, feature: any) => {
+            acc[feature.feature_key] = feature.feature_value || '';
+            return acc;
+          }, {} as Record<string, string>)
+        : {}, // Use actual sustainability features from database
 
       // House Rules
-      houseRules: {
-        babies: 0,
-        pets: 0,
-        childAge: 0,
-        bookingAge: 18,
-        parties: null,
-        smoking: null,
-        fireworks: null,
-        groups: null,
-        waste: null,
-        silenceStart: "",
-        silenceEnd: "",
-        customRules: [],
-      }, // Not in DB
+      houseRules: listing.house_rules && listing.house_rules.length > 0
+        ? listing.house_rules.reduce((acc: any, rule: any) => {
+            // Map rule types to form field names
+            switch (rule.rule_type) {
+              case "babies_allowed":
+                acc.babies = rule.rule_value;
+                break;
+              case 'pets_allowed':
+                acc.pets = rule.rule_value;
+                break;
+              case 'child_age_limit':
+                acc.childAge = parseInt(rule.rule_value) || 0;
+                break;
+              case 'min_booking_age':
+                acc.bookingAge = parseInt(rule.rule_value) || 18;
+                break;
+              case 'parties_allowed':
+                acc.parties = rule.rule_value === 'allowed' ? null : false;
+                break;
+              case 'smoking_allowed':
+                acc.smoking = rule.rule_value === 'allowed' ? null : false;
+                break;
+              case 'fireworks_allowed':
+                acc.fireworks = rule.rule_value === 'allowed' ? null : false;
+                break;
+              case 'groups_allowed':
+                acc.groups = rule.rule_value === 'allowed' ? null : false;
+                break;
+              case 'waste_separation_required':
+                acc.waste = rule.rule_value === 'separate' ? null : false;
+                break;
+              case 'silence_hours_start':
+                acc.silenceStart = rule.rule_value;
+                break;
+              case 'silence_hours_end':
+                acc.silenceEnd = rule.rule_value;
+                break;
+              case 'custom_rule':
+                acc.customRules = [...acc.customRules, rule.rule_value];
+                break;
+              default:
+                break;
+            }
+            return acc;
+          }, {
+            babies: 0,
+            pets: 0,
+            childAge: 0,
+            bookingAge: 18,
+            parties: null,
+            smoking: null,
+            fireworks: null,
+            groups: null,
+            waste: null,
+            silenceStart: "",
+            silenceEnd: "",
+            customRules: [],
+          })
+        : {
+            babies: 0,
+            pets: 0,
+            childAge: 0,
+            bookingAge: 18,
+            parties: null,
+            smoking: null,
+            fireworks: null,
+            groups: null,
+            waste: null,
+            silenceStart: "",
+            silenceEnd: "",
+            customRules: [],
+          }, // Use actual house rules from database
+
+      // Bedrooms
+      rooms: listing.rooms || [], // Use actual rooms from database
+
+      // Calendar Availability
+      arrivalDays: listing.arrival_departure_days 
+        ? listing.arrival_departure_days
+            .filter((day: any) => day.day_type === 'arrival')
+            .map((day: any) => day.day_name)
+        : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], // Default if no data
+      departureDays: listing.arrival_departure_days 
+        ? listing.arrival_departure_days
+            .filter((day: any) => day.day_type === 'departure')
+            .map((day: any) => day.day_name)
+        : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], // Default if no data
     };
   };
 

@@ -20,6 +20,13 @@ export interface ListingData {
   place: string;
   landRegistrationOption: string;
   images: string[];
+  rooms: Array<{
+    name: string;
+    description?: string;
+    room_type?: string;
+    size_m2?: number;
+    price_per_night?: string;
+  }>;
   pricePerNight: string;
   includedFacilities: string[];
   safetyDeposit: string;
@@ -200,6 +207,33 @@ export async function saveListingToDatabase(data: ListingData, userId: string) {
         throw new Error(`Failed to save sustainability: ${sustainabilityError.message}`);
       }
     }
+
+    // Insert rooms - TEMPORARILY DISABLED DUE TO SCHEMA ISSUES
+    console.log('Skipping rooms insert due to schema issues');
+    // if (data.rooms && data.rooms.length > 0) {
+    //   console.log('Inserting rooms for house ID:', houseId);
+    //   const { error: roomsError } = await supabase
+    //     .from('rooms')
+    //     .insert(
+    //       data.rooms.map((room: any) => ({
+    //         house_id: houseId,
+    //         name: room.name || '',
+    //         description: room.description || null,
+    //         room_type: room.room_type || 'Bedroom',
+    //         size_m2: room.size_m2 || null,
+    //         price_per_night: room.price_per_night ? parseFloat(room.price_per_night) : null,
+    //         created_at: new Date().toISOString(),
+    //         updated_at: new Date().toISOString()
+    //       })) as any
+    //     );
+
+    //   if (roomsError) {
+    //     console.error('Error saving rooms:', JSON.stringify(roomsError, null, 2));
+    //     console.error('Error details:', roomsError);
+    //     throw new Error(`Failed to save rooms: ${roomsError.message || 'Unknown error'}`);
+    //   }
+    //   console.log('Rooms saved successfully');
+    // }
 
     // Insert house rules
     const rulesData = [
@@ -399,6 +433,55 @@ export async function updateListingToDatabase(listingId: string, data: ListingDa
         throw new Error(`Failed to update sustainability: ${sustainabilityError.message}`);
       }
     }
+
+    // Update rooms
+    console.log('Checking if rooms table exists and deleting existing rooms for house ID:', numericListingId);
+    
+    // First check if rooms table exists and get its structure
+    try {
+      const { data: testRooms, error: testError } = await (supabase as any)
+        .from('rooms')
+        .select('*')
+        .limit(1);
+      
+      if (testError) {
+        console.error('Rooms table may not exist or access error:', testError);
+        throw new Error(`Rooms table error: ${testError.message}`);
+      }
+      
+      console.log('Rooms table exists, structure:', testRooms);
+      console.log('Available columns:', testRooms && testRooms.length > 0 ? Object.keys(testRooms[0]) : 'No data');
+    } catch (err) {
+      console.error('Error checking rooms table:', err);
+      throw new Error('Rooms table is not available');
+    }
+    
+    // Update rooms - TEMPORARILY DISABLED DUE TO SCHEMA ISSUES
+    console.log('Skipping rooms update due to schema issues');
+    // await (supabase as any).from('rooms').delete().eq('house_id', numericListingId);
+    // if (data.rooms && data.rooms.length > 0) {
+    //   console.log('Inserting rooms data:', JSON.stringify(data.rooms, null, 2));
+    //   const { error: roomsError } = await (supabase as any)
+    //     .from('rooms')
+    //     .insert(
+    //       data.rooms.map((room: any) => ({
+    //         house_id: numericListingId,
+    //         name: room.name || '',
+    //         description: room.description || null,
+    //         room_type: room.room_type || 'Bedroom',
+    //         size_m2: room.size_m2 || null,
+    //         price_per_night: room.price_per_night ? parseFloat(room.price_per_night) : null,
+    //         created_at: new Date().toISOString(),
+    //         updated_at: new Date().toISOString()
+    //       }))
+    //     );
+
+    //   if (roomsError) {
+    //     console.error('Error updating rooms:', JSON.stringify(roomsError, null, 2));
+    //     console.error('Error details:', roomsError);
+    //     throw new Error(`Failed to update rooms: ${roomsError.message || 'Unknown error'}`);
+    //   }
+    // }
 
     // Update house rules
     await (supabase as any).from('house_rules').delete().eq('house_id', numericListingId);

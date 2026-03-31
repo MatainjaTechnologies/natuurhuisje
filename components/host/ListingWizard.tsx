@@ -153,7 +153,10 @@ export function ListingWizard({ mode = 'create', existingListing = null }: { mod
           silenceStart: '',
           silenceEnd: '',
           customRules: []
-        }
+        },
+
+        // Rooms
+        rooms: existingListing.rooms || []
       };
     }
 
@@ -229,7 +232,16 @@ export function ListingWizard({ mode = 'create', existingListing = null }: { mod
         silenceStart: '',
         silenceEnd: '',
         customRules: [] as string[]
-      }
+      },
+
+      // Rooms
+      rooms: [] as Array<{
+        name: string;
+        description?: string;
+        room_type?: string;
+        size_m2?: number;
+        price_per_night?: string;
+      }>
     };
   });
 
@@ -3287,16 +3299,184 @@ function CalendarStep({ data, updateData, onNext, onPrevious }: any) {
 }
 
 function BedroomsStep({ data, updateData, onNext, onPrevious }: any) {
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+
+  const rooms = data.rooms || [];
+
+  const addRoom = () => {
+    const newRoom = {
+      id: Date.now(), // Temporary ID for new rooms
+      name: "",
+      description: "",
+      room_type: "Bedroom",
+      size_m2: null,
+      max_person: 2,
+      price_per_night: null
+    };
+    updateData({ ...data, rooms: [...rooms, newRoom] });
+    setEditingIndex(rooms.length);
+  };
+
+  const updateRoom = (index: number, field: string, value: any) => {
+    const updatedRooms = [...rooms];
+    updatedRooms[index] = { ...updatedRooms[index], [field]: value };
+    updateData({ ...data, rooms: updatedRooms });
+  };
+
+  const deleteRoom = (index: number) => {
+    const updatedRooms = rooms.filter((_: any, i: number) => i !== index);
+    updateData({ ...data, rooms: updatedRooms });
+    setEditingIndex(null);
+  };
+
   return (
     <div className="space-y-8 animate-fade-in">
       <h2 className="text-3xl font-serif text-[#1D331D]">Bedrooms</h2>
       
       <div className="space-y-4">
-        <h3 className="text-xl font-serif text-[#1D331D]">Number of bedrooms</h3>
-        
-        <button className="bg-[#EFEFEF] text-[#5b2d8e] px-6 py-3 rounded-lg font-medium hover:bg-gray-200 flex items-center gap-2 transition-colors">
-          <span className="text-xl">+</span> Add a bedroom
-        </button>
+        <div className="flex items-center justify-between">
+          <h3 className="text-xl font-serif text-[#1D331D]">Bedrooms ({rooms.length})</h3>
+          <button 
+            onClick={addRoom}
+            className="bg-[#EFEFEF] text-[#5b2d8e] px-6 py-3 rounded-lg font-medium hover:bg-gray-200 flex items-center gap-2 transition-colors"
+          >
+            <span className="text-xl">+</span> Add a bedroom
+          </button>
+        </div>
+
+        {rooms.length === 0 ? (
+          <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
+            <p className="text-gray-500 mb-4">No bedrooms added yet</p>
+            <button 
+              onClick={addRoom}
+              className="bg-[#59A559] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#4a8a4a] transition-colors"
+            >
+              Add your first bedroom
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {rooms.map((room: any, index: number) => (
+              <div key={room.id || index} className="border border-gray-200 rounded-lg p-6 bg-white">
+                {editingIndex === index ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="text-lg font-semibold text-[#1D331D]">Edit Bedroom {index + 1}</h4>
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => setEditingIndex(null)}
+                          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                        <button 
+                          onClick={() => deleteRoom(index)}
+                          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="block text-sm font-bold text-[#1D331D]">Room Name</label>
+                        <input 
+                          type="text"
+                          className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400"
+                          placeholder="e.g., Master Bedroom"
+                          value={room.name || ""}
+                          onChange={(e) => updateRoom(index, 'name', e.target.value)}
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <label className="block text-sm font-bold text-[#1D331D]">Room Type</label>
+                        <select 
+                          className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] cursor-pointer appearance-none"
+                          value={room.room_type || "Bedroom"}
+                          onChange={(e) => updateRoom(index, 'room_type', e.target.value)}
+                        >
+                          <option>Bedroom</option>
+                          <option>Living Room</option>
+                          <option>Kitchen</option>
+                          <option>Bathroom</option>
+                          <option>Other</option>
+                        </select>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <label className="block text-sm font-bold text-[#1D331D]">Size (m²)</label>
+                        <input 
+                          type="number"
+                          className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400"
+                          placeholder="e.g., 20"
+                          value={room.size_m2 || ""}
+                          onChange={(e) => updateRoom(index, 'size_m2', e.target.value ? parseInt(e.target.value) : null)}
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <label className="block text-sm font-bold text-[#1D331D]">Max Persons</label>
+                        <input 
+                          type="number"
+                          className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400"
+                          placeholder="e.g., 2"
+                          value={room.max_person || 2}
+                          onChange={(e) => updateRoom(index, 'max_person', parseInt(e.target.value) || 2)}
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <label className="block text-sm font-bold text-[#1D331D]">Price per Night (optional)</label>
+                        <input 
+                          type="number"
+                          className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400"
+                          placeholder="e.g., 100"
+                          value={room.price_per_night || ""}
+                          onChange={(e) => updateRoom(index, 'price_per_night', e.target.value ? parseFloat(e.target.value) : null)}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label className="block text-sm font-bold text-[#1D331D]">Description</label>
+                      <textarea 
+                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] min-h-[100px] transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400 resize-none"
+                        placeholder="Describe the room, bedding, amenities, etc."
+                        value={room.description || ""}
+                        onChange={(e) => updateRoom(index, 'description', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-lg font-semibold text-[#1D331D]">
+                        {room.name || `Bedroom ${index + 1}`}
+                      </h4>
+                      <div className="flex gap-4 text-sm text-gray-600 mt-1">
+                        <span>Type: {room.room_type || 'Bedroom'}</span>
+                        {room.size_m2 && <span>Size: {room.size_m2}m²</span>}
+                        <span>Max: {room.max_person || 2} persons</span>
+                        {room.price_per_night && <span>€{room.price_per_night}/night</span>}
+                      </div>
+                      {room.description && (
+                        <p className="text-gray-600 mt-2">{room.description}</p>
+                      )}
+                    </div>
+                    <button 
+                      onClick={() => setEditingIndex(index)}
+                      className="px-4 py-2 bg-[#59A559] text-white rounded-lg hover:bg-[#4a8a4a] transition-colors"
+                    >
+                      Edit
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="pt-8 flex justify-between border-t border-gray-100">
@@ -3948,16 +4128,16 @@ function HouseRulesStep({ data, updateData, onNext, onPrevious, mode = 'create',
   const updateRule = (field: string, value: any) => {
     updateData({
       ...data,
-      houseRules: { ...data.houseRules, [field]: value }
+      houseRules: { ...(data.houseRules || {}), [field]: value }
     });
   };
 
   const addCustomRule = () => {
-    updateRule('customRules', [...data.houseRules.customRules, '']);
+    updateRule('customRules', [...(data.houseRules?.customRules || []), '']);
   };
 
   const removeCustomRule = (idx: number) => {
-    const newRules = data.houseRules.customRules.filter((_: string, i: number) => i !== idx);
+    const newRules = (data.houseRules?.customRules || []).filter((_: string, i: number) => i !== idx);
     updateRule('customRules', newRules);
   };
 
@@ -4064,7 +4244,7 @@ function HouseRulesStep({ data, updateData, onNext, onPrevious, mode = 'create',
               <input 
                 type="time" 
                 className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400"
-                value={data.houseRules.silenceStart}
+                value={data.houseRules?.silenceStart || ''}
                 onChange={(e) => updateRule('silenceStart', e.target.value)}
               />
             </div>
@@ -4075,7 +4255,7 @@ function HouseRulesStep({ data, updateData, onNext, onPrevious, mode = 'create',
               <input 
                 type="time" 
                 className="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#59A559]/20 focus:border-[#59A559] bg-white transition-all duration-300 transform hover:border-gray-500 hover:shadow-md focus:shadow-lg focus:scale-[1.02] placeholder-gray-400"
-                value={data.houseRules.silenceEnd}
+                value={data.houseRules?.silenceEnd || ''}
                 onChange={(e) => updateRule('silenceEnd', e.target.value)}
               />
             </div>
@@ -4094,7 +4274,7 @@ function HouseRulesStep({ data, updateData, onNext, onPrevious, mode = 'create',
           <li>Groups of young people, students and sports teams are not allowed in this nature house</li>
         </ul>
 
-        {data.houseRules.customRules.map((rule: string, idx: number) => (
+        {(data.houseRules?.customRules || []).map((rule: string, idx: number) => (
           <div key={idx} className="flex gap-2 mt-2">
             <input 
               type="text"
@@ -4102,7 +4282,7 @@ function HouseRulesStep({ data, updateData, onNext, onPrevious, mode = 'create',
               placeholder="Add a rule..."
               value={rule}
               onChange={(e) => {
-                const newRules = [...data.houseRules.customRules];
+                const newRules = [...(data.houseRules?.customRules || [])];
                 newRules[idx] = e.target.value;
                 updateRule('customRules', newRules);
               }}

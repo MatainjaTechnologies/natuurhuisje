@@ -16,6 +16,7 @@ BEGIN
     setweight(to_tsvector('english', COALESCE(NEW.location, '')), 'A') ||
     setweight(to_tsvector('english', COALESCE(NEW.place, '')), 'A') ||
     setweight(to_tsvector('english', COALESCE(NEW.type, '')), 'B') ||
+    setweight(to_tsvector('english', COALESCE(array_to_string(NEW.amenities, ' '), '')), 'C') ||
     setweight(to_tsvector('english', COALESCE(NEW.street, '')), 'D') ||
     setweight(to_tsvector('english', COALESCE(NEW.region, '')), 'C');
   RETURN NEW;
@@ -36,6 +37,7 @@ UPDATE houses SET search_vector =
   setweight(to_tsvector('english', COALESCE(location, '')), 'A') ||
   setweight(to_tsvector('english', COALESCE(place, '')), 'A') ||
   setweight(to_tsvector('english', COALESCE(type, '')), 'B') ||
+  setweight(to_tsvector('english', COALESCE(array_to_string(amenities, ' '), '')), 'C') ||
   setweight(to_tsvector('english', COALESCE(street, '')), 'D') ||
   setweight(to_tsvector('english', COALESCE(region, '')), 'C');
 
@@ -52,6 +54,7 @@ RETURNS TABLE (
   max_person int,
   bedrooms int,
   bathrooms int,
+  amenities text[],
   rank real
 ) AS $$
 BEGIN
@@ -67,6 +70,7 @@ BEGIN
     h.max_person,
     h.bedrooms,
     h.bathrooms,
+    h.amenities,
     ts_rank(h.search_vector, websearch_to_tsquery('english', search_query)) as rank
   FROM houses h
   WHERE h.is_published = true
@@ -77,4 +81,4 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Add comment explaining the search_vector structure
-COMMENT ON COLUMN houses.search_vector IS 'Full-text search vector with weighted fields: A=name/location, B=description/type, C=region, D=street';
+COMMENT ON COLUMN houses.search_vector IS 'Full-text search vector with weighted fields: A=name/location, B=description/type, C=amenities/region, D=street';

@@ -152,7 +152,10 @@ export function ListingWizard({ mode = 'create', existingListing = null }: { mod
           silenceStart: '',
           silenceEnd: '',
           customRules: []
-        }
+        },
+
+        // Rooms
+        rooms: existingListing.rooms || []
       };
     }
 
@@ -228,7 +231,16 @@ export function ListingWizard({ mode = 'create', existingListing = null }: { mod
         silenceStart: '',
         silenceEnd: '',
         customRules: [] as string[]
-      }
+      },
+
+      // Rooms
+      rooms: [] as Array<{
+        name: string;
+        description?: string;
+        room_type?: string;
+        size_m2?: number;
+        price_per_night?: string;
+      }>
     };
   });
 
