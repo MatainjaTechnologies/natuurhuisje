@@ -81,6 +81,12 @@ export default function AccountSidebar({
       description: "Manage your personal information",
     },
     {
+      href: `/${lang}/account/change-password`,
+      label: "Password change",
+      icon: Settings,
+      description: "Change your password",
+    },
+    {
       href: `/${lang}/account/bookings`,
       label: "My Bookings",
       icon: Calendar,

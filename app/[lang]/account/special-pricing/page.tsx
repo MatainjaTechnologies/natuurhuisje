@@ -68,7 +68,7 @@ async function SpecialPricingContent({ lang }: { lang: Locale }) {
               </a>
             </div>
           ) : (
-            <SpecialPricingSelector properties={properties} />
+            <SpecialPricingSelector properties={properties} lang={lang} />
           )}
         </div>
       </AccountLayout>

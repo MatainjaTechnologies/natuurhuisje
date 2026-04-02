@@ -16,6 +16,9 @@ export default function SpecialPricingManager({ houseId, regularPrice }: Special
   const [editingId, setEditingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   
+  // Get today's date in YYYY-MM-DD format for min date validation
+  const today = new Date().toISOString().split('T')[0];
+  
   const [formData, setFormData] = useState<CreateSpecialPricingData>({
     house_id: houseId,
     start_date: '',
@@ -210,6 +213,7 @@ export default function SpecialPricingManager({ houseId, regularPrice }: Special
               <input
                 type="date"
                 required
+                min={today}
                 value={formData.start_date}
                 onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
@@ -223,6 +227,7 @@ export default function SpecialPricingManager({ houseId, regularPrice }: Special
               <input
                 type="date"
                 required
+                min={formData.start_date || today}
                 value={formData.end_date}
                 onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"

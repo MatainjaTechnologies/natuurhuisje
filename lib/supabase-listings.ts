@@ -45,6 +45,14 @@ export interface ListingData {
   };
   extraCosts: string[];
   minNights: number;
+  maxNights?: number;
+  arrivalDays: string[];
+  departureDays: string[];
+  checkInFrom?: string;
+  checkInUntil?: string;
+  checkOutFrom?: string;
+  checkOutUntil?: string;
+  minBookingDays?: number;
   description: string;
   surroundings: string;
   amenities: string[];
@@ -84,7 +92,7 @@ export async function saveListingToDatabase(data: ListingData, userId: string) {
         country: data.country || 'Netherlands',
         region: data.region || 'Drenthe',
         min_nights: data.minNights,
-        max_nights: 364,
+        max_nights: data.maxNights || 364,
         host_id: userId,
         location: data.location,
         plot_size: data.plotSize || null,
@@ -189,24 +197,40 @@ export async function saveListingToDatabase(data: ListingData, userId: string) {
     }
 
     // Insert sustainability features
-    const sustainabilityEntries = Object.entries(data.sustainability).filter(([_, value]) => value);
+    console.log('=== SUSTAINABILITY DEBUG ===');
+    console.log('Full sustainability object:', JSON.stringify(data.sustainability, null, 2));
+    console.log('Energy label:', data.energyLabel);
+    console.log('Sustainability object keys:', Object.keys(data.sustainability));
+    console.log('Sustainability object values:', Object.values(data.sustainability));
+    
+    const sustainabilityEntries = Object.entries(data.sustainability).filter(([key, value]) => {
+      console.log(`Checking sustainability entry: ${key} = ${value} (type: ${typeof value})`);
+      return value && value !== '' && value !== 'undefined' && value !== 'null';
+    });
+    console.log('Filtered sustainability entries to insert:', sustainabilityEntries);
+    
     if (sustainabilityEntries.length > 0) {
+      const insertData = sustainabilityEntries.map(([feature, value]) => ({
+        house_id: houseId,
+        feature_key: feature,
+        feature_value: value,
+        created_at: new Date().toISOString()
+      }));
+      console.log('Sustainability insert data:', JSON.stringify(insertData, null, 2));
+      
       const { error: sustainabilityError } = await supabase
         .from('sustainability_features')
-        .insert(
-          sustainabilityEntries.map(([feature, value]) => ({
-            house_id: houseId,
-            feature_key: feature,
-            feature_value: value,
-            created_at: new Date().toISOString()
-          })) as any
-        );
+        .insert(insertData as any);
 
       if (sustainabilityError) {
         console.error('Error saving sustainability:', sustainabilityError);
         throw new Error(`Failed to save sustainability: ${sustainabilityError.message}`);
       }
+      console.log('✓ Sustainability features saved successfully');
+    } else {
+      console.log('⚠ No sustainability features to save (all values were empty or falsy)');
     }
+    console.log('=== END SUSTAINABILITY DEBUG ===');
 
     // Insert rooms - TEMPORARILY DISABLED DUE TO SCHEMA ISSUES
     console.log('Skipping rooms insert due to schema issues');
@@ -280,6 +304,76 @@ export async function saveListingToDatabase(data: ListingData, userId: string) {
       }
     }
 
+    // Insert arrival and departure days
+    console.log('=== ARRIVAL/DEPARTURE DAYS DEBUG ===');
+    console.log('Arrival days:', data.arrivalDays);
+    console.log('Departure days:', data.departureDays);
+    
+    const arrivalDepartureDays = [
+      ...(data.arrivalDays || []).map(day => ({
+        house_id: houseId,
+        day_name: day,
+        day_type: 'arrival',
+        created_at: new Date().toISOString()
+      })),
+      ...(data.departureDays || []).map(day => ({
+        house_id: houseId,
+        day_name: day,
+        day_type: 'departure',
+        created_at: new Date().toISOString()
+      }))
+    ];
+    
+    console.log('Arrival/Departure data to insert:', JSON.stringify(arrivalDepartureDays, null, 2));
+    
+    if (arrivalDepartureDays.length > 0) {
+      const { error: daysError } = await supabase
+        .from('arrival_departure_days')
+        .insert(arrivalDepartureDays as any);
+
+      if (daysError) {
+        console.error('Error saving arrival/departure days:', daysError);
+        throw new Error(`Failed to save arrival/departure days: ${daysError.message}`);
+      }
+      console.log('✓ Arrival/Departure days saved successfully');
+    } else {
+      console.log('⚠ No arrival/departure days to save');
+    }
+    console.log('=== END ARRIVAL/DEPARTURE DAYS DEBUG ===');
+
+    // Insert availability settings (check-in/check-out times, booking settings)
+    console.log('=== AVAILABILITY SETTINGS DEBUG ===');
+    console.log('Check-in from:', data.checkInFrom);
+    console.log('Check-in until:', data.checkInUntil);
+    console.log('Check-out from:', data.checkOutFrom);
+    console.log('Check-out until:', data.checkOutUntil);
+    console.log('Min booking days:', data.minBookingDays);
+    
+    const availabilitySettings = {
+      house_id: houseId,
+      check_in_from: data.checkInFrom || '15:00',
+      check_in_until: data.checkInUntil || '22:00',
+      check_out_from: data.checkOutFrom || '07:00',
+      check_out_until: data.checkOutUntil || '11:00',
+      min_booking_days: data.minBookingDays || 0,
+      created_at: new Date().toISOString()
+    };
+    
+    console.log('Availability settings to insert:', JSON.stringify(availabilitySettings, null, 2));
+    
+    const { error: availabilityError } = await supabase
+      .from('availability_settings')
+      .insert(availabilitySettings as any);
+
+    if (availabilityError) {
+      console.error('Error saving availability settings:', availabilityError);
+      // Don't throw error if table doesn't exist yet, just log it
+      console.warn('Availability settings table may not exist. Skipping this step.');
+    } else {
+      console.log('✓ Availability settings saved successfully');
+    }
+    console.log('=== END AVAILABILITY SETTINGS DEBUG ===');
+
     return {
       success: true,
       houseId: houseId,
@@ -333,6 +427,7 @@ export async function updateListingToDatabase(listingId: string, data: ListingDa
         country: data.country || 'Netherlands',
         region: data.region || 'Drenthe',
         min_nights: data.minNights,
+        max_nights: data.maxNights || 364,
         location: data.location,
         plot_size: data.plotSize || null,
         is_near_neighbors: data.isNearNeighbors,
@@ -414,25 +509,43 @@ export async function updateListingToDatabase(listingId: string, data: ListingDa
     }
 
     // Update sustainability features
+    console.log('=== UPDATE SUSTAINABILITY DEBUG ===');
+    console.log('Full sustainability object:', JSON.stringify(data.sustainability, null, 2));
+    console.log('Energy label:', data.energyLabel);
+    console.log('Sustainability object keys:', Object.keys(data.sustainability));
+    console.log('Sustainability object values:', Object.values(data.sustainability));
+    
     await (supabase as any).from('sustainability_features').delete().eq('house_id', numericListingId);
-    const sustainabilityEntries = Object.entries(data.sustainability).filter(([_, value]) => value);
+    console.log('Deleted existing sustainability features for house:', numericListingId);
+    
+    const sustainabilityEntries = Object.entries(data.sustainability).filter(([key, value]) => {
+      console.log(`Checking sustainability entry: ${key} = ${value} (type: ${typeof value})`);
+      return value && value !== '' && value !== 'undefined' && value !== 'null';
+    });
+    console.log('Filtered sustainability entries to update:', sustainabilityEntries);
+    
     if (sustainabilityEntries.length > 0) {
+      const insertData = sustainabilityEntries.map(([feature, value]) => ({
+        house_id: numericListingId,
+        feature_key: feature,
+        feature_value: value,
+        created_at: new Date().toISOString()
+      }));
+      console.log('Sustainability update data:', JSON.stringify(insertData, null, 2));
+      
       const { error: sustainabilityError } = await (supabase as any)
         .from('sustainability_features')
-        .insert(
-          sustainabilityEntries.map(([feature, value]) => ({
-            house_id: numericListingId,
-            feature_key: feature,
-            feature_value: value,
-            created_at: new Date().toISOString()
-          }))
-        );
+        .insert(insertData);
 
       if (sustainabilityError) {
         console.error('Error updating sustainability:', sustainabilityError);
         throw new Error(`Failed to update sustainability: ${sustainabilityError.message}`);
       }
+      console.log('✓ Sustainability features updated successfully');
+    } else {
+      console.log('⚠ No sustainability features to update (all values were empty or falsy)');
     }
+    console.log('=== END UPDATE SUSTAINABILITY DEBUG ===');
 
     // Update rooms
     console.log('Checking if rooms table exists and deleting existing rooms for house ID:', numericListingId);
@@ -529,6 +642,82 @@ export async function updateListingToDatabase(listingId: string, data: ListingDa
         throw new Error(`Failed to update extra costs: ${extraCostsError.message}`);
       }
     }
+
+    // Update arrival and departure days
+    console.log('=== UPDATE ARRIVAL/DEPARTURE DAYS DEBUG ===');
+    console.log('Arrival days:', data.arrivalDays);
+    console.log('Departure days:', data.departureDays);
+    
+    await (supabase as any).from('arrival_departure_days').delete().eq('house_id', numericListingId);
+    console.log('Deleted existing arrival/departure days for house:', numericListingId);
+    
+    const arrivalDepartureDays = [
+      ...(data.arrivalDays || []).map(day => ({
+        house_id: numericListingId,
+        day_name: day,
+        day_type: 'arrival',
+        created_at: new Date().toISOString()
+      })),
+      ...(data.departureDays || []).map(day => ({
+        house_id: numericListingId,
+        day_name: day,
+        day_type: 'departure',
+        created_at: new Date().toISOString()
+      }))
+    ];
+    
+    console.log('Arrival/Departure data to update:', JSON.stringify(arrivalDepartureDays, null, 2));
+    
+    if (arrivalDepartureDays.length > 0) {
+      const { error: daysError } = await (supabase as any)
+        .from('arrival_departure_days')
+        .insert(arrivalDepartureDays);
+
+      if (daysError) {
+        console.error('Error updating arrival/departure days:', daysError);
+        throw new Error(`Failed to update arrival/departure days: ${daysError.message}`);
+      }
+      console.log('✓ Arrival/Departure days updated successfully');
+    } else {
+      console.log('⚠ No arrival/departure days to update');
+    }
+    console.log('=== END UPDATE ARRIVAL/DEPARTURE DAYS DEBUG ===');
+
+    // Update availability settings (check-in/check-out times, booking settings)
+    console.log('=== UPDATE AVAILABILITY SETTINGS DEBUG ===');
+    console.log('Check-in from:', data.checkInFrom);
+    console.log('Check-in until:', data.checkInUntil);
+    console.log('Check-out from:', data.checkOutFrom);
+    console.log('Check-out until:', data.checkOutUntil);
+    console.log('Min booking days:', data.minBookingDays);
+    
+    await (supabase as any).from('availability_settings').delete().eq('house_id', numericListingId);
+    console.log('Deleted existing availability settings for house:', numericListingId);
+    
+    const availabilitySettings = {
+      house_id: numericListingId,
+      check_in_from: data.checkInFrom || '15:00',
+      check_in_until: data.checkInUntil || '22:00',
+      check_out_from: data.checkOutFrom || '07:00',
+      check_out_until: data.checkOutUntil || '11:00',
+      min_booking_days: data.minBookingDays || 0,
+      created_at: new Date().toISOString()
+    };
+    
+    console.log('Availability settings to update:', JSON.stringify(availabilitySettings, null, 2));
+    
+    const { error: availabilityUpdateError } = await (supabase as any)
+      .from('availability_settings')
+      .insert(availabilitySettings);
+
+    if (availabilityUpdateError) {
+      console.error('Error updating availability settings:', availabilityUpdateError);
+      // Don't throw error if table doesn't exist yet, just log it
+      console.warn('Availability settings table may not exist. Skipping this step.');
+    } else {
+      console.log('✓ Availability settings updated successfully');
+    }
+    console.log('=== END UPDATE AVAILABILITY SETTINGS DEBUG ===');
 
     return {
       success: true,

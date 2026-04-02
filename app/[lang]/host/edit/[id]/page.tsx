@@ -107,6 +107,21 @@ export default function EditListingPage() {
             house_rules (
               rule_type,
               rule_value
+            ),
+            sustainability_features(
+              feature_key,
+              feature_value
+            ),
+            arrival_departure_days(
+              day_name,
+              day_type
+            ),
+            availability_settings(
+              check_in_from,
+              check_in_until,
+              check_out_from,
+              check_out_until,
+              min_booking_days
             )
           `)
           .eq("id", id)
@@ -196,6 +211,13 @@ export default function EditListingPage() {
 
       // Availability
       minNights: listing.min_nights || 1,
+      maxNights: (listing as any).max_nights || 364,
+      availabilityLimit: '2_years', // Default value since not stored in DB
+      checkInFrom: (listing as any).availability_settings?.check_in_from || '15:00',
+      checkInUntil: (listing as any).availability_settings?.check_in_until || '22:00',
+      checkOutFrom: (listing as any).availability_settings?.check_out_from || '07:00',
+      checkOutUntil: (listing as any).availability_settings?.check_out_until || '11:00',
+      minBookingDays: (listing as any).availability_settings?.min_booking_days || 0,
 
       // Description
       description: listing.description || "",

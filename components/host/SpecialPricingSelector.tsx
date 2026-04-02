@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Building, ChevronRight, AlertCircle, Home } from 'lucide-react';
 import SpecialPricingManager from './SpecialPricingManager';
+import type { Locale } from '@/i18n/config';
 
 interface Property {
   id: number;
@@ -19,9 +20,10 @@ interface Property {
 
 interface SpecialPricingSelectorProps {
   properties: Property[];
+  lang?: Locale;
 }
 
-export default function SpecialPricingSelector({ properties }: SpecialPricingSelectorProps) {
+export default function SpecialPricingSelector({ properties, lang = 'nl' }: SpecialPricingSelectorProps) {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
 
   // Helper function to get the first image from house_images
@@ -91,6 +93,7 @@ export default function SpecialPricingSelector({ properties }: SpecialPricingSel
             <SpecialPricingManager
               houseId={selectedProperty.id}
               regularPrice={selectedProperty.price_per_night}
+              lang={lang}
             />
           </div>
         </div>
