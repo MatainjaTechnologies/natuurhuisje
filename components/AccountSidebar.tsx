@@ -133,35 +133,35 @@ export default function AccountSidebar({
       description: "List a new property",
       roles: ["landlord", "admin"] as RoleName[],
     },
-    {
-      href: `/account/special-pricing`,
-      label: "Special Pricing",
-      icon: DollarSign,
-      description: "Manage seasonal pricing",
-      roles: ["landlord", "admin"] as RoleName[],
-    },
+    // {
+    //   href: `/account/special-pricing`,
+    //   label: "Special Pricing",
+    //   icon: DollarSign,
+    //   description: "Manage seasonal pricing",
+    //   roles: ["landlord", "admin"] as RoleName[],
+    // },
     // Admin specific items
-    {
-      href: `/account/users`,
-      label: "User Management",
-      icon: Users,
-      description: "Manage system users",
-      roles: ["admin"] as RoleName[],
-    },
-    {
-      href: `/account/analytics`,
-      label: "Analytics",
-      icon: BarChart,
-      description: "View system analytics",
-      roles: ["admin"] as RoleName[],
-    },
-    {
-      href: `/account/admin-settings`,
-      label: "Admin Settings",
-      icon: Shield,
-      description: "System administration",
-      roles: ["admin"] as RoleName[],
-    },
+    // {
+    //   href: `/account/users`,
+    //   label: "User Management",
+    //   icon: Users,
+    //   description: "Manage system users",
+    //   roles: ["admin"] as RoleName[],
+    // },
+    // {
+    //   href: `/account/analytics`,
+    //   label: "Analytics",
+    //   icon: BarChart,
+    //   description: "View system analytics",
+    //   roles: ["admin"] as RoleName[],
+    // },
+    // {
+    //   href: `/account/admin-settings`,
+    //   label: "Admin Settings",
+    //   icon: Shield,
+    //   description: "System administration",
+    //   roles: ["admin"] as RoleName[],
+    // },
   ];
 
   // Filter menu items based on user role
