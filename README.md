@@ -321,4 +321,11 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
+## Login credential
+
+- Admin: admin@natuurhuisje.com / Admin@123
+- Landlord: landlord@natuurhuisje.com / Landlord@123
+- User: user@natuurhuisje.com / User@123
+- Landlord: matainja0106@gmail.com / 654321
+
 Built with ❤️ by [Your Name]

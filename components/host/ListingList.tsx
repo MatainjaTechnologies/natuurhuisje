@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Edit, Trash2, Eye, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Edit, Trash2, Eye, Plus, ChevronLeft, ChevronRight, MoreVertical, DoorOpen, Copy, Archive, DollarSign } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -43,6 +43,7 @@ export function ListingList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [itemsPerPage] = useState(9); // 3x3 grid
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const supabase = createClient();
 
   // Fetch listings from Supabase
@@ -197,97 +198,157 @@ export function ListingList() {
       <div className="flex justify-between items-center">
         <Link
           href="/en/host/new"
-          className="inline-flex items-center px-4 py-2 bg-forest-600 text-white rounded-lg hover:bg-forest-700 transition-colors"
+          className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
         >
           <Plus className="h-4 w-4 mr-2" />
           Create Listing
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {listings.map((listing) => (
-          <div
-            key={listing.id}
-            className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
-          >
-            {/* Image */}
-            <div className="relative h-48 bg-gray-200">
-              {listing.house_images && listing.house_images.length > 0 && listing.house_images[0].image_url ? (
-                <Image
-                  src={listing.house_images[0].image_url}
-                  alt={listing.title || 'Property image'}
-                  fill
-                  className="object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"%3E%3Crect fill="%23e5e7eb" width="400" height="300"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="16" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
-                  }}
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <div className="text-gray-400">
-                    <Eye className="h-8 w-8" />
+      {/* List View */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="divide-y divide-gray-200">
+          {listings.map((listing) => (
+            <div
+              key={listing.id}
+              className="flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors"
+            >
+              {/* Image Thumbnail */}
+              <div className="relative w-24 h-24 flex-shrink-0 bg-gray-200 rounded-lg overflow-hidden">
+                {listing.house_images && listing.house_images.length > 0 && listing.house_images[0].image_url ? (
+                  <Image
+                    src={listing.house_images[0].image_url}
+                    alt={listing.title || 'Property image'}
+                    fill
+                    className="object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Crect fill="%23e5e7eb" width="100" height="100"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="12" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
+                    }}
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <Eye className="h-8 w-8 text-gray-400" />
                   </div>
+                )}
+              </div>
+
+              {/* Listing Info */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 text-lg mb-1 truncate">
+                      {listing.accommodation_name}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                      {listing.description}
+                    </p>
+                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                      <span className="capitalize">{listing.property_type}</span>
+                      <span>•</span>
+                      <span>{listing.bedrooms} bedrooms</span>
+                      <span>•</span>
+                      <span>{listing.max_guests} guests</span>
+                      <span>•</span>
+                      <span className="font-semibold text-gray-900">€{listing.price_per_night}/night</span>
+                    </div>
+                  </div>
+
+                  {/* Status Badge */}
+                  <span
+                    className={`px-3 py-1 text-xs font-medium rounded-full whitespace-nowrap ${
+                      listing.status === 'active'
+                        ? "bg-green-100 text-green-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }`}
+                  >
+                    {listing.status === 'active' ? "Published" : "Draft"}
+                  </span>
                 </div>
-              )}
-
-              {/* Status Badge */}
-              <div className="absolute top-2 right-2">
-                <span
-                  className={`px-2 py-1 text-xs font-medium rounded-full ${
-                    listing.status === 'active'
-                      ? "bg-green-100 text-green-800"
-                      : "bg-yellow-100 text-yellow-800"
-                  }`}
-                >
-                  {listing.status === 'active' ? "Published" : "Draft"}
-                </span>
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-4">
-              <h3 className="font-semibold text-gray-900 mb-1 line-clamp-1">
-                {listing.accommodation_name}
-              </h3>
-              <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                {listing.description}
-              </p>
-              <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
-                <span>{listing.property_type}</span>
-                <span>€{listing.price_per_night}/night</span>
               </div>
 
-              {/* Actions */}
-              <div className="flex items-center gap-2">
+              {/* Action Icons */}
+              <div className="flex items-center gap-2 flex-shrink-0">
                 <Link
                   href={`/en/host/edit/${listing.id}`}
-                  className="flex-1 flex items-center justify-center px-3 py-2 bg-forest-600 text-white rounded-lg hover:bg-forest-700 transition-colors text-sm"
+                  className="p-3 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                  title="Edit listing"
                 >
-                  <Edit className="h-3 w-3 mr-1" />
-                  Edit
+                  <Edit className="h-5 w-5" />
                 </Link>
                 <button
-                  onClick={() =>
-                    togglePublish(listing.id, listing.status)
-                  }
-                  className={`flex-1 px-3 py-2 rounded-lg transition-colors text-sm ${
-                    listing.status === 'active'
-                      ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
-                      : "bg-green-100 text-green-800 hover:bg-green-200"
-                  }`}
-                >
-                  {listing.status === 'active' ? "Unpublish" : "Publish"}
-                </button>
-                <button
                   onClick={() => handleDelete(listing.id)}
-                  className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+                  className="p-3 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                  title="Delete listing"
                 >
-                  <Trash2 className="h-3 w-3" />
+                  <Trash2 className="h-5 w-5" />
                 </button>
+                
+                {/* More Actions Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setOpenDropdown(openDropdown === listing.id ? null : listing.id)}
+                    className="p-3 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+                    title="More actions"
+                  >
+                    <MoreVertical className="h-5 w-5" />
+                  </button>
+                  
+                  {/* Dropdown Menu */}
+                  {openDropdown === listing.id && (
+                    <>
+                      {/* Backdrop to close dropdown */}
+                      <div 
+                        className="fixed inset-0 z-10" 
+                        onClick={() => setOpenDropdown(null)}
+                      />
+                      
+                      {/* Dropdown Content */}
+                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
+                        <Link
+                          href={`/en/host/rooms/${listing.id}`}
+                          className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          onClick={() => setOpenDropdown(null)}
+                        >
+                          <DoorOpen className="h-4 w-4" />
+                          Add Room
+                        </Link>
+                        <Link
+                          href={`/en/account/special-pricing`}
+                          className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          onClick={() => setOpenDropdown(null)}
+                        >
+                          <DollarSign className="h-4 w-4" />
+                          Special Pricing
+                        </Link>
+                        {/* <button
+                          onClick={() => {
+                            // Handle duplicate listing
+                            setOpenDropdown(null);
+                            alert('Duplicate listing feature coming soon!');
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          <Copy className="h-4 w-4" />
+                          Duplicate Listing
+                        </button>
+                        <button
+                          onClick={() => {
+                            togglePublish(listing.id, listing.status);
+                            setOpenDropdown(null);
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          <Archive className="h-4 w-4" />
+                          {listing.status === 'active' ? 'Unpublish' : 'Publish'}
+                        </button> */}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* Pagination */}

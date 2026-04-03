@@ -13,10 +13,14 @@ import {
   Home,
   LogOut,
   DollarSign,
+  Users,
+  BarChart,
+  Shield,
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { getUserRole, type RoleName } from "@/lib/roles";
 
 interface AccountSidebarProps {
   lang: string;
@@ -31,6 +35,7 @@ export default function AccountSidebar({
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [userRole, setUserRole] = useState<RoleName | null>(null);
 
   useEffect(() => {
     const getUser = async () => {
@@ -58,6 +63,14 @@ export default function AccountSidebar({
       };
 
       getUserProfile();
+
+      // Get user role
+      const fetchUserRole = async () => {
+        const role = await getUserRole(user.id);
+        setUserRole(role);
+      };
+
+      fetchUserRole();
     }
   }, [user]);
 
@@ -67,71 +80,97 @@ export default function AccountSidebar({
     router.push(`/${lang}/login`);
   };
 
-  const menuItems = [
+  // Role-based menu items
+  const getAllMenuItems = () => [
+    // Basic items for all users
     {
-      href: `/${lang}/account`,
+      href: `/account`,
       label: "Dashboard",
       icon: Home,
       description: "Overview of your account",
+      roles: ["user", "landlord", "admin"] as RoleName[],
     },
     {
-      href: `/${lang}/account/profile`,
+      href: `/account/profile`,
       label: "Profile",
       icon: User,
       description: "Manage your personal information",
+      roles: ["user", "landlord", "admin"] as RoleName[],
     },
     {
-      href: `/${lang}/account/change-password`,
+      href: `/account/change-password`,
       label: "Password change",
       icon: Settings,
       description: "Change your password",
+      roles: ["user", "landlord", "admin"] as RoleName[],
     },
     {
-      href: `/${lang}/account/bookings`,
+      href: `/account/bookings`,
       label: "My Bookings",
       icon: Calendar,
       description: "View your booking history",
+      roles: ["user", "landlord", "admin"] as RoleName[],
     },
+    // Landlord specific items
     {
-      href: `/${lang}/account/host-bookings`,
+      href: `/account/host-bookings`,
       label: "Booking Management",
       icon: Grid,
       description: "Manage property bookings",
+      roles: ["landlord", "admin"] as RoleName[],
     },
-    // {
-    //   href: `/${lang}/account/favorites`,
-    //   label: 'Favorites',
-    //   icon: Heart,
-    //   description: 'Saved properties'
-    // },
-    // {
-    //   href: `/${lang}/account/messages`,
-    //   label: 'Messages',
-    //   icon: MessageSquare,
-    //   description: 'Host communications'
-    // },
     {
-      href: `/${lang}/account/listings`,
+      href: `/account/listings`,
       label: "My Properties",
       icon: Building,
       description: "Manage your listings",
+      roles: ["landlord", "admin"] as RoleName[],
     },
     {
-      href: `/${lang}/account/special-pricing`,
+      href: `/host/new`,
+      label: "Add New Property",
+      icon: Building,
+      description: "List a new property",
+      roles: ["landlord", "admin"] as RoleName[],
+    },
+    {
+      href: `/account/special-pricing`,
       label: "Special Pricing",
       icon: DollarSign,
       description: "Manage seasonal pricing",
+      roles: ["landlord", "admin"] as RoleName[],
     },
-    // {
-    //   href: `/${lang}/account/settings`,
-    //   label: 'Settings',
-    //   icon: Settings,
-    //   description: 'Account preferences'
-    // }
+    // Admin specific items
+    {
+      href: `/account/users`,
+      label: "User Management",
+      icon: Users,
+      description: "Manage system users",
+      roles: ["admin"] as RoleName[],
+    },
+    {
+      href: `/account/analytics`,
+      label: "Analytics",
+      icon: BarChart,
+      description: "View system analytics",
+      roles: ["admin"] as RoleName[],
+    },
+    {
+      href: `/account/admin-settings`,
+      label: "Admin Settings",
+      icon: Shield,
+      description: "System administration",
+      roles: ["admin"] as RoleName[],
+    },
   ];
 
+  // Filter menu items based on user role
+  const menuItems = getAllMenuItems().filter(item => 
+    userRole && item.roles.includes(userRole)
+  );
+
   const isActive = (href: string) => {
-    if (href === `/${lang}/account`) {
+    if (href === `/account`) {
       return pathname === href;
     }
     return pathname.startsWith(href);
@@ -177,7 +216,7 @@ export default function AccountSidebar({
       </div>
 
       {/* Navigation Menu */}
-      <nav className="bg-white rounded-lg shadow-sm p-4">
+      <nav className="bg-white rounded-lg shadow-sm">
         <ul className="space-y-1">
           {menuItems.map((item) => {
             const Icon = item.icon;

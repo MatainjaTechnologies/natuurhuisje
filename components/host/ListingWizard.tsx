@@ -66,8 +66,8 @@ const STEPS = [
   { id: 'photos', label: 'Photos', icon: Camera },
   { id: 'pricing', label: 'Pricing', icon: Euro },
   { id: 'availability', label: 'Availability', icon: CalendarCheck },
-  { id: 'calendar', label: 'Calendar', icon: Calendar },
-  { id: 'bedrooms', label: 'Bedrooms', icon: BedDouble },
+  // { id: 'calendar', label: 'Calendar', icon: Calendar },
+  // { id: 'bedrooms', label: 'Bedrooms', icon: BedDouble },
   { id: 'description', label: 'Description', icon: AlignLeft },
   { id: 'stay_details', label: 'Stay details', icon: Bike },
   { id: 'sustainability', label: 'Sustainability', icon: Leaf },
@@ -289,10 +289,10 @@ export function ListingWizard({ mode = 'create', existingListing = null }: { mod
         return <PricingStep data={formData} updateData={setFormData} onNext={() => handleNext('pricing')} onPrevious={() => handlePrevious('pricing')} />;
       case 'availability':
         return <AvailabilityStep data={formData} updateData={setFormData} onNext={() => handleNext('availability')} onPrevious={() => handlePrevious('availability')} />;
-      case 'calendar':
-        return <CalendarStep data={formData} updateData={setFormData} onNext={() => handleNext('calendar')} onPrevious={() => handlePrevious('calendar')} />;
-      case 'bedrooms':
-        return <BedroomsStep data={formData} updateData={setFormData} onNext={() => handleNext('bedrooms')} onPrevious={() => handlePrevious('bedrooms')} />;
+      // case 'calendar':
+      //   return <CalendarStep data={formData} updateData={setFormData} onNext={() => handleNext('calendar')} onPrevious={() => handlePrevious('calendar')} />;
+      // case 'bedrooms':
+      //   return <BedroomsStep data={formData} updateData={setFormData} onNext={() => handleNext('bedrooms')} onPrevious={() => handlePrevious('bedrooms')} />;
       case 'description':
         return <DescriptionStep data={formData} updateData={setFormData} onNext={() => handleNext('description')} onPrevious={() => handlePrevious('description')} />;
       case 'stay_details':

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
+import { type Database, TablesInsert } from '@/types/supabase';
 
 interface ProfileFormProps {
   profile: any;
@@ -160,35 +161,14 @@ export default function ProfileForm({ profile, session, fullName }: ProfileFormP
 
       console.log('Final avatar URL to save:', avatarUrl);
 
-      // Update users table
-      const updateData = {
+      // Update users table - only update fields that exist in the table
+      const displayName = `${formData.first_name} ${formData.last_name}`.trim();
+      
+      const updateData: TablesInsert<'users'> = {
         auth_user_id: session.user.id,
         email: formData.email,
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        alternative_email: formData.alternative_email,
-        website: formData.website,
-        phone_country_code: formData.phone_country_code,
-        phone_number: formData.phone_number,
-        date_of_birth: formData.date_of_birth,
-        gender: formData.gender,
-        address_line_1: formData.address_line_1,
-        address_line_2: formData.address_line_2,
-        city: formData.city,
-        state: formData.state,
-        postal_code: formData.postal_code,
-        country: formData.country || 'NL', // Required field with default
-        nationality: formData.nationality,
-        preferred_language: formData.preferred_language || 'English', // Required field with default
-        company_name: formData.company_name,
-        tax_id: formData.tax_id,
-        email_notifications: formData.email_notifications,
-        sms_notifications: formData.sms_notifications,
-        marketing_emails: formData.marketing_emails,
+        display_name: displayName || null,
         avatar_url: avatarUrl,
-        currency_preference: 'EUR', // Required field with default
-        timezone: 'UTC', // Required field with default
-        updated_at: new Date().toISOString(),
       };
 
       console.log('Profile update data:', updateData);
