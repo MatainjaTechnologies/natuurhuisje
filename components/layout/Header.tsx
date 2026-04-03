@@ -192,12 +192,12 @@ export function Header({ user: propUser, lang }: HeaderProps) {
   });
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const languageDropdownRef = useRef<HTMLDivElement>(null);
-  
+
   // Check if we're on the rent-out or booking page
   const isRentOutPage = pathname?.includes("/rent-out");
-  const isBookingPage = pathname?.includes("/booking");
+  const isBookingPage = pathname?.startsWith(`${locale}/booking`);
   const isConfirmPage = pathname?.includes("/confirm");
-  
+
   // Check if we should hide the search in header
   const hideHeaderSearch =
     pathname?.includes("/login") ||
@@ -233,7 +233,11 @@ export function Header({ user: propUser, lang }: HeaderProps) {
   useEffect(() => {
     const handleScroll = () => {
       // Desktop search bar (>= 768px)
-      if (window.scrollY > 500 && window.innerWidth >= 768 && !hideHeaderSearch) {
+      if (
+        window.scrollY > 500 &&
+        window.innerWidth >= 768 &&
+        !hideHeaderSearch
+      ) {
         setShowSearchBar(true);
       } else {
         setShowSearchBar(false);
@@ -241,7 +245,11 @@ export function Header({ user: propUser, lang }: HeaderProps) {
       }
 
       // Mobile search bar (< 768px)
-      if (window.scrollY > 100 && window.innerWidth < 768 && !hideHeaderSearch) {
+      if (
+        window.scrollY > 100 &&
+        window.innerWidth < 768 &&
+        !hideHeaderSearch
+      ) {
         setShowMobileSearch(true);
       } else if (window.innerWidth < 768) {
         setShowMobileSearch(false);
@@ -426,7 +434,8 @@ export function Header({ user: propUser, lang }: HeaderProps) {
                   />
                 </svg>
                 <span className="text-gray-700">
-                  {headerT?.topBanner?.contributeToNature || "Contribute to nature projects"}
+                  {headerT?.topBanner?.contributeToNature ||
+                    "Contribute to nature projects"}
                 </span>
               </div>
             </div>
@@ -437,16 +446,20 @@ export function Header({ user: propUser, lang }: HeaderProps) {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Logo className="h-8" />
-            
+
             {/* Progress Indicator - Centered - Hidden on mobile */}
             <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-1">
-              <span className={`text-sm ${isConfirmPage ? 'text-gray-400 font-normal' : 'text-purple-900 font-medium'}`}>
-                {isBookingPage 
-                  ? (rentOutT?.steps?.step1 || "1. Booking details")
-                  : (rentOutT?.steps?.step1 || "1. Property details")}
+              <span
+                className={`text-sm ${isConfirmPage ? "text-gray-400 font-normal" : "text-purple-900 font-medium"}`}
+              >
+                {isBookingPage
+                  ? rentOutT?.steps?.step1 || "1. Booking details"
+                  : rentOutT?.steps?.step1 || "1. Property details"}
               </span>
               <span className="text-gray-400 text-sm mx-1">›</span>
-              <span className={`text-sm ${isConfirmPage ? 'text-purple-900 font-medium' : 'text-gray-400 font-normal'}`}>
+              <span
+                className={`text-sm ${isConfirmPage ? "text-purple-900 font-medium" : "text-gray-400 font-normal"}`}
+              >
                 {rentOutT?.steps?.step2 || "2. Confirmation"}
               </span>
             </div>
@@ -512,7 +525,8 @@ export function Header({ user: propUser, lang }: HeaderProps) {
                 />
               </svg>
               <span className="text-gray-700">
-                {headerT?.topBanner?.contributeToNature || "Contribute to nature projects"}
+                {headerT?.topBanner?.contributeToNature ||
+                  "Contribute to nature projects"}
               </span>
             </div>
           </div>
@@ -990,8 +1004,8 @@ export function Header({ user: propUser, lang }: HeaderProps) {
               </button>
 
               {/* Language Selector */}
-              <div className="relative" ref={languageDropdownRef}>
-                <button
+              {/* <div className="relative" ref={languageDropdownRef}> */}
+              {/* <button
                   onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
                   className="flex items-center gap-1.5 hover:bg-gray-100 px-2 py-1.5 rounded-lg transition-colors"
                 >
@@ -1007,10 +1021,10 @@ export function Header({ user: propUser, lang }: HeaderProps) {
                     {locale?.toUpperCase() || "EN"}
                   </span>
                   <ChevronDown className="h-3.5 w-3.5 text-gray-600" />
-                </button>
+                </button> */}
 
-                {/* Language Dropdown */}
-                {showLanguageDropdown && (
+              {/* Language Dropdown */}
+              {/* {showLanguageDropdown && (
                   <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                     {languages.map((language) => (
                       <button
@@ -1031,8 +1045,8 @@ export function Header({ user: propUser, lang }: HeaderProps) {
                       </button>
                     ))}
                   </div>
-                )}
-              </div>
+                )} */}
+              {/* </div> */}
 
               {/* Rent out and To register buttons / User Account */}
               {!user ? (

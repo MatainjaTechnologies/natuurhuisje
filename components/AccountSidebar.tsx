@@ -126,13 +126,13 @@ export default function AccountSidebar({
       description: "Manage your listings",
       roles: ["landlord", "admin"] as RoleName[],
     },
-    {
-      href: `/host/new`,
-      label: "Add New Property",
-      icon: Building,
-      description: "List a new property",
-      roles: ["landlord", "admin"] as RoleName[],
-    },
+    // {
+    //   href: `/host/new`,
+    //   label: "Add New Property",
+    //   icon: Building,
+    //   description: "List a new property",
+    //   roles: ["landlord", "admin"] as RoleName[],
+    // },
     // {
     //   href: `/account/special-pricing`,
     //   label: "Special Pricing",
