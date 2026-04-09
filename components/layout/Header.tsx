@@ -119,18 +119,28 @@ export function Header({ user: propUser, lang }: HeaderProps) {
           setUserProfile({ display_name: displayName });
         }
 
-        // get user role
-        const { data: userRole, error: userRoleError } = await supabase
-          .from("user_roles")
-          .select("role_name")
-          .eq("user_id", user.id)
-          .single<{ role_name: string }>();
+        // get user role (admin_users first, then fallback to user_roles)
+        const { data: adminRoleData } = await (supabase as any)
+          .from("admin_users")
+          .select("role")
+          .eq("auth_user_id", user.id)
+          .maybeSingle();
 
-        if (userRoleError) {
-          console.error("Header - Error fetching user role:", userRoleError);
-        } else if (userRole) {
-          console.log("Header - User role:", userRole);
-          setUserRole(userRole.role_name);
+        if (adminRoleData?.role === "admin") {
+          setUserRole("admin");
+        } else {
+          const { data: userRole, error: userRoleError } = await supabase
+            .from("user_roles")
+            .select("role_name")
+            .eq("user_id", user.id)
+            .single<{ role_name: string }>();
+
+          if (userRoleError) {
+            console.error("Header - Error fetching user role:", userRoleError);
+          } else if (userRole) {
+            console.log("Header - User role:", userRole);
+            setUserRole(userRole.role_name);
+          }
         }
       } else {
         setUserProfile(null);

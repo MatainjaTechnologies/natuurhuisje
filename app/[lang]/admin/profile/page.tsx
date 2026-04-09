@@ -19,7 +19,7 @@ async function ProfileContent({ lang }: { lang: Locale }) {
   let profile: any = null;
   try {
     const { data } = await supabase
-      .from('users')
+      .from('admin_users')
       .select('*')
       .eq('auth_user_id', session.user.id)
       .single();

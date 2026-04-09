@@ -27,13 +27,13 @@ export default async function AdminDashboard() {
     redirect("/login");
   }
 
-  const { data: roleData } = await (supabase as any)
-    .from("user_roles")
-    .select("role_name")
-    .eq("user_id", session.user.id)
+  const { data: adminData } = await (supabase as any)
+    .from("admin_users")
+    .select("auth_user_id, role")
+    .eq("auth_user_id", session.user.id)
     .single();
 
-  const isAdmin = roleData?.role_name === "admin";
+  const isAdmin = adminData?.role === "admin";
 
   // Get user profile from users table
   let profile: any = null;

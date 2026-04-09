@@ -54,6 +54,16 @@ export default function AdminLoginPage() {
       if (error) {
         setError(t?.login?.errors?.invalidCredentials || error.message);
       } else {
+        const syncResponse = await fetch('/api/admin/sync-user', {
+          method: 'POST',
+        });
+        const syncResult = await syncResponse.json();
+
+        if (!syncResult.success) {
+          setError(syncResult.error || 'Failed to sync admin profile');
+          return;
+        }
+
         router.push(`/${lang}/admin/dashboard`);
       }
     } catch (err) {

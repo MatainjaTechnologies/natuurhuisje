@@ -38,7 +38,7 @@ export default function AdminLayout({ children, lang }: AdminLayoutProps) {
       const getUserProfile = async () => {
         const supabase = createClient();
         const { data: profile, error } = await supabase
-          .from("users")
+          .from("admin_users")
           .select("display_name, avatar_url")
           .eq("auth_user_id", user.id)
           .single();

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   User,
   Grid,
+  Layers,
   Building,
   MessageSquare,
   Heart,
@@ -137,6 +138,13 @@ export default function AdminSidebar({
         icon: Building,
         description: "Manage your listings",
         roles: ["landlord", "admin"] as RoleName[],
+      },
+      {
+        href: `/admin/category`,
+        label: "Categories",
+        icon: Layers,
+        description: "Manage property categories",
+        roles: ["admin"] as RoleName[],
       },
       // {
       //   href: `/host/new`,

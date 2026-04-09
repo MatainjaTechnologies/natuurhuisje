@@ -11,8 +11,21 @@ export type { RoleName } from '@/types/roles';
  */
 export async function getUserRole(userId: string): Promise<RoleName | null> {
   const supabase = createClient();
+  type AdminRoleRow = { role: RoleName };
   
   try {
+    const { data: adminData, error: adminError } = await supabase
+      .from('admin_users')
+      .select('role')
+      .eq('auth_user_id', userId)
+      .maybeSingle();
+
+    const adminRole = (adminData as AdminRoleRow | null)?.role;
+
+    if (!adminError && adminRole === 'admin') {
+      return 'admin';
+    }
+
     const { data, error } = await supabase
       .from('user_roles')
       .select('role_name')

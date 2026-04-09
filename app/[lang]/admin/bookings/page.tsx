@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import type { Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/get-client-dictionary';
 import { fallbackTranslations } from '@/i18n/fallback-translations';
-import { getUserBookings } from '@/lib/supabase-bookings';
 import { createClient } from '@/utils/supabase/client';
 import { Calendar, MapPin, Users, Euro, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
@@ -64,18 +63,16 @@ function BookingsContent({ lang }: { lang: Locale }) {
           return;
         }
 
-        const { data: roleData, error: roleError } = await (supabase as any)
-          .from("user_roles")
-          .select("role_name")
-          .eq("user_id", user.id)
+        const { data: adminData, error: adminError } = await (supabase as any)
+          .from('admin_users')
+          .select('auth_user_id, role')
+          .eq('auth_user_id', user.id)
           .single();
 
-        if (roleError) {
-          setError(roleError.message || 'Failed to load user role');
+        if (adminError || !adminData || adminData.role !== 'admin') {
+          setError('Only admin users can access this page');
           return;
         }
-
-        const isAdmin = roleData?.role_name === 'admin';
 
         // Load translations
         const translations = await getDictionary(lang);
@@ -83,8 +80,9 @@ function BookingsContent({ lang }: { lang: Locale }) {
         const mergedTranslations = { ...fallbackTranslations, ...translations };
         setT(mergedTranslations);
 
-        // Fetch all bookings for admin, own bookings for other users
-        const bookingsResult = await getUserBookings(isAdmin ? undefined : user.id);
+        // Fetch all bookings for admin via admin API
+        const response = await fetch('/api/admin/host-bookings?page=1&itemsPerPage=500');
+        const bookingsResult = await response.json();
         
         if (bookingsResult.success) {
           setBookings(bookingsResult.data || []);

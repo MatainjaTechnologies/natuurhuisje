@@ -13,13 +13,13 @@ async function requireAdminUser() {
     return { error: NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 }) };
   }
 
-  const { data: roleData, error: roleError } = await (supabase as any)
-    .from('user_roles')
-    .select('role_name')
-    .eq('user_id', user.id)
+  const { data: adminData, error: adminError } = await (supabase as any)
+    .from('admin_users')
+    .select('auth_user_id, role')
+    .eq('auth_user_id', user.id)
     .single();
 
-  if (roleError || roleData?.role_name !== 'admin') {
+  if (adminError || !adminData || adminData.role !== 'admin') {
     return { error: NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 }) };
   }
 

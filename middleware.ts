@@ -47,13 +47,13 @@ async function checkAdminAccess(request: NextRequest): Promise<boolean> {
       return false;
     }
 
-    const { data: userData, error } = await supabase
-      .from('user_roles')
-      .select('role_name')
-      .eq('user_id', session.user.id)
+    const { data: adminData, error } = await supabase
+      .from('admin_users')
+      .select('auth_user_id, role')
+      .eq('auth_user_id', session.user.id)
       .single();
 
-    if (error || !userData || (userData as any).role_name !== 'admin') {
+    if (error || !adminData || (adminData as any).role !== 'admin') {
       return false;
     }
 

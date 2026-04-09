@@ -44,23 +44,23 @@ export default function AdminRouteLayout({
         return;
       }
 
-      // Check if user has admin role
-      const { data: userData, error: userError } = await (supabase as any)
-        .from("user_roles")
-        .select("role_name")
-        .eq("user_id", session.user.id)
+      // Check admin entry in admin_users table
+      const { data: adminData, error: adminError } = await (supabase as any)
+        .from("admin_users")
+        .select("auth_user_id, role")
+        .eq("auth_user_id", session.user.id)
         .single();
 
-      if (userError || !userData) {
-        console.error("Error checking user role:", userError);
+      if (adminError || !adminData) {
+        console.error("Error checking admin user:", adminError);
         // User exists but role check failed - redirect to admin login
         router.push(`/${lang}/admin/login`);
         return;
       }
 
       // Check if user is admin
-      if (userData.role_name !== "admin") {
-        console.error("User is not admin:", userData.role_name);
+      if (adminData.role !== "admin") {
+        console.error("User is not admin:", adminData.role);
         // User is authenticated but not admin - go back to previous route
         router.back();
         return;

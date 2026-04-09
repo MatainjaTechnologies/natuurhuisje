@@ -173,16 +173,24 @@ export default function ProfileForm({ profile, session, fullName }: ProfileFormP
 
       console.log('Profile update data:', updateData);
 
-      const { error: profileError } = await supabase
-        .from('users')
-        .upsert(updateData as any, {
-          onConflict: 'auth_user_id'
-        });
+      const adminUsersQuery: any = supabase.from('admin_users');
+
+      const { data: updatedProfile, error: profileError } = await adminUsersQuery
+        .update(updateData)
+        .eq('auth_user_id', session.user.id)
+        .select('auth_user_id')
+        .maybeSingle();
 
       console.log('Profile update result:', { error: profileError });
 
       if (profileError) {
-        throw profileError;
+        throw new Error(
+          `admin_users update failed (${profileError.code ?? 'unknown'}): ${profileError.message}`
+        );
+      }
+
+      if (!updatedProfile) {
+        throw new Error('Admin profile row not found. Please contact support to provision your admin account.');
       }
 
       // Update user metadata
@@ -194,7 +202,7 @@ export default function ProfileForm({ profile, session, fullName }: ProfileFormP
       });
 
       if (metadataError) {
-        throw metadataError;
+        throw new Error(`Auth metadata update failed: ${metadataError.message}`);
       }
 
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
@@ -204,11 +212,20 @@ export default function ProfileForm({ profile, session, fullName }: ProfileFormP
         router.refresh();
       }, 1500);
 
-    } catch (error: any) {
-      console.error('Profile update error:', error);
-      console.error('Error details:', JSON.stringify(error, null, 2));
+    } catch (error: unknown) {
+      const normalizedError =
+        error instanceof Error
+          ? error
+          : new Error(typeof error === 'string' ? error : JSON.stringify(error));
+
+      console.error('Profile update error:', normalizedError);
+      console.error('Error details:', {
+        name: normalizedError.name,
+        message: normalizedError.message,
+        stack: normalizedError.stack,
+      });
       console.error('Form data being submitted:', JSON.stringify(formData, null, 2));
-      setMessage({ type: 'error', text: error?.message || 'Failed to update profile. Please check the console for details.' });
+      setMessage({ type: 'error', text: normalizedError.message || 'Failed to update profile. Please check the console for details.' });
     } finally {
       setIsLoading(false);
     }
